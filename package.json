@@ -1,0 +1,25 @@
+{
+  "name": "telegram-contest",
+  "version": "0.0.1",
+  "description": "Telegram contest application ",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Zapix/telegram-contest.git"
+  },
+  "keywords": [
+    "Telegram",
+    "Vanilla",
+    "JS",
+    "Contest"
+  ],
+  "author": "Aleksandr Aibulatov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Zapix/telegram-contest/issues"
+  },
+  "homepage": "https://github.com/Zapix/telegram-contest#readme"
+}
