@@ -1,8 +1,9 @@
+import { sum } from './utils';
 import './style.css';
 import Avatar from './zap.avatar.png';
 
 function component() {
-  const title = 'My Wife will be healthy';
+  const title = `My Wife will be healthy ${sum(8, 5)}`;
   const parentNode = document.createElement('div');
 
   const textNode = document.createTextNode(title);
