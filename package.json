@@ -5,7 +5,9 @@
   "scripts": {
     "test": "test",
     "build": "NODE_ENV=production webpack",
-    "start": "webpack-dev-server --open"
+    "start": "webpack-dev-server --open",
+    "lint": "eslint src/",
+    "lintw": "esw -w src/"
   },
   "repository": {
     "type": "git",
@@ -26,6 +28,10 @@
   "devDependencies": {
     "clean-webpack-plugin": "^3.0.0",
     "css-loader": "^3.2.0",
+    "eslint": "^6.6.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-watch": "^6.0.1",
     "extract-text-webpack-plugin": "^3.0.2",
     "file-loader": "^4.2.0",
     "html-webpack-plugin": "^3.2.0",

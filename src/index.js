@@ -2,9 +2,10 @@ import './style.css';
 import Avatar from './zap.avatar.png';
 
 function component() {
+  const title = 'My Wife will be healthy';
   const parentNode = document.createElement('div');
 
-  const textNode = document.createTextNode('My Wife will be healthy');
+  const textNode = document.createTextNode(title);
 
   const headerNode = document.createElement('h1');
   headerNode.classList.add('red');
