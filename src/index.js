@@ -1,24 +1,31 @@
-import { sum } from './utils';
+import { render, createElement } from './utils/vdom';
 import './style.css';
 import Avatar from './zap.avatar.png';
 
-function component() {
-  const title = `My Wife will be healthy ${sum(8, 5)}`;
-  const parentNode = document.createElement('div');
+const div = document.createElement('h1');
+div.setAttribute('id', 'app');
+document.body.append(div);
 
-  const textNode = document.createTextNode(title);
+const vNode = createElement(
+  'div',
+  { class: 'base-app' },
+  [
+    createElement(
+      'h1',
+      { class: 'red' },
+      'Best Telegram Application',
+    ),
+    createElement('img', { src: Avatar }, null),
+    createElement(
+      'ul',
+      null,
+      [
+        createElement('li', null, '[x] - First rendering'),
+        createElement('li', null, '[ ] - Re-rendering vdom and dom node'),
+        createElement('li', null, '[ ] - Integrate value'),
+      ],
+    ),
+  ],
+);
 
-  const headerNode = document.createElement('h1');
-  headerNode.classList.add('red');
-  headerNode.append(textNode);
-
-  const image = new Image();
-  image.src = Avatar;
-
-  parentNode.append(headerNode);
-  parentNode.append(image);
-
-  return parentNode;
-}
-
-document.body.append(component());
+render(div, vNode);
