@@ -1,4 +1,4 @@
-import R from 'ramda';
+import * as R from 'ramda';
 
 /**
  * Checks that passed js object has `__vnode` attribute
