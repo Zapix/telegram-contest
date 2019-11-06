@@ -64,4 +64,4 @@ const nestedJsNode = {
 `utils/vdom/isVNode(object, deep=False)` - checks is passed object is valid virtual dom object or not.
 if `deep=True` then validate each children
 
-`utils/vdom/v(type, attributes, ...childrens)` - creates virtual dom object with valid vdom children
+`utils/vdom/createElement(type, attributes, childrens)` - creates virtual dom object with valid vdom children
