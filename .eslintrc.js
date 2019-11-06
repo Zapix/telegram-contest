@@ -16,6 +16,7 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
+    'no-underscore-dangle': ['error', { 'allow': ['_node', '_component', '__vnode']}]
   },
   plugins: [
     'jest',
