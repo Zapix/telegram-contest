@@ -16,6 +16,7 @@ const vNode = createElement(
       'Best Telegram Application',
     ),
     createElement('img', { src: Avatar }, null),
+    createElement('button', { id: 'btn', onclick: () => console.log('hello world') } , 'Click Me'),
     createElement(
       'ul',
       null,

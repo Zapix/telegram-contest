@@ -38,7 +38,10 @@ const setAttribute = R.curry((node, key, value) => node.setAttribute(key, value)
  * @param {Object} attrs - attributes that should be set
  */
 const setAttributes = R.curry((node, attrs) => {
+  const isHandler = R.pipe(R.nthArg(1), R.startsWith('on'));
+
   R.pipe(
+    R.pickBy(R.pipe(isHandler, R.not)),
     R.toPairs,
     R.forEach(
       R.pipe(
@@ -46,6 +49,15 @@ const setAttributes = R.curry((node, attrs) => {
       ),
     ),
   )(attrs);
+
+  R.pipe(
+    R.pickBy(isHandler),
+    R.toPairs(),
+    R.forEach(([eventName, handler]) => {
+      node.addEventListener(R.slice(2, Infinity, eventName), handler);
+    }),
+  )(attrs);
+
   return node;
 });
 
