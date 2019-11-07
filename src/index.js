@@ -1,4 +1,4 @@
-import { render, rerender, createElement } from './utils/vdom';
+import { createElement, mount } from './utils/vdom';
 import './style.css';
 import Avatar from './zap.avatar.png';
 
@@ -6,20 +6,55 @@ const div = document.createElement('h1');
 div.setAttribute('id', 'app');
 document.body.append(div);
 
-let oldVersion;
+function dispatch() {
+  const event = new CustomEvent('stateUpdate');
+  document.dispatchEvent(event);
+}
 
-function App(updated) {
+function Header() {
+  return createElement(
+    'div',
+    { id: 'header' },
+    [
+      createElement('img', { src: Avatar }, null),
+      createElement(
+        'h1',
+        { id: 'title' },
+        'Best Telegram Application',
+      ),
+    ],
+  );
+}
+
+function Footer() {
+  return createElement(
+    'div',
+    { id: 'footer' },
+    [
+      createElement(
+        'strong',
+        null,
+        '(c) With Love By Zapix',
+      ),
+    ],
+  );
+}
+
+function MainSection(content) {
+  return createElement(
+    'div',
+    { id: 'main-section' },
+    [content],
+  );
+}
+
+
+function SomeContent(updated) {
   const updatedSign = updated ? 'x' : ' ';
   return createElement(
     'div',
-    { class: 'base-app' },
+    null,
     [
-      createElement(
-        'h1',
-        { class: 'red' },
-        'Best Telegram Application',
-      ),
-      createElement('img', { src: Avatar }, null),
       createElement(
         'ul',
         null,
@@ -27,7 +62,7 @@ function App(updated) {
           [
             createElement('li', null, '[x] - First rendering'),
             createElement('li', null, `[${updatedSign}] - Re-rendering vdom and dom node`),
-            createElement('li', null, '[ ] - Prepare function for tracking state changes'),
+            createElement('li', null, '[x] - Prepare function for tracking state changes'),
           ]
 
         ) : (
@@ -37,16 +72,42 @@ function App(updated) {
           ]
         ),
       ),
-      createElement(
-        'button', {
-          id: 'btn',
-          onclick: () => rerender(div, oldVersion, App(true)),
-        },
-        'Mark re-rendering as done',
+      updated ? (
+        createElement(
+          'small',
+          null,
+          'That works!',
+        )
+      ) : (
+        createElement(
+          'button', {
+            class: 'btn',
+            onclick: (e) => {
+              e.preventDefault();
+              dispatch();
+            },
+          },
+          'Mark re-rendering as done',
+        )
       ),
     ],
   );
 }
 
-oldVersion = App();
-render(div, oldVersion);
+function App(state) {
+  return createElement(
+    'div',
+    { id: 'base-app' },
+    [
+      Header(),
+      MainSection(SomeContent(state)),
+      Footer(),
+    ],
+  );
+}
+
+const updateView = mount(div, App, false);
+
+document.addEventListener('stateUpdate', () => {
+  updateView(true);
+});
