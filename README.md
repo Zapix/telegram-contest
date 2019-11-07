@@ -57,6 +57,12 @@ const nestedJsNode = {
   ]
 }
 ```
+
+## Component
+
+*Component* is a function that returns virtual dom object
+
+*BaseComponent* is a component that takes whole state of application
   
 ## API Reference
 
