@@ -17,9 +17,15 @@ const areBothVNodesString = R.allPass([
   R.pipe(R.nthArg(0), R.is(String)),
 ]);
 
+/**
+ * Compares vNodes.
+ * @param {Object|string} aVnode
+ * @param {Object|string} bVnode
+ * @returns {boolean}
+ */
 const isVNodesEqual = R.cond([
   [areBothVNodesString, R.equals],
-  [R.T,isVNodesObjectsEqual],
+  [R.T, isVNodesObjectsEqual],
 ]);
 
 export default isVNodesEqual;

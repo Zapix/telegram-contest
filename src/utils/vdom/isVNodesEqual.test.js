@@ -52,7 +52,7 @@ describe('isVNodesEqual()', () => {
     const aVNode = createElement(
       'h1',
       { class: 'title' },
-      'New Application'
+      'New Application',
     );
 
     expect(isVNodesEqual(aVNode, 'string')).toBeFalsy();
@@ -64,5 +64,5 @@ describe('isVNodesEqual()', () => {
 
   test('different strings', () => {
     expect(isVNodesEqual('string', 'another')).toBeFalsy();
-  })
+  });
 });

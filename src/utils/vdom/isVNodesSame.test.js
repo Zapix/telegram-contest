@@ -43,8 +43,7 @@ describe('isVNodesSame()', () => {
     expect(isVNodesSame(aVNode, bVNode)).toBeFalsy();
   });
 
-
   test('one string another string', () => {
-    expect(isVNodesSame('hello', 'world')).toBeTruthy();
-  })
+    expect(isVNodesSame('test', 'world')).toBeTruthy();
+  });
 });
