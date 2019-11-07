@@ -1,4 +1,5 @@
 import * as R from 'ramda';
+
 /**
  * `aVNode` equals `bVNode` if they have same type and same attributes.
  * ATTENTION: function doesn't compare `_node` and `_children` attributes
