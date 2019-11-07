@@ -15,7 +15,7 @@ const appendNode = R.curryN(2)((parrentNode, newNode) => parrentNode.append(newN
 /**
  * Creates HTMLElement
  */
-const createHtmlElement = (x) => document.createElement(x);
+export const createHtmlElement = (x) => document.createElement(x);
 
 /**
  * Sets attribute for node
@@ -28,6 +28,12 @@ const createHtmlElement = (x) => document.createElement(x);
  */
 const setAttribute = R.curry((node, key, value) => node.setAttribute(key, value));
 
+const pickHandlers = R.pickBy(R.allPass([
+  R.pipe(R.nthArg(0), R.is(Function)),
+  R.pipe(R.nthArg(1), R.startsWith('on')),
+]));
+
+const pickAttributes = R.pickBy(R.pipe(R.nthArg(1), R.startsWith('on'), R.not));
 
 /**
  * Sets attributes from `attrs` argument to `node` element
@@ -37,8 +43,9 @@ const setAttribute = R.curry((node, key, value) => node.setAttribute(key, value)
  * @param {HTMLElement} node - node element
  * @param {Object} attrs - attributes that should be set
  */
-const setAttributes = R.curry((node, attrs) => {
+export const setAttributes = R.curry((node, attrs) => {
   R.pipe(
+    pickAttributes,
     R.toPairs,
     R.forEach(
       R.pipe(
@@ -46,6 +53,49 @@ const setAttributes = R.curry((node, attrs) => {
       ),
     ),
   )(attrs);
+
+  return node;
+});
+
+/**
+ * Sets handlers from `attrs` argument to `node` element
+ * handler is attributes that key starts with "on" and value is a function
+ *
+ * SIDE EFFECT!
+ *
+ * @param {HTMLElement} node - node element
+ * @param {Object} attrs - attributes that should be set
+ */
+export const setHandlers = R.curry((node, attrs) => {
+  R.pipe(
+    pickHandlers,
+    R.toPairs(),
+    R.forEach(([eventName, handler]) => {
+      node.addEventListener(R.slice(2, Infinity, eventName), handler);
+    }),
+  )(attrs);
+
+  return node;
+});
+
+
+/**
+ * Remove handlers that have been set in attrs
+ *
+ * SIDE EFFECT!
+ *
+ * @param {HTMLElement} node - node element
+ * @param {Object} attrs - attributes that should be set
+ */
+export const clearHandlers = R.curry((node, attrs) => {
+  R.pipe(
+    pickHandlers,
+    R.toPairs(),
+    R.forEach(([eventName, handler]) => {
+      node.removeEventListener(R.slice(2, Infinity, eventName), handler);
+    }),
+  )(attrs);
+
   return node;
 });
 
@@ -63,11 +113,17 @@ function createNode(vNode) {
     R.flip(setAttributes),
   )(vNode);
 
+  const setHandlersForNode = R.pipe(
+    R.prop('attrs'),
+    R.flip(setHandlers),
+  )(vNode);
+
   /* eslint-disable */
   vNode._node = R.pipe( // need reassign property to keep info about virtual dom
     R.prop('type'),
     createHtmlElement,
     setAttributesForNode,
+    setHandlersForNode,
   )(vNode);
   /* eslint-enable */
 

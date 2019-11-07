@@ -65,3 +65,9 @@ const nestedJsNode = {
 if `deep=True` then validate each children
 
 `utils/vdom/createElement(type, attributes, childrens)` - creates virtual dom object with valid vdom children
+
+`utils/vdom/render(parentNode, vNode)` - renders vNode to parrent node
+
+`utils/vdom/isVNodesEqual(aVNode, bVNode)` - compares to vNodes they are equal with same attrs and same types
+
+`utils/vdom/isVNodesSame(aVNode, bVNode)` - vNodes are the same if they have same type and same id or haven`t got it
