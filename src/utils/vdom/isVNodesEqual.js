@@ -7,9 +7,19 @@ import * as R from 'ramda';
  * @param {Object} bVnode
  * @returns {boolean}
  */
-const isVNodesEqual = R.allPass([
+const isVNodesObjectsEqual = R.allPass([
   R.eqProps('type'),
   R.eqProps('attrs'),
+]);
+
+const areBothVNodesString = R.allPass([
+  R.pipe(R.nthArg(0), R.is(String)),
+  R.pipe(R.nthArg(0), R.is(String)),
+]);
+
+const isVNodesEqual = R.cond([
+  [areBothVNodesString, R.equals],
+  [R.T,isVNodesObjectsEqual],
 ]);
 
 export default isVNodesEqual;

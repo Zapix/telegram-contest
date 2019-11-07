@@ -36,4 +36,15 @@ describe('isVNodesSame()', () => {
 
     expect(isVNodesSame(aVNode, bVNode)).toBeFalsy();
   });
+
+  test('one vNode another string', () => {
+    const aVNode = 'string';
+    const bVNode = createElement('div', {}, null);
+    expect(isVNodesSame(aVNode, bVNode)).toBeFalsy();
+  });
+
+
+  test('one string another string', () => {
+    expect(isVNodesSame('hello', 'world')).toBeTruthy();
+  })
 });
