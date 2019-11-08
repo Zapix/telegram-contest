@@ -1,3 +1,5 @@
+const path = require('path');
+
 module.exports = {
   env: {
     browser: true,
@@ -21,4 +23,7 @@ module.exports = {
   plugins: [
     'jest',
   ],
+  'settings': {
+    'import/resolver': 'webpack',
+  },
 };

@@ -1,4 +1,4 @@
-import { createElement, mount } from './utils/vdom';
+import { createElement, mount } from 'utils/vdom';
 import './style.css';
 import Avatar from './zap.avatar.png';
 
