@@ -73,11 +73,7 @@ function SomeContent(updated) {
         ),
       ),
       updated ? (
-        createElement(
-          'small',
-          null,
-          'That works!',
-        )
+        null
       ) : (
         createElement(
           'button', {
