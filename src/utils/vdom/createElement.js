@@ -28,7 +28,7 @@ const createElement = R.applySpec({
   children: R.pipe(
     R.nthArg(2),
     R.cond([
-      [R.is(Array), R.identity],
+      [R.is(Array), R.filter(R.pipe(R.isNil, R.not))],
       [isVNode, wrapToArray],
       [R.T, R.always([])],
     ]),

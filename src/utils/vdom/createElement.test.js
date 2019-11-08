@@ -35,4 +35,19 @@ describe('createElement', () => {
     expect(vNode.children).toHaveLength(2);
     expect(isVNode(vNode, true)).toBeTruthy();
   });
+
+  test('create node with null value', () => {
+    const vNode = createElement(
+      'ul',
+      null,
+      [
+        createElement('li', null, 'Item 1'),
+        createElement('li', null, 'Item 2'),
+        null,
+      ],
+    );
+
+    expect(isVNode(vNode, true)).toBeTruthy();
+    expect(vNode.children).toHaveLength(2);
+  });
 });
