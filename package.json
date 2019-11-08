@@ -46,6 +46,7 @@
     "webpack-dev-server": "^3.9.0"
   },
   "dependencies": {
-    "ramda": "^0.26.1"
+    "ramda": "^0.26.1",
+    "rxjs": "^6.5.3"
   }
 }
