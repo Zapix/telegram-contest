@@ -1,3 +1,5 @@
+const path = require('path');
+
 module.exports = {
   env: {
     browser: true,
@@ -16,9 +18,12 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
-    'no-underscore-dangle': ['error', { 'allow': ['_node', '_component', '__vnode']}]
+    'no-underscore-dangle': ['error', { 'allow': ['_node', '_component', '__vnode', '__']}]
   },
   plugins: [
     'jest',
   ],
+  'settings': {
+    'import/resolver': 'webpack',
+  },
 };

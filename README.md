@@ -77,3 +77,7 @@ if `deep=True` then validate each children
 `utils/vdom/isVNodesEqual(aVNode, bVNode)` - compares to vNodes they are equal with same attrs and same types
 
 `utils/vdom/isVNodesSame(aVNode, bVNode)` - vNodes are the same if they have same type and same id or haven`t got it
+
+`utils/vdom/mount(root$, baseComponent, initialState)`  - renders base component and state to root element and returns function
+that could update vNodes with new state value. 
+
