@@ -36,7 +36,7 @@ module.exports = {
         use: [
           'file-loader',
         ]
-      }
+      },
     ],
   },
   resolve: {
