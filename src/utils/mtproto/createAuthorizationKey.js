@@ -1,5 +1,5 @@
 import { REQ_PQ, PQ_INNER_DATA } from './constants';
-import { getRandomInt, uint8ToBigInt, findPrimeFactors } from './utils';
+import { getRandomInt, uint8ToBigInt, bigIntToUint8Array, findPrimeFactors } from './utils';
 
 /**
  * Generates message for p q authorization
@@ -90,12 +90,43 @@ export function buildPQInnerData(responsePQ) {
   inner_pq_data[0] = PQ_INNER_DATA;
 
   const pq = new Uint8Array(innerPQ, 4, 12);
+
+  pq[0] = responsePQ.pq.length;
   for (let i = 0; i < responsePQ.pq.length; i++) {
-    pq[i] = responsePQ.pq[i];
+    pq[i + 1] = responsePQ.pq[i];
   }
 
   const pq_value = uint8ToBigInt(responsePQ.pq);
-  const [p, q] = findPrimeFactors(pq_value);
-  console.log(p, p.toString(16));
-  console.log(q, q.toString(16));
+  const [p_value, q_value] = findPrimeFactors(pq_value);
+  const p_array = bigIntToUint8Array(p_value);
+  const p = new Uint8Array(innerPQ, 16, 8);
+  p[0] = p_array.length;
+  for (let i=0; i < p_array.length; i += 1) p[i+1] = p_array[i];
+
+  const q_array = bigIntToUint8Array(q_value);
+  const q = new Uint8Array(innerPQ, 24, 8);
+  q[0] = q_array.length;
+  for (let i=0; i < q_array.length; i += 1) q[i+1] = q_array[i];
+
+  const nonce = new Uint8Array(innerPQ, 32, 16);
+  for (let i=0; i < responsePQ.nonce.length; i += 1) nonce[i] = responsePQ.nonce[i];
+
+  const server_nonce = new Uint8Array(innerPQ, 48, 16);
+  for (let i=0; i < responsePQ.server_nonce.length; i += 1) {
+    server_nonce[i] = responsePQ.server_nonce[i];
+  }
+
+  const new_nonce = new Uint8Array(innerPQ, 64, 32);
+  for (let i=0; i < 32; i += 1) new_nonce[i] = getRandomInt(256);
+
+  return {
+    inner_pq_data,
+    pq,
+    p,
+    q,
+    nonce,
+    server_nonce,
+    new_nonce,
+    buffer: innerPQ
+  };
 }

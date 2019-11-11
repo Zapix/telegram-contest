@@ -163,6 +163,14 @@ function min(a, b) {
   return b;
 }
 
+function pow(a, b, c) {
+  const value = a ** b;
+  if (!c) {
+    return value;
+  }
+  return value % c;
+}
+
 /**
  * Decompose prime factors takes algorithm form
  * https://github.com/LonamiWebs/Telethon/blob/master/telethon/crypto/factorization.py
@@ -215,12 +223,17 @@ export function findPrimeFactors(pq) {
     }
   }
 
-  q = pq / g;
-  return (g < q) ? [g, q] : [q, g];
+  const p = g;
+  q = pq / p;
+  console.log(`PQ: ${pq.toString(16)}`);
+  console.log(`P: ${p.toString(16)}`);
+  console.log(`Q: ${q.toString(16)}`);
+  console.log(`P * Q: ${(p * q).toString(16)}`);
+  return (p < q) ? [p, q] : [q, p];
 }
 
 /**
- * Parse sequence of bytes to string with bigendian format
+ * Parse sequence of bytes to BigInt. Sequence has got big endian format
  * @param {Uint8Array} arr
  * @returns {BigInt}
  */
@@ -233,3 +246,21 @@ export function uint8ToBigInt(arr) {
   return BigInt(hex);
 }
 
+/**
+ * Trans bigInt to Uint8Array with big endian format
+ * @param bigint
+ * @returns {number[]}
+ */
+export function bigIntToUint8Array(bigint) {
+  const result  = [];
+  let value = bigint;
+
+  while (value > BigInt(0)) {
+    result.push(Number(value % BigInt(256)));
+    value = value / BigInt(256);
+  }
+  if (result.length === 0) {
+    result.push(0);
+  }
+  return result.reverse();
+}

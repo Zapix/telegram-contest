@@ -83,5 +83,12 @@ describe('findPrimeFactors', () => {
     const [p, q] = findPrimeFactors(BigInt('0x31f05bcc5ce66ccd'));
     expect(p === BigInt('0x6f7b6a45')).toBeTruthy();
     expect(q === BigInt('0x72ad24e9')).toBeTruthy();
-  })
+  });
+
+  test('from telegram response 2', () => {
+    const [p, q] = findPrimeFactors(BigInt('0x256edefca64f89db'));
+    expect(p === BigInt('0x5556e63f')).toBeTruthy();
+    expect(q === BigInt('0x704a8d65')).toBeTruthy();
+  });
+
 });
