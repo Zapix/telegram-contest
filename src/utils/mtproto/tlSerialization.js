@@ -1,6 +1,6 @@
 import * as R from 'ramda'
 
-import { bigIntToUint8Array } from './utils';
+import { bigIntToUint8Array, uint8ToBigInt } from './utils';
 
 const debug = x => {
   console.log(x);
@@ -69,4 +69,44 @@ const toLongTlString = R.pipe(
 export const toTlString = R.cond([
   [isShortString, toShortTlString],
   [R.T, toLongTlString],
+]);
+
+
+const fromTlShortString  = R.pipe(
+  R.of,
+  R.ap([
+    R.always(1),
+    R.pipe(R.nth(0), R.inc),
+    R.identity,
+  ]),
+  R.apply(R.slice)
+);
+
+/**
+ * Parse bytes array to int with little endian notation
+ * @type {Function|*}
+ */
+const uint8ToInt = R.pipe(
+  R.flip(R.curryN(2)(uint8ToBigInt))(true),
+  Number,
+  debug,
+);
+
+const fromTlLongString = R.pipe(
+  R.of,
+  R.ap([
+    R.always(4),
+    R.pipe(R.slice(1, 4), uint8ToInt, R.add(4)),
+    R.identity,
+  ]),
+  R.apply(R.slice)
+);
+
+/**
+ * Takes array of bytes that represents
+ * @param {Number[]} tlString - serialized telegram string
+ */
+export const fromTlString = R.cond([
+  [R.pipe(R.nth(0), R.gt(254)), fromTlShortString],
+  [R.T, fromTlLongString],
 ]);
