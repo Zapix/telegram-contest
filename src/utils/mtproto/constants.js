@@ -8,5 +8,6 @@ export const TEST_DC_INC = 10000; // INCREMENT DC FOR TEST
 
 export const REQ_PQ = 0x60469778;
 export const PQ_INNER_DATA = 0x83c95aec;
+export const REQ_DH_PARAMS = 0xd712e4be;
 
 export const AUTH_SEND_CODE = 0xa677244f;

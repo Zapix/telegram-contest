@@ -1,11 +1,21 @@
 import * as R from 'ramda';
 import random from 'random-bigint';
+import forge from 'node-forge';
 
-import { PROTOCOL_ID, DC_ID, TEST_DC_INC } from './constants';
+import { DC_ID, PROTOCOL_ID, TEST_DC_INC } from './constants';
+
+export const debug = (x) => {
+  console.log(x);
+  return x;
+};
 
 export function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
+
+const getRandomByte =  R.partial(getRandomInt, [256]);
+
+export const getNRandomBytes = R.times(getRandomByte);
 
 const checkFirstByte = R.pipe(
   (buffer) => (new Uint8Array(buffer,0,1))[0],
@@ -233,6 +243,18 @@ export function findPrimeFactors(pq) {
 }
 
 /**
+ * Return hex variant of uint8array
+ * @param {Uint8Array} arr
+ */
+export function uint8ArrayToHex(arr) {
+  let hex = '';
+  for (let i = 0; i < arr.length; i++) {
+    hex += arr[i].toString(16).padStart(2, '0');
+  }
+  return hex;
+}
+
+/**
  * Parse sequence of bytes to BigInt. Sequence has got big endian format
  * @param {Uint8Array} arr
  * @returns {BigInt}
@@ -240,20 +262,21 @@ export function findPrimeFactors(pq) {
 export function uint8ToBigInt(arr) {
   let hex = '0x';
   for (let i = 0; i < arr.length; i++) {
-    hex += arr[i].toString(16);
+    hex += arr[i].toString(16).padStart(2, '0');
   }
   console.log(hex);
   return BigInt(hex);
 }
 
 /**
- * Trans bigInt to Uint8Array with big endian format
+ * Trans number or bigint to Uint8Array with big endian format if little endian doesn't set
  * @param bigint
+ * @param littleEndian
  * @returns {number[]}
  */
-export function bigIntToUint8Array(bigint) {
+export function bigIntToUint8Array(bigint, littleEndian) {
   const result  = [];
-  let value = bigint;
+  let value = BigInt(bigint);
 
   while (value > BigInt(0)) {
     result.push(Number(value % BigInt(256)));
@@ -262,5 +285,51 @@ export function bigIntToUint8Array(bigint) {
   if (result.length === 0) {
     result.push(0);
   }
-  return result.reverse();
+  return littleEndian ? result : result.reverse();
 }
+
+/**
+ * Converts ByteBuffer to ArrayBuffer
+ * @param {ByteBuffer} forgeBuffer
+ * @returns {ArrayBuffer}
+ */
+export function forgeBufferToArrayBuffer(forgeBuffer) {
+  const bytes = forgeBuffer.getBytes();
+  const buffer = new ArrayBuffer(bytes.length);
+  const uintArray = new Uint8Array(buffer);
+  for (let i=0; i < uintArray.length; i++) uintArray[i] = bytes.charCodeAt(i);
+
+  return buffer;
+};
+
+/**
+ * Converts ArrayBuffer to node-forge ByteBuffer;
+ * @param arrayBuffer
+ * @returns {ByteBuffer}
+ */
+export function arrayBufferToForgeBuffer(arrayBuffer) {
+  const forgeBuffer = forge.util.createBuffer();
+  const uintArray = new Uint8Array(arrayBuffer);
+  for (let i=0; i < uintArray.length; i += 1) forgeBuffer.putByte(uintArray[i]);
+  return forgeBuffer;
+}
+
+/**
+ * Generates message id
+ * @returns {bigint}
+ */
+export function getMessageId() {
+  return BigInt(+Date.now()) * BigInt(Math.pow(2, 32));
+}
+
+/**
+ * Copy bytes from Uint8Array `from` to Uint*Array `to`;
+ * @param {Uint8Array} fromArr
+ * @param {Uint8Array} toArr
+ */
+export function copyBytes(fromArr, toArr) {
+  for(let i = 0; i < fromArr.length; i += 1) {
+    toArr[i] = fromArr[i];
+  }
+}
+

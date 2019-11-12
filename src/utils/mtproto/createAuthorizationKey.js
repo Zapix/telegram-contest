@@ -1,5 +1,21 @@
-import { REQ_PQ, PQ_INNER_DATA } from './constants';
-import { getRandomInt, uint8ToBigInt, bigIntToUint8Array, findPrimeFactors } from './utils';
+import * as R from 'ramda';
+import forge from 'node-forge';
+
+import { PQ_INNER_DATA, REQ_PQ, REQ_DH_PARAMS } from './constants';
+import {
+  bigIntToUint8Array,
+  findPrimeFactors,
+  getMessageId,
+  getRandomInt,
+  uint8ToBigInt,
+  arrayBufferToForgeBuffer,
+  forgeBufferToArrayBuffer,
+  copyBytes,
+  uint8ArrayToHex,
+  getNRandomBytes,
+  debug,
+} from './utils';
+import { getPublicKey } from './pems';
 
 /**
  * Generates message for p q authorization
@@ -12,7 +28,7 @@ export function getInitialDHExchangeMessage() {
   auth_key_id[0] = BigInt(0);
 
   const message_id = new BigUint64Array(initMessage, 8,1);
-  message_id[0] = BigInt(+Date.now()) * BigInt(Math.pow(2, 32));
+  message_id[0] = getMessageId();
 
   const message_length = new Uint32Array(initMessage, 16, 1);
   message_length[0] = 20;
@@ -53,7 +69,10 @@ export function parseResponsePQ(resPQ) {
   const vector_long = new Uint8Array(resPQ, 68, 4);
   const count = new Uint32Array(resPQ, 72,1);
   const fingerprint = new Uint8Array(resPQ, 76, 8);
+  const fingerprint_buffer = resPQ.slice(76,84);
 
+  console.log(`Finger prints count: ${count[0]}`);
+  console.log('Response fingerprint:', uint8ArrayToHex(fingerprint));
   return {
     auth_key_id,
     message_id,
@@ -65,6 +84,7 @@ export function parseResponsePQ(resPQ) {
     vector_long,
     count,
     fingerprint,
+    fingerprint_buffer,
     buffer: resPQ,
   };
 }
@@ -128,5 +148,97 @@ export function buildPQInnerData(responsePQ) {
     server_nonce,
     new_nonce,
     buffer: innerPQ
+  };
+}
+
+export function encryptPQInner(responsePQ, pqInnerData) {
+  const md = forge.md.sha1.create();
+  const forgePQInnerBuffer = arrayBufferToForgeBuffer(pqInnerData.buffer);
+  md.update(forgePQInnerBuffer.bytes());
+  const hash = md.digest();
+  const randomBytesCount = 255 - (hash.data.length + forgePQInnerBuffer.data.length);
+  const randomBytes = R.pipe(
+    R.curry(getNRandomBytes),
+    x => R.apply(String.fromCharCode, x),
+    x => forge.util.createBuffer(x),
+  )(randomBytesCount);
+
+  const encryptMessage = R.pipe(
+    R.map(R.prop('data')),
+    R.join('')
+  )([hash, forgePQInnerBuffer, randomBytes]);
+  console.log(encryptMessage);
+  console.log(encryptMessage.length);
+
+  // reverse fingerprint
+  const fingerprint = responsePQ.fingerprint.map(x => x).reverse();
+  const pubKey = getPublicKey(fingerprint);
+  const encryptedData = pubKey.encrypt(encryptMessage, 'RAW');
+  const encryptedDataBuffer = forge.util.createBuffer(encryptedData);
+  const encryptedArrayBuffer = forgeBufferToArrayBuffer(encryptedDataBuffer);
+
+  return {
+    encryptedData,
+    buffer: encryptedArrayBuffer,
+  }
+}
+
+
+/**
+ *
+ * @param {Object} innerPQ - object with inner pq data
+ * @param {Object} encryptedBuffer - object with encrypted inner pq data
+ */
+export function buildDHExchangeMessage(responsePQ, innerPQ, encryptedBuffer) {
+  const messageBuffer = new ArrayBuffer(340);
+
+  const auth_key_id = new BigUint64Array(messageBuffer, 0, 1);
+  auth_key_id[0] = BigInt(0);
+
+  const message_id = new BigUint64Array(messageBuffer, 8,1);
+  message_id[0] = getMessageId();
+
+  const message_length = new Uint32Array(messageBuffer, 16, 1);
+  message_length[0] = 320;
+
+  const operation = new Uint32Array(messageBuffer, 20, 1);
+  operation[0] = REQ_DH_PARAMS;
+
+  const nonce = new Uint8Array(messageBuffer, 24, 16);
+  copyBytes(innerPQ.nonce, nonce);
+
+  const server_nonce = new Uint8Array(messageBuffer, 40, 16);
+  copyBytes(responsePQ.server_nonce, server_nonce);
+
+  const p = new Uint8Array(messageBuffer, 56, 8);
+  copyBytes(innerPQ.p, p);
+
+  const q = new Uint8Array(messageBuffer, 64, 8);
+  copyBytes(innerPQ.q, q);
+
+  const fingerprint = new Uint8Array(messageBuffer, 72, 8);
+  copyBytes(responsePQ.fingerprint, fingerprint);
+
+  const big_len_id = new Uint8Array(messageBuffer, 80, 4);
+  big_len_id[0] = 254;
+  big_len_id[1] = 0;
+  big_len_id[2] = 1;
+
+  const bufferArray = new Uint8Array(encryptedBuffer.buffer);
+  const encrypted_data = new Uint8Array(messageBuffer, 84, 256);
+  copyBytes(bufferArray, encrypted_data);
+
+  return {
+    auth_key_id,
+    message_id,
+    message_length,
+    operation,
+    nonce,
+    server_nonce,
+    p,
+    q,
+    fingerprint,
+    encrypted_data,
+    buffer: messageBuffer,
   };
 }
