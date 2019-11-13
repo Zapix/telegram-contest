@@ -1,7 +1,7 @@
 import { mount } from 'utils/vdom';
 import { buildStateStream, combineReducers, dispatchInit } from 'utils/store';
-
 import { reducer as todoReducer } from 'state/todo';
+import { createAuthorizationKey } from 'utils/mtproto';
 
 import './style.css';
 import App from './components/App';
@@ -18,3 +18,8 @@ const state$ = buildStateStream(combineReducers({
 
 state$.subscribe(updateView);
 dispatchInit();
+
+createAuthorizationKey().then(({ authKey, authKeyHash }) => {
+  console.log(authKeyHash);
+  console.log(authKey);
+});
