@@ -63,7 +63,11 @@ const nestedJsNode = {
 *Component* is a function that returns virtual dom object
 
 *BaseComponent* is a component that takes whole state of application
-  
+
+## MTProto
+
+*MTproto* is a protocol that uses by Telegram for communication between clients and telegram servers;
+
 ## API Reference
 
 

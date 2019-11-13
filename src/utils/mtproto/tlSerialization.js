@@ -89,7 +89,6 @@ const fromTlShortString  = R.pipe(
 const uint8ToInt = R.pipe(
   R.flip(R.curryN(2)(uint8ToBigInt))(true),
   Number,
-  debug,
 );
 
 const fromTlLongString = R.pipe(
@@ -110,3 +109,37 @@ export const fromTlString = R.cond([
   [R.pipe(R.nth(0), R.gt(254)), fromTlShortString],
   [R.T, fromTlLongString],
 ]);
+
+const getPaddingCount = R.pipe(
+  R.modulo(R.__, 4),
+  R.subtract(4),
+  R.modulo(R.__, 4),
+);
+
+/**
+ * get's string from arrayBuffer
+ * @param arrayBuffer
+ * @param offset
+ * @returns {{incomingString: number[], offset: number}}
+ */
+export function getStringFromArrayBuffer(arrayBuffer, offset) {
+  const stringMarker = new Uint8Array(arrayBuffer, offset);
+  if (stringMarker[0] === 254) {
+    const stringLengthUint = new Uint8Array(arrayBuffer, offset + 1, 3);
+    const stringLength = uint8ToInt(stringLengthUint, true);
+    const incomingString = new Uint8Array(arrayBuffer, offset + 4, stringLength);
+    const paddingCount = getPaddingCount(stringLength);
+    return {
+      incomingString: incomingString,
+      offset: offset + (4 + stringLength) + paddingCount,
+    };
+  } else {
+    const stringLength = stringMarker[0];
+    const incomingString = new Uint8Array(arrayBuffer, offset + 1, stringLength);
+    const paddingCount = getPaddingCount(1 + stringLength);
+    return {
+      incomingString,
+      offset: offset + (1 + stringLength) + paddingCount,
+    };
+  }
+}

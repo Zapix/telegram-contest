@@ -173,12 +173,29 @@ function min(a, b) {
   return b;
 }
 
-function pow(a, b, c) {
-  const value = a ** b;
-  if (!c) {
-    return value;
+
+/**
+ * Fast modular exponentiation for a ^ b mod n
+ * @returns {BigInt}
+ */
+export function pow(a, b, n) {
+  a = a % n;
+  let result = BigInt(1);
+  let x = a;
+
+  while(b > 0){
+    const leastSignificantBit = b % BigInt(2);
+    b = b / BigInt(2);
+
+    if (leastSignificantBit === BigInt(1)) {
+      result = result * x;
+      result = result % n;
+    }
+
+    x = x * x;
+    x = x % n;
   }
-  return value % c;
+  return result;
 }
 
 /**
@@ -244,7 +261,8 @@ export function findPrimeFactors(pq) {
 
 /**
  * Return hex variant of uint8array
- * @param {Uint8Array} arr
+ * @param {Uint8Array|Number[]} arr
+ * @returns {string} - hex string
  */
 export function uint8ArrayToHex(arr) {
   let hex = '';
@@ -255,17 +273,29 @@ export function uint8ArrayToHex(arr) {
 }
 
 /**
- * Parse sequence of bytes to BigInt. Sequence has got big endian format
- * @param {Uint8Array} arr
+ * Parases hex string to number array of bytes
+ * @param {string} - hex string,
+ * @return {Number[]}
+ */
+export const hexToUint8Array = R.pipe(
+  R.cond([
+    [R.startsWith('0x'), R.slice(2, Infinity)],
+    [R.T, R.identity],
+  ]),
+  R.splitEvery(2),
+  R.map(R.flip(R.curryN(2)(parseInt))(16)),
+);
+
+/**
+ * Parse sequence of bytes to BigInt. Sequence has got big endian format as default
+ * @param {Uint8Array|Number[]} arr
+ * @param {boolean} littleEndian
  * @returns {BigInt}
  */
-export function uint8ToBigInt(arr) {
-  let hex = '0x';
-  for (let i = 0; i < arr.length; i++) {
-    hex += arr[i].toString(16).padStart(2, '0');
-  }
-  console.log(hex);
-  return BigInt(hex);
+export function uint8ToBigInt(arr, littleEndian) {
+  const calc = littleEndian ? arr.reverse() : arr;
+  const hex = uint8ArrayToHex(arr);
+  return BigInt(`0x${hex}`);
 }
 
 /**
@@ -294,11 +324,12 @@ export function bigIntToUint8Array(bigint, littleEndian) {
  * @returns {ArrayBuffer}
  */
 export function forgeBufferToArrayBuffer(forgeBuffer) {
-  const bytes = forgeBuffer.getBytes();
-  const buffer = new ArrayBuffer(bytes.length);
-  const uintArray = new Uint8Array(buffer);
-  for (let i=0; i < uintArray.length; i++) uintArray[i] = bytes.charCodeAt(i);
+  const bufferHex = forgeBuffer.toHex();
+  const bufferArray = hexToUint8Array(bufferHex);
 
+  const buffer = new ArrayBuffer(bufferArray.length);
+  const uintArray = new Uint8Array(buffer);
+  for (let i=0; i < uintArray.length; i++) uintArray[i] = bufferArray[i];
   return buffer;
 };
 
@@ -331,5 +362,59 @@ export function copyBytes(fromArr, toArr) {
   for(let i = 0; i < fromArr.length; i += 1) {
     toArr[i] = fromArr[i];
   }
+}
+
+
+/**
+ * Takes buffers on nonce and builds sha1 has of them
+ * @param {forge.util.ByteBuffer} aNonce
+ * @param {forge.utils.ByteBuffer} bNonce
+ * @returns {Object} - hash digest
+ */
+function hashFromNonces(aNonce, bNonce) {
+  aNonce.read = 0;
+  bNonce.read = 0;
+  const buffer = forge.util.createBuffer();
+  const md = forge.md.sha1.create();
+  md.update(aNonce.data + bNonce.data);
+  return md.digest()
+}
+
+/**
+ * Generates key, iv values for AES encryption
+ *
+ * answer_with_hash := SHA1(answer) + answer + (0-15 random bytes); such that the length be divisible by 16;
+ * tmp_aes_key := SHA1(new_nonce + server_nonce) + substr (SHA1(server_nonce + new_nonce), 0, 12);
+ * tmp_aes_iv := substr (SHA1(server_nonce + new_nonce), 12, 8) + SHA1(new_nonce + new_nonce) + substr (new_nonce, 0, 4);
+ *
+ * @param {Uint8Array|Number[]} serverNonce
+ * @param {Uint8Array|Number[]} newNonce
+ * @returns {{iv: forge.util.ByteBuffer, key: forge.util.ByteBuffer}} - byte strings of data
+ */
+export function generateKeyDataFromNonce(serverNonce, newNonce) {
+  const serverNonceBuffer = forge.util.createBuffer();
+  R.forEach(x => serverNonceBuffer.putByte(x), serverNonce);
+  const newNonceBuffer = forge.util.createBuffer();
+  R.forEach(x => newNonceBuffer.putByte(x), newNonce);
+
+  const newNonceServerNonceHash = hashFromNonces(newNonceBuffer, serverNonceBuffer);
+  const serverNonceNewNonceHash = hashFromNonces(serverNonceBuffer, newNonceBuffer);
+  const newNonceNewNonceHash = hashFromNonces(newNonceBuffer, newNonceBuffer);
+
+  const key_bytes = (
+    newNonceServerNonceHash.data +
+    serverNonceNewNonceHash.data.slice(0, 12)
+  );
+
+  const iv_bytes = (
+    serverNonceNewNonceHash.data.slice(12) +
+    newNonceNewNonceHash.data +
+    newNonceBuffer.data.slice(0, 4)
+  );
+
+  return {
+    key: forge.util.createBuffer(key_bytes),
+    iv: forge.util.createBuffer(iv_bytes),
+  };
 }
 
