@@ -2,10 +2,8 @@ import * as R from 'ramda';
 
 import { createElement } from 'utils/vdom';
 
-import Header from './Header';
-import MainSection from './MainSection';
+import { CenterLayout } from 'components/layout';
 import ToDoPage from './ToDoPage';
-import Footer from './Footer';
 
 export default function App(state) {
   /* eslint-disable */
@@ -21,9 +19,7 @@ export default function App(state) {
     'div',
     { id: 'base-app' },
     [
-      Header(),
-      MainSection(ToDoPage(R.prop('todo', state))),
-      Footer(),
+      CenterLayout(ToDoPage(R.prop('todo', state))),
     ],
   );
 }
