@@ -1,9 +1,5 @@
-import * as R from 'ramda';
-
 import { createElement } from 'utils/vdom';
-
-import { CenterLayout } from 'components/layout';
-import ToDoPage from './ToDoPage';
+import { LoginPage } from 'components/pages';
 
 export default function App(state) {
   /* eslint-disable */
@@ -19,7 +15,7 @@ export default function App(state) {
     'div',
     { id: 'base-app' },
     [
-      CenterLayout(ToDoPage(R.prop('todo', state))),
+      LoginPage(state),
     ],
   );
 }
