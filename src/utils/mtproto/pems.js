@@ -1,14 +1,8 @@
-import * as R from 'ramda'
+import * as R from 'ramda';
 import forge from 'node-forge';
 
 import { bigIntToUint8Array, uint8ArrayToHex } from './utils';
 import { toTlString } from './tlSerialization';
-
-const debug = x => {
-  console.log(x);
-  return x;
-};
-
 
 const pems = [`
 -----BEGIN RSA PUBLIC KEY-----
@@ -19,7 +13,7 @@ Efzk2DWgkBluml8OREmvfraX3bkHZJTKX4EQSjBbbdJ2ZXIsRrYOXfaA+xayEGB+
 8hdlLmAjbCVfaigxX0CDqWeR1yFL9kwd9P0NsZRPsmoqVwMbMu7mStFai6aIhc3n
 Slv8kg9qv1m6XHVQY3PnEw+QQtqSIXklHwIDAQAB
 -----END RSA PUBLIC KEY-----
-`,`
+`, `
 -----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAruw2yP/BCcsJliRoW5eB
 VBVle9dtjJw+OYED160Wybum9SXtBBLXriwt4rROd9csv0t0OHCaTmRqBcQ0J8fx
@@ -29,7 +23,7 @@ gTCy5SrKeLoCPPbOgGsdxJxyz5KKcZnSLj16yE5HvJQn0CNpRdENvRUXe6tBP78O
 39oJ8BTHp9oIjd6XWXAsp2CvK45Ol8wFXGF710w9lwCGNbmNxNYhtIkdqfsEcwR5
 JwIDAQAB
 -----END PUBLIC KEY-----
-`,`
+`, `
 -----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvfLHfYH2r9R70w8prHbl
 Wt/nDkh+XkgpflqQVcnAfSuTtO05lNPspQmL8Y2XjVT4t8cT6xAkdgfmmvnvRPOO
@@ -39,7 +33,7 @@ DyWdGK+AZjgBLaDKSnC6qD2cFY81UryRWOab8zKkWAnhw2kFpcqhI0jdV5QaSCEx
 vnsjVaX0Y1N0870931/5Jb9ICe4nweZ9kSDF/gip3kWLG0o8XQpChDfyvsqB9OLV
 /wIDAQAB
 -----END PUBLIC KEY-----
-`,`
+`, `
 -----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAs/ditzm+mPND6xkhzwFI
 z6J/968CtkcSE/7Z2qAJiXbmZ3UDJPGrzqTDHkO30R8VeRM/Kz2f4nR05GIFiITl
@@ -49,7 +43,7 @@ Uk0xW14htcJrRrq+PXXQbRzTMynseCoPIoke0dtCodbA3qQxQovE16q9zz4Otv2k
 4j63cz53J+mhkVWAeWxVGI0lltJmWtEYK6er8VqqWot3nqmWMXogrgRLggv/Nbbo
 oQIDAQAB
 -----END PUBLIC KEY-----
-`,`
+`, `
 -----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvmpxVY7ld/8DAjz6F6q0
 5shjg8/4p6047bn6/m8yPy1RBsvIyvuDuGnP/RzPEhzXQ9UJ5Ynmh2XJZgHoE9xb
@@ -59,9 +53,9 @@ xW3pT13Ap6vuC+mQuJPyiHvSxjEKHgqePji9NP3tJUFQjcECqcm0yV7/2d0t/pbC
 m+ZH1sadZspQCEPPrtbkQBlvHb4OLiIWPGHKSMeRFvp3IWcmdJqXahxLCUS1Eh6M
 AQIDAQAB
 -----END PUBLIC KEY-----
-`,];
+`];
 
-const publicKeys = pems.map(x => forge.pki.publicKeyFromPem(x));
+const publicKeys = pems.map((x) => forge.pki.publicKeyFromPem(x));
 
 
 const forgeBigIntegerToBigInt = R.pipe(
@@ -76,7 +70,7 @@ const forgeBigIntegerToUint8Array = R.pipe(
 
 const forgeBigIntegerToTlString = R.pipe(
   forgeBigIntegerToUint8Array,
-  toTlString
+  toTlString,
 );
 
 /**
@@ -87,11 +81,11 @@ function buildFingerPrint(publicKey) {
   const md = forge.md.sha1.create();
   const buffer = forge.util.createBuffer();
 
-  const n_array = forgeBigIntegerToTlString(publicKey.n);
-  const e_array = forgeBigIntegerToTlString(publicKey.e);
-  const ne_array = R.concat(n_array, e_array);
-  for(let i=0; i < ne_array.length; i+= 1) {
-    buffer.putByte(ne_array[i]);
+  const nArray = forgeBigIntegerToTlString(publicKey.n);
+  const eArray = forgeBigIntegerToTlString(publicKey.e);
+  const neArray = R.concat(nArray, eArray);
+  for (let i = 0; i < neArray.length; i += 1) {
+    buffer.putByte(neArray[i]);
   }
 
   md.update(buffer.data);
@@ -109,7 +103,7 @@ const publicKeyMap = R.pipe(
     R.pipe(
       R.of,
       R.ap([buildFingerPrint, R.identity]),
-    )
+    ),
   ),
   R.fromPairs,
 )(publicKeys);
@@ -125,4 +119,3 @@ export const getPublicKey = R.pipe(
 );
 
 export default pems;
-

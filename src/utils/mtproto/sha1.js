@@ -11,5 +11,5 @@ export default function sha1(data) {
     const hashableBuffer = arrayBufferToForgeBuffer(data);
     md.update(hashableBuffer.bytes());
   }
-  return md.digest()
+  return md.digest();
 }
