@@ -1,15 +1,10 @@
-import * as R from 'ramda'
+import * as R from 'ramda';
 
 import { bigIntToUint8Array, uint8ToBigInt } from './utils';
 
-const debug = x => {
-  console.log(x);
-  return x;
-};
-
 export const isShortString = R.pipe(
   R.prop('length'),
-  R.gt(254)
+  R.gt(254),
 );
 
 export const isLongString = R.pipe(
@@ -29,7 +24,7 @@ const padEndBytes = R.pipe(
       R.times(R.always(0)),
     ),
   ]),
-  R.flatten
+  R.flatten,
 );
 
 const toShortTlString = R.pipe(
@@ -72,14 +67,14 @@ export const toTlString = R.cond([
 ]);
 
 
-const fromTlShortString  = R.pipe(
+const fromTlShortString = R.pipe(
   R.of,
   R.ap([
     R.always(1),
     R.pipe(R.nth(0), R.inc),
     R.identity,
   ]),
-  R.apply(R.slice)
+  R.apply(R.slice),
 );
 
 /**
@@ -98,7 +93,7 @@ const fromTlLongString = R.pipe(
     R.pipe(R.slice(1, 4), uint8ToInt, R.add(4)),
     R.identity,
   ]),
-  R.apply(R.slice)
+  R.apply(R.slice),
 );
 
 /**
@@ -130,16 +125,15 @@ export function getStringFromArrayBuffer(arrayBuffer, offset) {
     const incomingString = new Uint8Array(arrayBuffer, offset + 4, stringLength);
     const paddingCount = getPaddingCount(stringLength);
     return {
-      incomingString: incomingString,
+      incomingString,
       offset: offset + (4 + stringLength) + paddingCount,
     };
-  } else {
-    const stringLength = stringMarker[0];
-    const incomingString = new Uint8Array(arrayBuffer, offset + 1, stringLength);
-    const paddingCount = getPaddingCount(1 + stringLength);
-    return {
-      incomingString,
-      offset: offset + (1 + stringLength) + paddingCount,
-    };
   }
+  const stringLength = stringMarker[0];
+  const incomingString = new Uint8Array(arrayBuffer, offset + 1, stringLength);
+  const paddingCount = getPaddingCount(1 + stringLength);
+  return {
+    incomingString,
+    offset: offset + (1 + stringLength) + paddingCount,
+  };
 }

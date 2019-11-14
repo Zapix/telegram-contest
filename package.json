@@ -3,11 +3,13 @@
   "version": "0.0.1",
   "description": "Telegram contest application ",
   "scripts": {
-    "test": "jest",
     "build": "NODE_ENV=production webpack",
     "start": "webpack-dev-server --open",
+    "test": "jest",
+    "testw": "jest --watch",
     "lint": "eslint src/",
-    "lintw": "esw -w --clear src/"
+    "lintw": "esw -w --clear src/",
+    "lint-fix": "eslint --fix src/"
   },
   "repository": {
     "type": "git",

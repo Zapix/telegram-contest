@@ -12,18 +12,21 @@ module.exports = {
   globals: {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly',
+    BigInt: true,
+    BigUint64Array: true,
   },
   parserOptions: {
     ecmaVersion: 2018,
     sourceType: 'module',
   },
   rules: {
-    'no-underscore-dangle': ['error', { 'allow': ['_node', '_component', '__vnode', '__']}]
+    'no-underscore-dangle': ['error', { 'allow': ['_node', '_component', '__vnode', '__']}],
+    'no-param-reassign': 0,
   },
   plugins: [
     'jest',
   ],
-  'settings': {
+  settings: {
     'import/resolver': 'webpack',
   },
 };

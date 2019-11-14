@@ -9,7 +9,7 @@ describe('decryptIge', () => {
   test('success', () => {
     const serverNonce = hexToUint8Array('A5CF4D33F4A11EA877BA4AA573907330');
     const newNonce = hexToUint8Array(
-      '311C85DB234AA2640AFC4A76A735CF5B1F0FD68BD17FA181E1229AD867CC024D'
+      '311C85DB234AA2640AFC4A76A735CF5B1F0FD68BD17FA181E1229AD867CC024D',
     );
     const { key, iv } = generateKeyDataFromNonce(serverNonce, newNonce);
 
@@ -18,7 +18,7 @@ describe('decryptIge', () => {
 
     const encryptedAnswer = hexToUint8Array(R.slice(0, 64, encodedString));
     const encryptedAnswerBuffer = forge.util.createBuffer();
-    R.forEach(x => encryptedAnswerBuffer.putByte(x), encryptedAnswer);
+    R.forEach((x) => encryptedAnswerBuffer.putByte(x), encryptedAnswer);
 
     const answerBuffer = decryptIge(encryptedAnswerBuffer, key, iv);
     expect(answerBuffer.toHex().toUpperCase().slice(40)).toEqual(R.slice(0, 24, primaryString));
@@ -29,7 +29,7 @@ describe('encryptIge()', () => {
   test('success', () => {
     const serverNonce = hexToUint8Array('A5CF4D33F4A11EA877BA4AA573907330');
     const newNonce = hexToUint8Array(
-      '311C85DB234AA2640AFC4A76A735CF5B1F0FD68BD17FA181E1229AD867CC024D'
+      '311C85DB234AA2640AFC4A76A735CF5B1F0FD68BD17FA181E1229AD867CC024D',
     );
     const { key, iv } = generateKeyDataFromNonce(serverNonce, newNonce);
 
@@ -37,11 +37,10 @@ describe('encryptIge()', () => {
     primaryString += R.join('', R.times(R.always('0'), 24));
     const primaryStringBytes = hexToUint8Array(primaryString);
     const primaryBuffer = forge.util.createBuffer();
-    R.forEach(x => primaryBuffer.putByte(x), primaryStringBytes);
+    R.forEach((x) => primaryBuffer.putByte(x), primaryStringBytes);
 
     const encryptedBuffer = encryptIge(primaryBuffer, key, iv);
     const decryptedBuffer = decryptIge(encryptedBuffer, key, iv);
     expect(decryptedBuffer.toHex().toUpperCase()).toEqual(primaryString);
-
   });
 });

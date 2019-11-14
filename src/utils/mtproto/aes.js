@@ -1,4 +1,4 @@
-import forge from 'node-forge';
+/* eslint no-bitwise: 0 */
 import aesjs from 'aes-js';
 
 import {
@@ -24,17 +24,18 @@ export function decryptIge(encodedMessage, key, iv) {
   const ivBuffer = forgeBufferToArrayBuffer(iv);
   const iv1 = new Uint8Array(ivBuffer, 0, ivBuffer.byteLength / 2);
   const iv2 = new Uint8Array(ivBuffer, ivBuffer.byteLength / 2);
+  /* eslint-disable-next-line */
   const aesECB = new aesjs.ModeOfOperation.ecb(keyBlock);
 
   const blocksCount = cipherTextBuffer.byteLength / 16;
-  let plainTextBuffer = new ArrayBuffer(cipherTextBuffer.byteLength);
+  const plainTextBuffer = new ArrayBuffer(cipherTextBuffer.byteLength);
 
   const cipherTextBlockBuffer = new ArrayBuffer(16);
   const cipherTextBlock = new Uint8Array(cipherTextBlockBuffer);
 
   for (let blockIdx = 0; blockIdx < blocksCount; blockIdx += 1) {
     const cipherText = new Uint8Array(cipherTextBuffer, blockIdx * 16, 16);
-    for (let i = 0; i < 16; i++) {
+    for (let i = 0; i < 16; i += 1) {
       cipherTextBlock[i] = cipherText[i] ^ iv2[i];
     }
 
@@ -43,8 +44,8 @@ export function decryptIge(encodedMessage, key, iv) {
     const plainTextBlock = new Uint8Array(plainTextBlockBuffer);
     copyBytes(bytes, plainTextBlock);
 
-    for (let i = 0; i < 16; i+= 1) {
-      plainTextBlock[i] = plainTextBlock[i] ^ iv1[i];
+    for (let i = 0; i < 16; i += 1) {
+      plainTextBlock[i] ^= iv1[i];
     }
 
     copyBytes(cipherText, iv1);
@@ -73,6 +74,7 @@ export function encryptIge(message, key, iv) {
   const iv1 = new Uint8Array(ivBuffer, 0, ivBuffer.byteLength / 2);
   const iv2 = new Uint8Array(ivBuffer, ivBuffer.byteLength / 2);
 
+  /* eslint-disable-next-line */
   const aesECB = new aesjs.ModeOfOperation.ecb(keyBlock);
 
   const blocksCount = plainTextBuffer.byteLength / 16;
@@ -83,7 +85,7 @@ export function encryptIge(message, key, iv) {
 
   for (let blockIdx = 0; blockIdx < blocksCount; blockIdx += 1) {
     const plainTextBlock = new Uint8Array(plainTextBuffer, blockIdx * 16, 16);
-    for (let i = 0; i < 16; i++) {
+    for (let i = 0; i < 16; i += 1) {
       cipherTextBlock[i] = plainTextBlock[i] ^ iv1[i];
     }
 
@@ -92,8 +94,8 @@ export function encryptIge(message, key, iv) {
     const encryptedTextBlock = new Uint8Array(aesEncryptedBuffer);
     copyBytes(bytes, encryptedTextBlock);
 
-    for (let i = 0; i < 16; i+= 1) {
-      encryptedTextBlock[i] = encryptedTextBlock[i] ^ iv2[i];
+    for (let i = 0; i < 16; i += 1) {
+      encryptedTextBlock[i] ^= iv2[i];
     }
 
     copyBytes(encryptedTextBlock, iv1);
@@ -105,4 +107,3 @@ export function encryptIge(message, key, iv) {
 
   return arrayBufferToForgeBuffer(encryptedBuffer);
 }
-
