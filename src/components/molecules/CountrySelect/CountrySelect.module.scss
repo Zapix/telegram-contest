@@ -1,0 +1,48 @@
+.wrapper {
+}
+
+.inputWrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  z-index: 20;
+}
+
+.selected{
+  .check {
+    background: url('./down_svg.svg') no-repeat center;
+  }
+
+  .countryListWrapper {
+    display: block;
+  }
+  .countryListOuter {
+    display: block;
+  }
+}
+
+.check {
+  margin-left: -42px;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background: url('./up_svg.svg') no-repeat center;
+}
+
+.countryListWrapper {
+  display: none;
+  margin-top: 8px;
+  position: absolute;
+  width: 334px;
+  z-index: 20;
+}
+
+.countryListOuter {
+  display: none;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  z-index: 10;
+}

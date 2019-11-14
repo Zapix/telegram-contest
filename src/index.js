@@ -3,7 +3,7 @@ import { buildStateStream, combineReducers, dispatchInit } from 'utils/store';
 import { reducer as todoReducer } from 'state/todo';
 import { createAuthorizationKey } from 'utils/mtproto';
 
-import './style.css';
+import './style.scss';
 import App from './components/App';
 
 const div = document.createElement('h1');

@@ -1,11 +1,5 @@
-import * as R from 'ramda';
-
 import { createElement } from 'utils/vdom';
-
-import Header from './Header';
-import MainSection from './MainSection';
-import ToDoPage from './ToDoPage';
-import Footer from './Footer';
+import { LoginPage } from 'components/pages';
 
 export default function App(state) {
   /* eslint-disable */
@@ -21,9 +15,7 @@ export default function App(state) {
     'div',
     { id: 'base-app' },
     [
-      Header(),
-      MainSection(ToDoPage(R.prop('todo', state))),
-      Footer(),
+      LoginPage(state),
     ],
   );
 }

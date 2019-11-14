@@ -1,0 +1,60 @@
+@import '../../../variables';
+
+.button {
+  position: relative;
+  padding: 16px;
+  border: none;
+  border-radius: $borderRadius;
+  font-size: 14px;
+  outline: none;
+  -webkit-transition-duration: 0.4s; /* Safari */
+  transition-duration: 0.4s;
+  width: 100%;
+  overflow: hidden;
+
+  &:after {
+    content: "";
+    display: block;
+    position: absolute;
+    padding-top: 300%;
+    padding-left: 350%;
+    margin-left: -20px!important;
+    margin-top: -120%;
+    opacity: 0;
+    transition: all 0.8s
+  }
+
+  &:active:after {
+    padding: 0;
+    margin: 0;
+    opacity: 1;
+    transition: 0s
+  }
+}
+
+.primary {
+  background: linear-gradient(to right, $primaryButtonColor, $primaryButtonColor);
+  color: #fff;
+
+  &:after {
+    background: $primaryHoveredColor;
+  }
+
+  &:hover {
+    background: linear-gradient(to right, $primaryHoveredColor, $primaryHoveredColor),
+                linear-gradient(to right, $primaryButtonColor, $primaryButtonColor);
+  }
+}
+
+.default {
+  background: linear-gradient(to right, #f4f4f4, #f4f4f4);
+
+  &:after {
+    background: $defaultHoveredColor;
+  }
+
+  &:hover {
+    background: linear-gradient(to right, $defaultHoveredColor, $defaultHoveredColor),
+                linear-gradient(to right, $defaultButtonColor, $defaultButtonColor);
+  }
+}

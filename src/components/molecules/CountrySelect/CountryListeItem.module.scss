@@ -1,0 +1,38 @@
+@import '../../../variables';
+
+.item {
+  display: flex;
+  flex-direction: row;
+  height: 40px;
+  align-items: center;
+
+  &:hover {
+    background-color: $transparentGrey;
+  }
+}
+
+.flag {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  flex-grow: 0;
+}
+
+.countryName {
+  flex-grow: 3;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.phone {
+  display: flex;
+  flex-direction: row;
+  color: $greyFont;
+  width: 60px;
+  font-size: 0.8em;
+}
+
+
+

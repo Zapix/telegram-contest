@@ -1,0 +1,16 @@
+@import '../../../variables';
+
+$selectElementHeight: 40px;
+$maxCountryListHeight: 310px;
+
+.countryList {
+  border: 1px solid $disabledBorderColor;
+  border-radius: $borderRadius;
+  box-shadow: 5px 5px 5px $boxShadowColor;
+  font-size: 14px;
+  background: #fff;
+  min-height: $selectElementHeight;
+  max-height: $maxCountryListHeight;
+  overflow-y: auto;
+  overflow-x: hidden;
+}

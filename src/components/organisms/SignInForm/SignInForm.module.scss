@@ -1,0 +1,22 @@
+.form {
+  margin-top: 40px;
+}
+
+.inputGroup{
+  margin-top: 16px;
+}
+
+.submitGroup {
+  height: 49px;
+  visibility: hidden;
+}
+
+.input {
+  width: 300px;
+}
+
+.valid {
+  .submitGroup {
+    visibility: visible;
+  }
+}
