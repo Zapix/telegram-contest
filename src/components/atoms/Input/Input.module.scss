@@ -5,10 +5,12 @@
   padding: 16px;
   font-size: 14px;
 
+  margin: 1px;
   border-radius: $borderRadius;
   border: 1px solid $disabledBorderColor;
 }
 
 .input:focus {
+  margin: 0;
   border: 2px solid $focusBorderColor;
 }

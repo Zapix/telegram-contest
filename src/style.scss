@@ -1,3 +1,4 @@
+@import './variables';
 * {
   margin: 0;
   padding: 0;
@@ -52,4 +53,18 @@ html, body {
   font-size: 0.5em;
 }
 
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
 
+/* Track */
+::-webkit-scrollbar-track {
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: $greyFont;
+  opacity: 0.1;
+  border-radius: 5px;
+}
