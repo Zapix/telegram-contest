@@ -22,3 +22,8 @@ export const DH_GEN_RETRY = 0x46dc1fb9;
 export const DH_GEN_FAIL = 0xa69dae02;
 
 export const AUTH_SEND_CODE = 0xa677244f;
+export const AUTH_SENT_CODE = 0x5e002502;
+export const CODE_SETTINGS = 0xdebebe83;
+
+export const PING = 0x7abe77ec;
+export const PONG = 0x347773c5;

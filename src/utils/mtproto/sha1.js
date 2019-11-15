@@ -2,6 +2,11 @@ import * as R from 'ramda';
 import forge from 'node-forge';
 import { arrayBufferToForgeBuffer } from './utils';
 
+/**
+ * Returns
+ * @param {ArrayBuffer|forge.util.ByteBuffer} data
+ * @returns {*}
+ */
 export default function sha1(data) {
   const md = forge.md.sha1.create();
 

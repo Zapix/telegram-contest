@@ -1,43 +1,54 @@
-import { API_ID } from './constants';
-import { getMessageId } from './utils';
+import {
+  API_ID,
+  API_HASH,
+  AUTH_SEND_CODE,
+  CODE_SETTINGS,
+} from './constants';
+import { stringToTlString } from './tlSerialization';
+import { copyBytes } from './utils';
+import { encryptMessage } from './encryptMessage';
+import sendRequest from './sendRequest';
 
-export function buildAuthMessage(phone) {
-  const buffer = new ArrayBuffer(
-    20 + (16 + 4 + 36 + 4),
-  );
+/**
+ * Builds secnd code message
+ * @param {string} phone
+ */
+export function buildAuthSendCodeMessage(phone) {
+  const phoneTl = stringToTlString(phone);
+  const apiHashTl = stringToTlString(API_HASH);
 
-  const authKeyId = new BigUint64Array(buffer, 0, 1);
-  authKeyId[0] = BigInt(0);
+  const buffer = new ArrayBuffer(4 + phoneTl.length + 4 + apiHashTl.length + 4 + 4);
 
-  const messageId = new BigUint64Array(buffer, 8, 1);
-  messageId[0] = getMessageId();
+  const constructor = new Uint32Array(buffer, 0, 1);
+  constructor[0] = AUTH_SEND_CODE;
 
-  const messageLength = new Uint32Array(buffer, 16, 4);
-  messageLength[0] = 48;
+  const phoneTlBytes = new Uint8Array(buffer, 4, phoneTl.length);
+  copyBytes(phoneTl, phoneTlBytes);
 
-  const phoneBytes = new Uint8Array(buffer, 20, 16);
-  phoneBytes[0] = buffer.length;
-  phoneBytes[1] = 0;
-  phoneBytes[2] = 0;
-  for (let i = 0; i < phone.length; i += 1) {
-    phoneBytes[3 + i] = phone.charCodeAt(i);
-  }
-
-  const apiId = new Uint32Array(buffer, 36, 1);
+  const apiId = new Uint32Array(buffer, 4 + phoneTl.length, 1);
   apiId[0] = API_ID;
 
-  const apiHash = new Uint32Array(buffer, 40, 36);
-  apiHash[0] = apiHash.length;
-  apiHash[1] = 0;
-  apiHash[2] = 0;
-  for (let i = 0; i < apiHash.length; i += 1) {
-    apiHash[3 + i] = phone.charCodeAt(i);
-  }
+  const apiHashTlBytes = new Uint8Array(buffer, 4 + phoneTl.length + 4, apiHashTl.length);
+  copyBytes(apiHashTl, apiHashTlBytes);
 
-  const codeSettings = new Uint32Array(buffer, 76);
-  codeSettings[0] = 1;
+  const codeSettings = new Uint32Array(
+    buffer,
+    4 + phoneTl.length + 4 + apiHashTlBytes.length,
+    2,
+  );
+  codeSettings[0] = CODE_SETTINGS;
 
-  return buffer;
+  return {
+    buffer,
+    constructor,
+    phoneTl,
+    apiId,
+    apiHashTl,
+    codeSettings,
+  };
 }
 
-export default function sendAuthCode() {}
+export default function sendAuthCode(authKey, authHash, salt, sessionId, phone) {
+  const authSendCodeMessage = buildAuthSendCodeMessage(phone);
+  return sendRequest(encryptMessage(authKey, authHash, salt, sessionId, authSendCodeMessage.buffer));
+}

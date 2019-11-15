@@ -53,7 +53,6 @@ export const isValidInitPayload = R.allPass([
   checkSecondInt,
 ]);
 
-
 /**
  * Generates init payload for websocket communication. Please check:
  * https://core.telegram.org/mtproto/mtproto-transports#transport-obfuscation
@@ -96,6 +95,26 @@ export function buildSecondInitPayload(initPayloadBuffer) {
   }
 
   return buffer;
+}
+
+/**
+ * Builds Uint8 Array from string
+ * @param {string} str - string that should be encoded;
+ * @returns {Uint8Array}
+ */
+export function stringToUint8(str) {
+  const encoder = new TextEncoder();
+  return encoder.encode(str);
+}
+
+/**
+ * Builds string form Uint8Array
+ * @param {Uint8Array} uint8arr
+ * @returns {string}
+ */
+export function uint8ToString(uint8arr) {
+  const decoder = new TextDecoder();
+  return decoder.decode(uint8arr);
 }
 
 /**
@@ -289,7 +308,7 @@ export const hexToUint8Array = R.pipe(
 /**
  * Parse sequence of bytes to BigInt. Sequence has got big endian format as default
  * @param {Uint8Array|Number[]} arr
- * @param {boolean} littleEndian
+ * @param {boolean} [littleEndian]
  * @returns {BigInt}
  */
 export function uint8ToBigInt(arr, littleEndian) {
@@ -298,6 +317,18 @@ export function uint8ToBigInt(arr, littleEndian) {
   return BigInt(`0x${hex}`);
 }
 
+
+/**
+ * Moves all arr into buffer
+ * @param {Uint8Array} arr
+ * @returns {ArrayBuffer}
+ */
+export function uint8ToArrayBuffer(arr) {
+  const buffer = new ArrayBuffer(arr.length);
+  const bufferBytes = new Uint8Array(buffer);
+  copyBytes(arr, bufferBytes);
+  return buffer;
+}
 /**
  * Trans number or bigint to Uint8Array with big endian format if little endian doesn't set
  * @param bigint
@@ -362,6 +393,18 @@ export function copyBytes(fromArr, toArr) {
   for (let i = 0; i < fromArr.length; i += 1) {
     toArr[i] = fromArr[i];
   }
+}
+
+/**
+ * Copies whole buffer to another with recipient buffer offset
+ * @param fromBuffer
+ * @param toBuffer
+ * @param offset
+ */
+export function copyBuffer(fromBuffer, toBuffer, offset = 0) {
+  const fromBufferBytes = new Uint8Array(fromBuffer);
+  const toBufferBytes = new Uint8Array(toBuffer, offset);
+  copyBytes(fromBufferBytes, toBufferBytes);
 }
 
 
