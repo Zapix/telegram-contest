@@ -1,8 +1,8 @@
 import * as R from 'ramda';
-import { PING } from './constants';
-import { copyBytes, getNRandomBytes } from './utils';
+import { GET_CONFIG, PING, GET_NEAREST_DC } from './constants';
+import { copyBytes, getNRandomBytes, debug } from './utils';
 import sendRequest from './sendRequest';
-import { encryptMessage } from './encryptMessage';
+import encryptMessage from './encryptMessage';
 
 export function buildPingMessage() {
   const buffer = new ArrayBuffer(12);
@@ -21,13 +21,13 @@ export function buildPingMessage() {
   }
 }
 
+
 export default function ping(authKey, authKeyId, salt, sessionId) {
-  console.log('Send ping');
   const encrypt = R.partial(encryptMessage, [authKey, authKeyId, salt, sessionId]);
   R.pipe(
     buildPingMessage,
     R.prop('buffer'),
     encrypt,
     sendRequest,
-  )()
+  )();
 }

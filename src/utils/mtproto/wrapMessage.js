@@ -4,7 +4,7 @@
  * @param {BigInt} messageId - message id bytes
  * @param {ArrayBuffer} messageBuffer - array buffer of original message
  */
-import { copyBuffer, copyBytes, uint8ArrayToHex } from './utils';
+import { copyBuffer, copyBytes } from './utils';
 
 export default function wrapMessage(authKeyId, messageId, messageBuffer) {
   const buffer = new ArrayBuffer(8 + 8 + 4 + messageBuffer.byteLength);
@@ -18,11 +18,9 @@ export default function wrapMessage(authKeyId, messageId, messageBuffer) {
   messageLength[0] = messageBuffer.byteLength;
 
   copyBuffer(messageBuffer, buffer, 20);
-
-  console.log("Wrapped buffer", new Uint8Array(buffer));
   return {
     buffer,
     authKeyId,
-    messageId: messageIdBytes,
-  }
+    messageIdBytes,
+  };
 }

@@ -1,7 +1,8 @@
+import * as R from 'ramda';
 import { mount } from 'utils/vdom';
 import { buildStateStream, combineReducers, dispatchInit } from 'utils/store';
 import { reducer as todoReducer } from 'state/todo';
-import { createAuthorizationKey, sendAuthCode, ping } from 'utils/mtproto';
+import { createAuthorizationKey, ping, httpWait, sendAuthCode } from 'utils/mtproto';
 
 import './style.scss';
 import App from './components/App';
@@ -21,7 +22,7 @@ state$.subscribe(updateView);
 dispatchInit();
 
 createAuthorizationKey().then(({ authKey, authKeyId, serverSalt }) => {
-  const sessionId = BigInt('0x' + uint8ArrayToHex(getNRandomBytes(8)));
+  const sessionId = getNRandomBytes(8);
   ping(authKey, authKeyId, serverSalt, sessionId);
-  // sendAuthCode(authKey, authKeyId, serverSalt, sessionId, '79625213997');
+  sendAuthCode(authKey, authKeyId, serverSalt, sessionId, '79625213997');
 });

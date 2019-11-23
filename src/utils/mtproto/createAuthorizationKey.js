@@ -30,7 +30,7 @@ import { fromTlString, getStringFromArrayBuffer, toTlString } from './tlSerializ
 import { getPublicKey } from './pems';
 import { decryptIge as decryptAesIge, encryptIge as encryptAesIge } from './aes';
 import sendRequest from './sendRequest';
-import sha1 from './sha1';
+import { sha1 } from './sha';
 
 /**
  * Generates message for p q authorization
@@ -629,14 +629,16 @@ export default function createAuthorizationKey() {
         const serverSalt = buildSalt(pqInnerData);
         const authKey = bigIntToUint8Array(dhValues.gab);
         const authKeyHash = buildAuthKeyHash(authKey);
-        const authKeyId = buildAuthKeyId(authKey);
+        console.log('Auth key hash: ', authKeyHash);
+        const authKeyId = buildAuthKeyId(authKeyHash);
+        console.log('Auth key id: ', authKeyId);
         const authKeyAuxHash = buildAuthKeyAuxHash(authKeyHash);
 
         verifyNewNonce(pqInnerData.new_nonce, authKeyAuxHash, verifyResponse);
 
         return { authKey, authKeyId, serverSalt };
       }),
-    new Promise((resolve, reject) => setTimeout(reject, 120 * 100))
+    new Promise((resolve, reject) => setTimeout(reject, 600 * 100))
       .then(() => {
         console.log('request is too long');
       }),

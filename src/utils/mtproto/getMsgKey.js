@@ -1,19 +1,23 @@
 import * as R from 'ramda';
-import sha1 from './sha1';
-import { forgeBufferToArrayBuffer } from './utils';
+import { sha256 }from './sha';
+import { forgeBufferToArrayBuffer, uint8ToArrayBuffer, debug } from './utils';
+
+
 /**
- * Generates message key from buffer.
+ * Generates message key from u
  *
- * ATTENTION using MTproto v1 coz it looks simplier for now
- *
- * @param {ArrayBuffer} messageBuffer
+ * @param {Uint8Array} authKey from 88 to 88 + 32
+ * @param {Uint8Array} - payload with padding
  * @returns {Uint8Array} - sha1 of messageBuffer
  */
 const getMsgKey = R.pipe(
-  sha1,
+  R.unapply(R.flatten),
+  uint8ToArrayBuffer,
+  debug,
+  sha256,
   forgeBufferToArrayBuffer,
   x => new Uint8Array(x),
-  R.slice(4, 20),
+  R.slice(8, 24),
 );
 
 export default getMsgKey;

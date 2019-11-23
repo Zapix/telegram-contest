@@ -381,12 +381,12 @@ export function arrayBufferToForgeBuffer(arrayBuffer) {
  * @returns {bigint}
  */
 export function getMessageId() {
-  return BigInt(+Date.now()) * BigInt(2 ** 32);
+  return (BigInt(+Date.now()) * BigInt(2 ** 32)) + BigInt(4);
 }
 
 /**
  * Copy bytes from Uint8Array `from` to Uint*Array `to`;
- * @param {Uint8Array} fromArr
+ * @param {Uint8Array|Number[]} fromArr
  * @param {Uint8Array} toArr
  */
 export function copyBytes(fromArr, toArr) {

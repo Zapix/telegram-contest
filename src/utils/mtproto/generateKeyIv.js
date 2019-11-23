@@ -1,12 +1,12 @@
 import * as R from 'ramda';
 
 import { copyBytes, forgeBufferToArrayBuffer, debug } from './utils';
-import sha1 from './sha1';
+import { sha256 } from './sha';
 
 const bufferToUint8 = x => new Uint8Array(x);
 
 const hashFunc = R.pipe(
-  sha1,
+  sha256,
   forgeBufferToArrayBuffer,
 );
 
@@ -20,9 +20,7 @@ function buildBuffer(arr) {
   return buffer;
 }
 
-const getSha1 = R.pipe(
-  R.unapply(R.flatten),
-  debug,
+const getSha256 = R.pipe(
   buildBuffer,
   hashFunc,
   bufferToUint8,
@@ -37,22 +35,20 @@ const getSha1 = R.pipe(
  * @return {{key: Uint8Array, iv: Uint8Array}}
  */
 export default function generateKeyIv(authKey, msgKey) {
-  const sha1a = getSha1(msgKey, R.slice(0, 32, authKey));
-  const sha1b = getSha1(R.slice(32, 48, authKey), msgKey, R.slice(48, 64, authKey));
-  const sha1c = getSha1(R.slice(64, 96, authKey), msgKey);
-  const sha1d = getSha1(msgKey, R.slice(96, 128, authKey));
+
+  const sha256a = getSha256(R.flatten([msgKey, R.slice(0, 36, authKey)]));
+  const sha256b = getSha256(R.flatten([R.slice(40, 76, authKey), msgKey]));
 
   return {
     key: R.flatten([
-      R.slice(0, 8, sha1a),
-      R.slice(8, 20, sha1b),
-      R.slice(4, 16, sha1c),
+      R.slice(0, 8, sha256a),
+      R.slice(8, 24, sha256b),
+      R.slice(24, 32, sha256a),
     ]),
     iv: R.flatten([
-      R.slice(8, 20, sha1a),
-      R.slice(0, 8, sha1b),
-      R.slice(16, 20, sha1c),
-      R.slice(0, 8, sha1d),
+      R.slice(0, 8, sha256b),
+      R.slice(8, 24, sha256a),
+      R.slice(24, 32, sha256b),
     ]),
   };
 }

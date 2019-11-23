@@ -6,7 +6,7 @@ import {
 } from './constants';
 import { stringToTlString } from './tlSerialization';
 import { copyBytes } from './utils';
-import { encryptMessage } from './encryptMessage';
+import encryptMessage from './encryptMessage';
 import sendRequest from './sendRequest';
 
 /**
