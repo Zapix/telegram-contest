@@ -8,11 +8,6 @@
 import { copyBuffer, copyBytes, uint8ArrayToHex } from './utils';
 
 export default function addSessionInfo(salt, sessionId, messageId, messageBuffer) {
-  console.log('Add session info:');
-  console.log('Salt: ', salt);
-  console.log('Session id: ', sessionId);
-  console.log('Message id: ', messageId);
-  console.log('-----------------');
   const buffer = new ArrayBuffer(8 + 8 + 8 + 4 + 4 + messageBuffer.byteLength);
 
   const saltBytes = new Uint8Array(buffer, 0, 8);
@@ -25,7 +20,7 @@ export default function addSessionInfo(salt, sessionId, messageId, messageBuffer
   messageIdBytes[0] = messageId;
 
   const seqNo = new Uint32Array(buffer, 24, 1);
-  seqNo[0] = 1;
+  seqNo[0] = 0;
 
   const messageLength = new Uint32Array(buffer, 28, 1);
   messageLength[0] = messageBuffer.byteLength;

@@ -32,12 +32,14 @@ const getSha256 = R.pipe(
  * https://core.telegram.org/mtproto/description_v1#defining-aes-key-and-initialization-vector
  * @param {Uint8Array} authKey
  * @param {Uint8Array} msgKey
+ * @param {boolean} fromServer
  * @return {{key: Uint8Array, iv: Uint8Array}}
  */
-export default function generateKeyIv(authKey, msgKey) {
+export default function generateKeyIv(authKey, msgKey, fromServer) {
+  const x = fromServer ? 8 : 0;
 
-  const sha256a = getSha256(R.flatten([msgKey, R.slice(0, 36, authKey)]));
-  const sha256b = getSha256(R.flatten([R.slice(40, 76, authKey), msgKey]));
+  const sha256a = getSha256(R.flatten([msgKey, R.slice(x, 36 + x, authKey)]));
+  const sha256b = getSha256(R.flatten([R.slice(40 + x, 76 + x, authKey), msgKey]));
 
   return {
     key: R.flatten([

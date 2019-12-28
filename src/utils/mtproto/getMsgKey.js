@@ -13,7 +13,6 @@ import { forgeBufferToArrayBuffer, uint8ToArrayBuffer, debug } from './utils';
 const getMsgKey = R.pipe(
   R.unapply(R.flatten),
   uint8ToArrayBuffer,
-  debug,
   sha256,
   forgeBufferToArrayBuffer,
   x => new Uint8Array(x),

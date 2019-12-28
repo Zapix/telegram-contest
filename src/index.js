@@ -1,12 +1,17 @@
 import * as R from 'ramda';
+import {filter} from 'rxjs/operators';
+
 import { mount } from 'utils/vdom';
-import { buildStateStream, combineReducers, dispatchInit } from 'utils/store';
+import { buildStateStream, combineReducers, dispatchInit, getActionStream } from 'utils/store';
 import { reducer as todoReducer } from 'state/todo';
 import { createAuthorizationKey, ping, httpWait, sendAuthCode } from 'utils/mtproto';
+import decryptMessage from 'utils/mtproto/decryptMessage';
+import { isActionOf } from 'utils/store';
 
 import './style.scss';
 import App from './components/App';
 import { getNRandomBytes, getRandomInt, uint8ArrayToHex } from './utils/mtproto/utils';
+import { AUTH_REQUESTED, PING_REQUESTED, HTTP_WAIT } from './state/todo/constants';
 
 const div = document.createElement('h1');
 div.setAttribute('id', 'app');
@@ -18,11 +23,51 @@ const state$ = buildStateStream(combineReducers({
   todo: todoReducer,
 }));
 
+const action$ = getActionStream();
+
 state$.subscribe(updateView);
 dispatchInit();
 
 createAuthorizationKey().then(({ authKey, authKeyId, serverSalt }) => {
   const sessionId = getNRandomBytes(8);
-  ping(authKey, authKeyId, serverSalt, sessionId);
-  sendAuthCode(authKey, authKeyId, serverSalt, sessionId, '79625213997');
+  const decrypt = R.partial(decryptMessage, [authKey, authKeyId, serverSalt, sessionId]);
+
+  action$.pipe(
+    filter(isActionOf(PING_REQUESTED))
+  ).subscribe((item) => {
+    console.log('Send ping request to telegram server');
+    ping(authKey, authKeyId, serverSalt, sessionId)
+      .then((response) => response.arrayBuffer())
+      .then(decrypt)
+      .then((message) => {
+        console.log('Message byteLength', message.byteLength);
+        console.log(uint8ArrayToHex(new Uint8Array(message)));
+      });
+  });
+
+  action$.pipe(
+    filter(isActionOf(HTTP_WAIT))
+  ).subscribe((item) => {
+    console.log('Send Http Wait request');
+
+    httpWait(authKey, authKeyId, serverSalt, sessionId)
+      .then((response) => response.arrayBuffer())
+      .then(decrypt)
+      .then((message) => {
+        console.log('Http Wait Result: ', uint8ArrayToHex(new Uint8Array(message)));
+      });
+  });
+
+  action$.pipe(
+    filter(isActionOf(AUTH_REQUESTED))
+  ).subscribe((item) => {
+    console.log('Auth requested', item)
+
+    sendAuthCode(authKey, authKeyId, serverSalt, sessionId, '+79625213997')
+      .then((response) => response.arrayBuffer())
+      .then(decrypt)
+      .then((message) => {
+        console.log(uint8ArrayToHex(new Uint8Array(message)));
+      });
+  });
 });

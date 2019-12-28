@@ -376,12 +376,20 @@ export function arrayBufferToForgeBuffer(arrayBuffer) {
   return forgeBuffer;
 }
 
+
+/**
+ * @returns {number}
+ */
+export function getUnixTimestamp() {
+  return Math.floor(+Date.now() / 1000);
+}
+
 /**
  * Generates message id
  * @returns {bigint}
  */
 export function getMessageId() {
-  return (BigInt(+Date.now()) * BigInt(2 ** 32)) + BigInt(4);
+  return BigInt(getUnixTimestamp() *2 ** 32);
 }
 
 /**
@@ -459,3 +467,8 @@ export function generateKeyDataFromNonce(serverNonce, newNonce) {
     iv: forge.util.createBuffer(ivBytes),
   };
 }
+
+export const uint8toForgeBuffer = R.pipe(
+  uint8ToArrayBuffer,
+  arrayBufferToForgeBuffer
+);

@@ -1,6 +1,6 @@
 import * as R from 'ramda';
 import { GET_CONFIG, PING, GET_NEAREST_DC } from './constants';
-import { copyBytes, getNRandomBytes, debug } from './utils';
+import { copyBytes, getNRandomBytes, debug, uint8ArrayToHex } from './utils';
 import sendRequest from './sendRequest';
 import encryptMessage from './encryptMessage';
 
@@ -11,6 +11,7 @@ export function buildPingMessage() {
   constructor[0] = PING;
 
   const randomArray = getNRandomBytes(8);
+  console.log('Ping id: ', uint8ArrayToHex(randomArray));
   const randomBytes = new Uint8Array(buffer, 4);
   copyBytes(randomArray, randomBytes);
 
@@ -24,7 +25,7 @@ export function buildPingMessage() {
 
 export default function ping(authKey, authKeyId, salt, sessionId) {
   const encrypt = R.partial(encryptMessage, [authKey, authKeyId, salt, sessionId]);
-  R.pipe(
+  return R.pipe(
     buildPingMessage,
     R.prop('buffer'),
     encrypt,

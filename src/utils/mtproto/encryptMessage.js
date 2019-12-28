@@ -1,14 +1,6 @@
 import * as R from 'ramda';
 
-import {
-  arrayBufferToForgeBuffer,
-  copyBuffer,
-  copyBytes,
-  debug,
-  forgeBufferToArrayBuffer,
-  getMessageId,
-  uint8ToArrayBuffer,
-} from './utils';
+import { forgeBufferToArrayBuffer, getMessageId, uint8toForgeBuffer, } from './utils';
 import wrapMessage from './wrapMessage';
 import addSessionInfo from './addSessionInfo';
 import getMsgKey from './getMsgKey';
@@ -16,11 +8,6 @@ import generateKeyIv from './generateKeyIv';
 import { encryptIge as encryptAesIge, } from './aes';
 import padBytes from './padBytes';
 import addExternalHeader from './addExternalHeader';
-
-const uint8toForgeBuffer = R.pipe(
-  uint8ToArrayBuffer,
-  arrayBufferToForgeBuffer
-);
 
 const encrypt = R.pipe(
   R.unapply(R.map(uint8toForgeBuffer)),
@@ -32,8 +19,8 @@ export default function encryptMessage(authKey, authKeyId, salt, sessionId, mess
   const messageId = getMessageId();
 
   const messageWithHeaders = R.pipe(
-    R.partial(wrapMessage, [authKeyId, messageId]),
-    R.prop('buffer'),
+    // R.partial(wrapMessage, [authKeyId, messageId]),
+    // R.prop('buffer'),
     R.partial(addSessionInfo, [salt, sessionId, messageId]),
   )(messageBuffer);
 
