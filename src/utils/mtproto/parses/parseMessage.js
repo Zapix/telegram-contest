@@ -1,4 +1,7 @@
 import * as R from 'ramda';
+import { isPong } from './utils';
+
+import parsePong from './parsePong';
 
 /**
  * Writes warning message into console and returns null
@@ -22,6 +25,7 @@ const parseUnexpectedMessage = R.pipe(
  * @returns {Array<*> | *}
  */
 const parseMessage = R.cond([
+  [isPong, parsePong],
   [R.T, parseUnexpectedMessage],
 ]);
 
