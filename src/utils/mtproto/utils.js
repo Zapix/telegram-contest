@@ -322,6 +322,20 @@ export const hexToUint8Array = R.pipe(
 );
 
 /**
+ * Parses hex string and returns ArrayBuffer of it
+ * @param hexStr
+ * @return {ArrayBuffer}
+ */
+export function hexToArrayBuffer(hexStr) {
+  const bytesArr = hexToUint8Array(hexStr);
+  const buffer = new ArrayBuffer(bytesArr.length);
+  const bufferBytes = new Uint8Array(buffer);
+
+  copyBytes(bytesArr, bufferBytes);
+  return buffer;
+}
+
+/**
  * Parse sequence of bytes to BigInt. Sequence has got big endian format as default
  * @param {Uint8Array|Number[]} arr
  * @param {boolean} [littleEndian]
