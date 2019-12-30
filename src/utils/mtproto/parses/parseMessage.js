@@ -1,7 +1,11 @@
 import * as R from 'ramda';
-import { isPong } from './utils';
+import {
+  isPong,
+  isNewSessionCreated,
+} from './utils';
 
 import parsePong from './parsePong';
+import parseNewSessionCreated from './parseNewSessionCreated';
 
 /**
  * Writes warning message into console and returns null
@@ -26,6 +30,7 @@ const parseUnexpectedMessage = R.pipe(
  */
 const parseMessage = R.cond([
   [isPong, parsePong],
+  [isNewSessionCreated, parseNewSessionCreated],
   [R.T, parseUnexpectedMessage],
 ]);
 
