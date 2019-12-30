@@ -2,7 +2,12 @@ import * as R from 'ramda';
 import random from 'random-bigint';
 import forge from 'node-forge';
 
-import { DC_ID, PROTOCOL_ID, TEST_DC_INC } from './constants';
+import {
+  DC_ID,
+  PROTOCOL_ID,
+  TEST_DC_INC,
+  MESSAGE_CONTAINER,
+} from './constants';
 
 export const debug = (x) => {
   console.log(x);
@@ -473,6 +478,8 @@ export const uint8toForgeBuffer = R.pipe(
   arrayBufferToForgeBuffer,
 );
 
-export const isContainer = R.pipe(
-  (x) => new Uint8Array(x, 0, 4),
+export const isMessageContainer = R.pipe(
+  (x) => new Uint32Array(x, 0, 1),
+  R.nth(0),
+  R.equals(MESSAGE_CONTAINER),
 );
