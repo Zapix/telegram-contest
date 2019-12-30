@@ -1,3 +1,5 @@
+import * as R from 'ramda';
+
 import {
   API_ID,
   API_HASH,
@@ -48,7 +50,11 @@ export function buildAuthSendCodeMessage(phone) {
   };
 }
 
-export default function sendAuthCode(authKey, authHash, salt, sessionId, phone) {
-  const authSendCodeMessage = buildAuthSendCodeMessage(phone);
-  return sendRequest(encryptMessage(authKey, authHash, salt, sessionId, authSendCodeMessage.buffer));
+export default function sendAuthCode(authKey, authKeyId, salt, sessionId, phone) {
+  const encrypt = R.partial(encryptMessage, [authKey, authKeyId, salt, sessionId]);
+  return R.pipe(
+    buildAuthSendCodeMessage,
+    encrypt,
+    sendRequest,
+  )(phone);
 }

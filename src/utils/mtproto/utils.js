@@ -43,6 +43,17 @@ const checkSecondInt = R.pipe(
 );
 
 /**
+ * Copy bytes from Uint8Array `from` to Uint*Array `to`;
+ * @param {Uint8Array|Number[]} fromArr
+ * @param {Uint8Array} toArr
+ */
+export function copyBytes(fromArr, toArr) {
+  for (let i = 0; i < fromArr.length; i += 1) {
+    toArr[i] = fromArr[i];
+  }
+}
+
+/**
  * Takes ArrayBuffer init payload and return is it valid or not
  * @param {ArrayBuffer} buffer
  * @returns {boolean}
@@ -389,18 +400,7 @@ export function getUnixTimestamp() {
  * @returns {bigint}
  */
 export function getMessageId() {
-  return BigInt(getUnixTimestamp() *2 ** 32);
-}
-
-/**
- * Copy bytes from Uint8Array `from` to Uint*Array `to`;
- * @param {Uint8Array|Number[]} fromArr
- * @param {Uint8Array} toArr
- */
-export function copyBytes(fromArr, toArr) {
-  for (let i = 0; i < fromArr.length; i += 1) {
-    toArr[i] = fromArr[i];
-  }
+  return BigInt(getUnixTimestamp() * 2 ** 32);
 }
 
 /**
@@ -470,5 +470,9 @@ export function generateKeyDataFromNonce(serverNonce, newNonce) {
 
 export const uint8toForgeBuffer = R.pipe(
   uint8ToArrayBuffer,
-  arrayBufferToForgeBuffer
+  arrayBufferToForgeBuffer,
+);
+
+export const isContainer = R.pipe(
+  (x) => new Uint8Array(x, 0, 4),
 );

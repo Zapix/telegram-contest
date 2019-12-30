@@ -1,11 +1,10 @@
 import * as R from 'ramda';
 
-import { forgeBufferToArrayBuffer, getMessageId, uint8toForgeBuffer, } from './utils';
-import wrapMessage from './wrapMessage';
+import { forgeBufferToArrayBuffer, getMessageId, uint8toForgeBuffer } from './utils';
 import addSessionInfo from './addSessionInfo';
 import getMsgKey from './getMsgKey';
 import generateKeyIv from './generateKeyIv';
-import { encryptIge as encryptAesIge, } from './aes';
+import { encryptIge as encryptAesIge } from './aes';
 import padBytes from './padBytes';
 import addExternalHeader from './addExternalHeader';
 

@@ -1,9 +1,9 @@
 import * as R from 'ramda';
 
-import { copyBytes, forgeBufferToArrayBuffer, debug } from './utils';
+import { copyBytes, forgeBufferToArrayBuffer } from './utils';
 import { sha256 } from './sha';
 
-const bufferToUint8 = x => new Uint8Array(x);
+const bufferToUint8 = (x) => new Uint8Array(x);
 
 const hashFunc = R.pipe(
   sha256,

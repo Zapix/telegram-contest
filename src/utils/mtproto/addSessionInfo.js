@@ -5,7 +5,7 @@
  * @param {BigInt} messageId
  * @param {ArrayBuffer} messageBuffer
  */
-import { copyBuffer, copyBytes, uint8ArrayToHex } from './utils';
+import { copyBuffer, copyBytes } from './utils';
 
 export default function addSessionInfo(salt, sessionId, messageId, messageBuffer) {
   const buffer = new ArrayBuffer(8 + 8 + 8 + 4 + 4 + messageBuffer.byteLength);

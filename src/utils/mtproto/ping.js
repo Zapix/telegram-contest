@@ -1,6 +1,10 @@
 import * as R from 'ramda';
-import { GET_CONFIG, PING, GET_NEAREST_DC } from './constants';
-import { copyBytes, getNRandomBytes, debug, uint8ArrayToHex } from './utils';
+import { PING } from './constants';
+import {
+  copyBytes,
+  getNRandomBytes,
+  uint8ArrayToHex,
+} from './utils';
 import sendRequest from './sendRequest';
 import encryptMessage from './encryptMessage';
 
@@ -19,7 +23,7 @@ export function buildPingMessage() {
     buffer,
     constructor,
     randomBytes,
-  }
+  };
 }
 
 

@@ -573,7 +573,9 @@ function verifyNewNonce(newNonce, authKeyAuxHash, verifyResponse) {
 function buildSalt({ server_nonce: serverNonce, new_nonce: newNonce }) {
   const salt = new Uint8Array(8);
   for (let i = 0; i < 8; i += 1) {
+    /* eslint-disable */
     salt[i] = newNonce[i] ^ serverNonce[i];
+    /* eslint-enable */
   }
   return salt;
 }

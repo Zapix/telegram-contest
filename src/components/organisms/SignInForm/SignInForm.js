@@ -19,7 +19,7 @@ function handleChange(e) {
 function handleSubmit(e) {
   e.preventDefault();
   const phoneNumber = document.getElementById('phoneNumber').value;
-  requestAuth();
+  requestAuth(phoneNumber);
 }
 
 function handleClick(e) {
@@ -83,10 +83,10 @@ export default function SignInForm() {
             'button',
             {
               id: 'sendPing',
-              onclick: handleClick
-            }
-          )
-        ]
+              onclick: handleClick,
+            },
+          ),
+        ],
       ),
       createElement(
         'div',
@@ -98,9 +98,9 @@ export default function SignInForm() {
             {
               id: 'httpWait',
               onclick: handleHttpWait,
-            }
-          )
-        ]
+            },
+          ),
+        ],
       ),
       createElement(
         'div',

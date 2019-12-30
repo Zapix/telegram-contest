@@ -1,16 +1,26 @@
 import * as R from 'ramda';
-import {filter} from 'rxjs/operators';
+import { filter } from 'rxjs/operators';
 
 import { mount } from 'utils/vdom';
-import { buildStateStream, combineReducers, dispatchInit, getActionStream } from 'utils/store';
+import {
+  buildStateStream,
+  combineReducers,
+  dispatchInit,
+  getActionStream,
+  isActionOf,
+} from 'utils/store';
 import { reducer as todoReducer } from 'state/todo';
-import { createAuthorizationKey, ping, httpWait, sendAuthCode } from 'utils/mtproto';
+import {
+  createAuthorizationKey,
+  ping,
+  httpWait,
+  sendAuthCode,
+} from 'utils/mtproto';
 import decryptMessage from 'utils/mtproto/decryptMessage';
-import { isActionOf } from 'utils/store';
 
 import './style.scss';
 import App from './components/App';
-import { getNRandomBytes, getRandomInt, uint8ArrayToHex } from './utils/mtproto/utils';
+import { getNRandomBytes, uint8ArrayToHex } from './utils/mtproto/utils';
 import { AUTH_REQUESTED, PING_REQUESTED, HTTP_WAIT } from './state/todo/constants';
 
 const div = document.createElement('h1');
@@ -33,9 +43,9 @@ createAuthorizationKey().then(({ authKey, authKeyId, serverSalt }) => {
   const decrypt = R.partial(decryptMessage, [authKey, authKeyId, serverSalt, sessionId]);
 
   action$.pipe(
-    filter(isActionOf(PING_REQUESTED))
+    filter(isActionOf(PING_REQUESTED)),
   ).subscribe((item) => {
-    console.log('Send ping request to telegram server');
+    console.log('Send ping request to telegram server ', item);
     ping(authKey, authKeyId, serverSalt, sessionId)
       .then((response) => response.arrayBuffer())
       .then(decrypt)
@@ -46,9 +56,9 @@ createAuthorizationKey().then(({ authKey, authKeyId, serverSalt }) => {
   });
 
   action$.pipe(
-    filter(isActionOf(HTTP_WAIT))
+    filter(isActionOf(HTTP_WAIT)),
   ).subscribe((item) => {
-    console.log('Send Http Wait request');
+    console.log('Send Http Wait request ', item);
 
     httpWait(authKey, authKeyId, serverSalt, sessionId)
       .then((response) => response.arrayBuffer())
@@ -59,9 +69,9 @@ createAuthorizationKey().then(({ authKey, authKeyId, serverSalt }) => {
   });
 
   action$.pipe(
-    filter(isActionOf(AUTH_REQUESTED))
+    filter(isActionOf(AUTH_REQUESTED)),
   ).subscribe((item) => {
-    console.log('Auth requested', item)
+    console.log('Auth requested', item);
 
     sendAuthCode(authKey, authKeyId, serverSalt, sessionId, '+79625213997')
       .then((response) => response.arrayBuffer())

@@ -1,6 +1,6 @@
 import * as R from 'ramda';
 import parseSessionInfo from './parseSessionInfo';
-import { bigIntToUint8Array, copyBytes, uint8ToArrayBuffer, uint8ToBigInt } from './utils';
+import { copyBytes, uint8ToArrayBuffer, uint8ToBigInt } from './utils';
 
 test('parseSessionInfo()', () => {
   const salt = R.times(R.always(1), 8);
@@ -28,7 +28,7 @@ test('parseSessionInfo()', () => {
     ...seqNoArr,
     ...messageLengthArr,
     ...message,
-    ...padding
+    ...padding,
   ];
   expect(messageWithHeaderBytes).toHaveLength(48);
 

@@ -18,13 +18,11 @@ const classFromAttrs = R.pipe(
 export default function Button(textLabel, buttonType, attrs) {
   return createElement(
     'button',
-    Object.assign(
-      {
-        type: R.defaultTo('button', buttonType),
-        class: mergeClasses(styles.button, attrs, classFromAttrs(attrs)),
-      },
-      R.omit('type', attrs),
-    ),
+    {
+      type: R.defaultTo('button', buttonType),
+      class: mergeClasses(styles.button, attrs, classFromAttrs(attrs)),
+      ...R.omit('type', attrs),
+    },
     textLabel,
   );
 }

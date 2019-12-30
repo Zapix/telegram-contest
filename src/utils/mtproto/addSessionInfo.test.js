@@ -12,8 +12,7 @@ test('addSessionInfo', () => {
   const sessionId = [4, 4, 4, 4, 4, 4, 4, 4];
   const messageIdBytes = [2, 2, 2, 2, 2, 2, 2, 2];
   const messageId = uint8ToBigInt(messageIdBytes);
-  const seqNo = 1;
-  const seqNoBytes = [1, 0, 0, 0];
+  const seqNoBytes = [0, 0, 0, 0];
   const messageLengthBytes = [wrappedMessage.length, 0, 0, 0];
 
   const { buffer } = addSessionInfo(salt, sessionId, messageId, wrappedMessageBuffer);
@@ -31,4 +30,3 @@ test('addSessionInfo', () => {
 
   expect(new Uint8Array(buffer)).toEqual(expectedBytes);
 });
-

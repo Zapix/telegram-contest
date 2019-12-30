@@ -1,5 +1,4 @@
 import * as R from 'ramda';
-import wrapPlainMessage from './wrapPlainMessage';
 import encryptMessage from './encryptMessage';
 import sendRequest from './sendRequest';
 import { HTTP_WAIT } from './constants';
@@ -31,6 +30,6 @@ export default function httpWait(authKey, authKeyId, salt, sessionId) {
     httpWaitMessage,
     R.prop('buffer'),
     encrypt,
-    sendRequest
+    sendRequest,
   )();
 }

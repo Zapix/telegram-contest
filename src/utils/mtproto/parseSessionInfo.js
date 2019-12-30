@@ -9,8 +9,6 @@
  *  message: ArrayBuffer
  * }}
  */
-import { uint8ArrayToHex } from './utils';
-
 export default function parseSessionInfo(messageWithSessionInfo) {
   const salt = new Uint8Array(messageWithSessionInfo, 0, 8);
   const sessionId = new Uint8Array(messageWithSessionInfo, 8, 8);
@@ -25,9 +23,8 @@ export default function parseSessionInfo(messageWithSessionInfo) {
   const messageLength = messageLengthArr[0];
 
   const message = messageWithSessionInfo.slice(32, 32 + messageLength);
-  const messageWithPadding = messageWithSessionInfo.slice(32);
 
-  console.log('Message length: '.padStart(30), message.byteLength);
-  console.log('Message with padding:'.padStart(30), messageWithPadding.byteLength);
-  return { salt, sessionId, messageId, seqNo, messageLength, message };
+  return {
+    salt, sessionId, messageId, seqNo, messageLength, message,
+  };
 }
