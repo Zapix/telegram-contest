@@ -2,12 +2,7 @@ import * as R from 'ramda';
 import random from 'random-bigint';
 import forge from 'node-forge';
 
-import {
-  DC_ID,
-  PROTOCOL_ID,
-  TEST_DC_INC,
-  MESSAGE_CONTAINER,
-} from './constants';
+import { DC_ID, PROTOCOL_ID, TEST_DC_INC } from './constants';
 
 export const debug = (x) => {
   console.log(x);
@@ -490,10 +485,4 @@ export function generateKeyDataFromNonce(serverNonce, newNonce) {
 export const uint8toForgeBuffer = R.pipe(
   uint8ToArrayBuffer,
   arrayBufferToForgeBuffer,
-);
-
-export const isMessageContainer = R.pipe(
-  (x) => new Uint32Array(x, 0, 1),
-  R.nth(0),
-  R.equals(MESSAGE_CONTAINER),
 );

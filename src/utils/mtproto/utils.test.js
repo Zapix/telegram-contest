@@ -7,8 +7,6 @@ import {
   primeGenerator,
   generateKeyDataFromNonce,
   hexToUint8Array,
-  copyBytes,
-  isMessageContainer,
 } from './utils';
 
 describe('isValidInitPayload()', () => {
@@ -105,29 +103,5 @@ describe('generateKeyDataFromNonce()', () => {
     expect(iv.toHex().toUpperCase()).toEqual(
       '3212D579EE35452ED23E0D0C92841AA7D31B2E9BDEF2151E80D15860311C85DB',
     );
-  });
-});
-
-describe('isMessageContainer', () => {
-  it('success', () => {
-    /* eslint-disable */
-    const hexStr = 'dcf8f1730200000001309989462d075e010000001c0000000809c29e00000000452d075e078cde63a724558fb73e6267c6ab026b01689989462d075e0200000014000000c573773400000000452d075e7e34abe84fe1ef56';
-    /* eslint-enable */
-    const messageContainerBytes = hexToUint8Array(hexStr);
-    const buffer = new ArrayBuffer(messageContainerBytes.length);
-    const bufferBytes = new Uint8Array(buffer);
-    copyBytes(messageContainerBytes, bufferBytes);
-
-    expect(isMessageContainer(buffer)).toEqual(true);
-  });
-
-  it('failed', () => {
-    const hexStr = 'c573773400000000452d075e7e34abe84fe1ef56';
-    const messageContainerBytes = hexToUint8Array(hexStr);
-    const buffer = new ArrayBuffer(messageContainerBytes.length);
-    const bufferBytes = new Uint8Array(buffer);
-    copyBytes(messageContainerBytes, bufferBytes);
-
-    expect(isMessageContainer(buffer)).toEqual(false);
   });
 });
