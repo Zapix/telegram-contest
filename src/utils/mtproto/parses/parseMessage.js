@@ -2,10 +2,12 @@ import * as R from 'ramda';
 import {
   isPong,
   isNewSessionCreated,
+  isMessageContainer,
 } from './utils';
 
 import parsePong from './parsePong';
 import parseNewSessionCreated from './parseNewSessionCreated';
+import parseMessageContainer from './parseMessageContainer';
 
 /**
  * Writes warning message into console and returns null
@@ -28,10 +30,20 @@ const parseUnexpectedMessage = R.pipe(
  * @param {ArrayBuffer} buffer
  * @returns {Array<*> | *}
  */
-const parseMessage = R.cond([
+const parsePlainMessage = R.cond([
   [isPong, parsePong],
   [isNewSessionCreated, parseNewSessionCreated],
   [R.T, parseUnexpectedMessage],
+]);
+
+/**
+ * Allow to parse messageContainers
+ * @param {ArrayBuffer} buffer
+ * @returns {Array<*> | *}
+ */
+const parseMessage = R.cond([
+  [isMessageContainer, R.pipe(parseMessageContainer, R.map(parsePlainMessage))],
+  [R.T, parsePlainMessage],
 ]);
 
 export default parseMessage;

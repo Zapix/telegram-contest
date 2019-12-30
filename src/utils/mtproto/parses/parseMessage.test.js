@@ -26,6 +26,27 @@ describe('parseMessage', () => {
     });
   });
 
+  it('parse message container', () => {
+    /* eslint-disable */
+    const hexStr = 'dcf8f1730200000001309989462d075e010000001c0000000809c29e00000000452d075e078cde63a724558fb73e6267c6ab026b01689989462d075e0200000014000000c573773400000000452d075e7e34abe84fe1ef56';
+    /* eslint-enable */
+    const buffer = hexToArrayBuffer(hexStr);
+
+    expect(parseMessage(buffer)).toEqual([
+      {
+        type: NEW_SESSION_CREATED,
+        firstMsgId: BigInt('0x5e072d4500000000'),
+        uniqueId: BigInt('0x8f5524a763de8c07'),
+        serverSalt: BigInt('0x6b02abc667623eb7'),
+      },
+      {
+        type: PONG,
+        msgId: BigInt('0x5e072d4500000000'),
+        pingId: BigInt('0x56efe14fe8ab347e'),
+      },
+    ]);
+  });
+
   it('unexpected message', () => {
     const hexStr = '12110320';
     const buffer = hexToArrayBuffer(hexStr);
