@@ -6,12 +6,15 @@ import {
   isPong,
   isNewSessionCreated,
   isMessageContainer,
-  getConstructor, isBadMsgNotification,
+  isBadMsgNotification,
+  isMsgsAck,
+  getConstructor,
 } from './utils';
 import parsePong from './parsePong';
 import parseNewSessionCreated from './parseNewSessionCreated';
 import parseMessageContainer from './parseMessageContainer';
 import parseBadMsgNotification from './parseBadMsgNotification';
+import parseMsgsAck from './parseMsgsAck';
 
 /**
  * Writes warning message into console and returns null
@@ -41,6 +44,7 @@ const parsePlainMessage = R.cond([
   [isPong, parsePong],
   [isNewSessionCreated, parseNewSessionCreated],
   [isBadMsgNotification, parseBadMsgNotification],
+  [isMsgsAck, parseMsgsAck],
   [R.T, parseUnexpectedMessage],
 ]);
 

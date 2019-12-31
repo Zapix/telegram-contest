@@ -1,5 +1,10 @@
 import parseMessage from './parseMessage';
-import { PONG, NEW_SESSION_CREATED, BAD_MSG_NOTIFICATION } from '../constants';
+import {
+  PONG,
+  NEW_SESSION_CREATED,
+  BAD_MSG_NOTIFICATION,
+  MSGS_ACK,
+} from '../constants';
 import { hexToArrayBuffer } from '../utils';
 
 describe('parseMessage', () => {
@@ -59,7 +64,18 @@ describe('parseMessage', () => {
     });
   });
 
-  it('messages acknowledgment', () => {});
+  it('messages acknowledgment', () => {
+    const hexStr = '59b4d66215c4b51c02000000000000000a700b5e000000000e800b5e';
+    const buffer = hexToArrayBuffer(hexStr);
+
+    expect(parseMessage(buffer)).toEqual({
+      type: MSGS_ACK,
+      msgIds: [
+        BigInt('0x5e0b700a00000000'),
+        BigInt('0x5e0b800e00000000'),
+      ],
+    });
+  });
 
   it('unexpected message', () => {
     const hexStr = '12110320';
