@@ -3,11 +3,13 @@ import {
   isPong,
   isNewSessionCreated,
   isMessageContainer,
+  getConstructor,
 } from './utils';
 
 import parsePong from './parsePong';
 import parseNewSessionCreated from './parseNewSessionCreated';
 import parseMessageContainer from './parseMessageContainer';
+import { numberToHex, dumpArrayBuffer } from '../utils';
 
 /**
  * Writes warning message into console and returns null
@@ -15,11 +17,14 @@ import parseMessageContainer from './parseMessageContainer';
  * @returns {null}
  */
 const parseUnexpectedMessage = R.pipe(
-  (x) => new Uint32Array(x, 0, 1),
-  R.nth(0),
-  (x) => x.toString(16),
+  R.of,
+  R.ap([
+    R.pipe(getConstructor, numberToHex),
+    dumpArrayBuffer,
+  ]),
   (x) => {
-    console.warn(`Unexpected message ${x}`);
+    console.warn(`Unexpected message constructor: ${x[0]}`);
+    console.warn(x[1]);
   },
   R.always(null),
 );

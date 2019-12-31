@@ -290,6 +290,14 @@ export function findPrimeFactors(pq) {
 }
 
 /**
+ * @param {Number} x
+ * @returns {string}
+ */
+export function numberToHex(x) {
+  return x.toString(16)
+}
+
+/**
  * Return hex variant of uint8array
  * @param {Uint8Array|Number[]} arr
  * @returns {string} - hex string
@@ -486,3 +494,12 @@ export const uint8toForgeBuffer = R.pipe(
   uint8ToArrayBuffer,
   arrayBufferToForgeBuffer,
 );
+
+export const arrayBufferToUint8Array = (x) => new Uint8Array(x);
+
+export const dumpArrayBuffer = R.pipe(
+  arrayBufferToUint8Array,
+  uint8ArrayToHex,
+);
+
+export const arrayBufferToHex = dumpArrayBuffer;
