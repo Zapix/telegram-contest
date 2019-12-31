@@ -4,6 +4,7 @@ import {
   PONG,
   NEW_SESSION_CREATED,
   BAD_MSG_NOTIFICATION,
+  MSGS_ACK, VECTOR,
 } from '../constants';
 
 /**
@@ -50,4 +51,22 @@ export const isNewSessionCreated = R.pipe(
 export const isBadMsgNotification = R.pipe(
   getConstructor,
   R.equals(BAD_MSG_NOTIFICATION),
+);
+
+/**
+ * @param {ArrayBuffer} - message buffer
+ * @returns {boolean}
+ */
+export const isMsgsAck = R.pipe(
+  getConstructor,
+  R.equals(MSGS_ACK),
+);
+
+/**
+ * @param {ArrayBuffer} - message buffer
+ * @returns {boolean}
+ */
+export const isVector = R.pipe(
+  getConstructor,
+  R.equals(VECTOR),
 );

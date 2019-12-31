@@ -37,3 +37,6 @@ export const MESSAGE_CONTAINER = 0x73f1f8dc;
 export const NEW_SESSION_CREATED = 0x9ec20908;
 
 export const BAD_MSG_NOTIFICATION = 0xa7eff811;
+export const MSGS_ACK = 0x62d6b459;
+
+export const VECTOR = 0x1cb5c415;

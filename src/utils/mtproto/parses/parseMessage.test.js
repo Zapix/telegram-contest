@@ -59,6 +59,8 @@ describe('parseMessage', () => {
     });
   });
 
+  it('messages acknowledgment', () => {});
+
   it('unexpected message', () => {
     const hexStr = '12110320';
     const buffer = hexToArrayBuffer(hexStr);

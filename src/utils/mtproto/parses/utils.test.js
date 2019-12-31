@@ -4,6 +4,8 @@ import {
   isPong,
   isNewSessionCreated,
   isBadMsgNotification,
+  isMsgsAck,
+  isVector,
 } from './utils';
 import { hexToArrayBuffer } from '../utils';
 
@@ -48,7 +50,7 @@ describe('isPong', () => {
   });
 });
 
-describe('isNewSessionCreated', () => {
+describe('isNewSe1cb5c415ssionCreated', () => {
   it('success', () => {
     /* eslint-disable */
     const hexStr = '0809c29e00000000452d075e078cde63a724558fb73e6267c6ab026b';
@@ -71,5 +73,22 @@ describe('isBadMsgNotification', () => {
     const hexStr = '11f8efa70000000079f60a5e0200000023000000';
     const buffer = hexToArrayBuffer(hexStr);
     expect(isBadMsgNotification(buffer)).toEqual(true);
+  });
+});
+
+describe('isMsgAck', () => {
+  it('success', () => {
+    const hexStr = '59b4d66215c4b51c01000000000000007b050b5e';
+    // 59b4d662 15c4b51c 01000000 000000007b050b5e
+    const buffer = hexToArrayBuffer(hexStr);
+    expect(isMsgsAck(buffer)).toEqual(true);
+  });
+});
+
+describe('isVector', () => {
+  it('success', () => {
+    const hexStr = '15c4b51c01000000000000007b050b5e';
+    const buffer = hexToArrayBuffer(hexStr);
+    expect(isVector(buffer)).toEqual(true);
   });
 });
