@@ -1,5 +1,5 @@
 import parseMessage from './parseMessage';
-import { PONG, NEW_SESSION_CREATED } from '../constants';
+import { PONG, NEW_SESSION_CREATED, BAD_MSG_NOTIFICATION } from '../constants';
 import { hexToArrayBuffer } from '../utils';
 
 describe('parseMessage', () => {
@@ -45,6 +45,18 @@ describe('parseMessage', () => {
         pingId: BigInt('0x56efe14fe8ab347e'),
       },
     ]);
+  });
+
+  it('bad message notification', () => {
+    const hexStr = '11f8efa70000000079f60a5e0200000023000000';
+    const buffer = hexToArrayBuffer(hexStr);
+
+    expect(parseMessage(buffer)).toEqual({
+      type: BAD_MSG_NOTIFICATION,
+      badMsgId: BigInt('0x5e0af67900000000'),
+      badSeqNo: 2,
+      errorCode: 0x23,
+    });
   });
 
   it('unexpected message', () => {

@@ -1,15 +1,17 @@
 import * as R from 'ramda';
+
+import { numberToHex, dumpArrayBuffer } from '../utils';
+
 import {
   isPong,
   isNewSessionCreated,
   isMessageContainer,
-  getConstructor,
+  getConstructor, isBadMsgNotification,
 } from './utils';
-
 import parsePong from './parsePong';
 import parseNewSessionCreated from './parseNewSessionCreated';
 import parseMessageContainer from './parseMessageContainer';
-import { numberToHex, dumpArrayBuffer } from '../utils';
+import parseBadMsgNotification from './parseBadMsgNotification';
 
 /**
  * Writes warning message into console and returns null
@@ -38,6 +40,7 @@ const parseUnexpectedMessage = R.pipe(
 const parsePlainMessage = R.cond([
   [isPong, parsePong],
   [isNewSessionCreated, parseNewSessionCreated],
+  [isBadMsgNotification, parseBadMsgNotification],
   [R.T, parseUnexpectedMessage],
 ]);
 
