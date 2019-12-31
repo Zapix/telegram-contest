@@ -294,7 +294,7 @@ export function findPrimeFactors(pq) {
  * @returns {string}
  */
 export function numberToHex(x) {
-  return x.toString(16)
+  return x.toString(16);
 }
 
 /**

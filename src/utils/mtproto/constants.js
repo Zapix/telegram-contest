@@ -35,3 +35,5 @@ export const HTTP_WAIT = 0x9299359f;
 
 export const MESSAGE_CONTAINER = 0x73f1f8dc;
 export const NEW_SESSION_CREATED = 0x9ec20908;
+
+export const BAD_MSG_NOTIFICATION = 0xa7eff811;

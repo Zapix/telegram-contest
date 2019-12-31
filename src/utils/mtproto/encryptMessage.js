@@ -18,8 +18,6 @@ export default function encryptMessage(authKey, authKeyId, salt, sessionId, mess
   const messageId = getMessageId();
 
   const messageWithHeaders = R.pipe(
-    // R.partial(wrapMessage, [authKeyId, messageId]),
-    // R.prop('buffer'),
     R.partial(addSessionInfo, [salt, sessionId, messageId]),
   )(messageBuffer);
 

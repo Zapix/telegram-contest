@@ -54,6 +54,7 @@ export default function sendAuthCode(authKey, authKeyId, salt, sessionId, phone)
   const encrypt = R.partial(encryptMessage, [authKey, authKeyId, salt, sessionId]);
   return R.pipe(
     buildAuthSendCodeMessage,
+    R.prop('buffer'),
     encrypt,
     sendRequest,
   )(phone);

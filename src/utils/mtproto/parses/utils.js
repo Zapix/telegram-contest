@@ -1,5 +1,10 @@
 import * as R from 'ramda';
-import { MESSAGE_CONTAINER, PONG, NEW_SESSION_CREATED } from '../constants';
+import {
+  MESSAGE_CONTAINER,
+  PONG,
+  NEW_SESSION_CREATED,
+  BAD_MSG_NOTIFICATION,
+} from '../constants';
 
 /**
  * Gets constructor value from buffer
@@ -36,4 +41,13 @@ export const isPong = R.pipe(
 export const isNewSessionCreated = R.pipe(
   getConstructor,
   R.equals(NEW_SESSION_CREATED),
+);
+
+/**
+ * @param {ArrayBuffer} - message buffer
+ * @returns {boolean}
+ */
+export const isBadMsgNotification = R.pipe(
+  getConstructor,
+  R.equals(BAD_MSG_NOTIFICATION),
 );
