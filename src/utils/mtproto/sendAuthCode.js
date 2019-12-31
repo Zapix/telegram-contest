@@ -50,8 +50,8 @@ export function buildAuthSendCodeMessage(phone) {
   };
 }
 
-export default function sendAuthCode(authKey, authKeyId, salt, sessionId, phone) {
-  const encrypt = R.partial(encryptMessage, [authKey, authKeyId, salt, sessionId]);
+export default function sendAuthCode(authKey, authKeyId, salt, sessionId, seqNo, phone) {
+  const encrypt = R.partial(encryptMessage, [authKey, authKeyId, salt, sessionId, seqNo]);
   return R.pipe(
     buildAuthSendCodeMessage,
     R.prop('buffer'),

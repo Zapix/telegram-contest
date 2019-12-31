@@ -14,12 +14,9 @@ const encrypt = R.pipe(
   forgeBufferToArrayBuffer,
 );
 
-export default function encryptMessage(authKey, authKeyId, salt, sessionId, messageBuffer) {
+export default function encryptMessage(authKey, authKeyId, salt, sessionId, seqNo, messageBuffer) {
   const messageId = getMessageId();
-
-  const messageWithHeaders = R.pipe(
-    R.partial(addSessionInfo, [salt, sessionId, messageId]),
-  )(messageBuffer);
+  const messageWithHeaders = addSessionInfo(salt, sessionId, messageId, seqNo, messageBuffer);
 
   const paddedBuffer = padBytes(messageWithHeaders.buffer);
   const padded = new Uint8Array(paddedBuffer);

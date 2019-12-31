@@ -20,10 +20,10 @@ function httpWaitMessage() {
   return { buffer };
 }
 
-export default function httpWait(authKey, authKeyId, salt, sessionId) {
+export default function httpWait(authKey, authKeyId, salt, sessionId, seqNo) {
   const encrypt = R.partial(
     encryptMessage,
-    [authKey, authKeyId, salt, sessionId],
+    [authKey, authKeyId, salt, sessionId, seqNo],
   );
 
   return R.pipe(

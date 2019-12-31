@@ -27,8 +27,8 @@ export function buildPingMessage() {
 }
 
 
-export default function ping(authKey, authKeyId, salt, sessionId) {
-  const encrypt = R.partial(encryptMessage, [authKey, authKeyId, salt, sessionId]);
+export default function ping(authKey, authKeyId, salt, sessionId, seqNo) {
+  const encrypt = R.partial(encryptMessage, [authKey, authKeyId, salt, sessionId, seqNo]);
   return R.pipe(
     buildPingMessage,
     R.prop('buffer'),

@@ -1,12 +1,9 @@
 export default function* seqNoGenerator() {
-  let seqNo = 0;
-  const notContentRelated = false;
+  let seqNo = 1;
   while (true) {
-    let currentSeqNo = seqNo * 2;
-    if (notContentRelated) {
-      seqNo += 1;
-      currentSeqNo += 1;
-    }
-    yield currentSeqNo;
+    seqNo *= 2;
+    seqNo += 1;
+    console.log(`Generated seqNo: ${seqNo}`);
+    yield seqNo;
   }
 }

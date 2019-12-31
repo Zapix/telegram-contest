@@ -12,10 +12,10 @@ test('addSessionInfo', () => {
   const sessionId = [4, 4, 4, 4, 4, 4, 4, 4];
   const messageIdBytes = [2, 2, 2, 2, 2, 2, 2, 2];
   const messageId = uint8ToBigInt(messageIdBytes);
-  const seqNoBytes = [0, 0, 0, 0];
+  const seqNoBytes = [5, 0, 0, 0];
   const messageLengthBytes = [wrappedMessage.length, 0, 0, 0];
 
-  const { buffer } = addSessionInfo(salt, sessionId, messageId, wrappedMessageBuffer);
+  const { buffer } = addSessionInfo(salt, sessionId, messageId, 5, wrappedMessageBuffer);
 
   const expected = [
     ...salt,
