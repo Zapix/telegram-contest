@@ -8,13 +8,15 @@ import {
   isMessageContainer,
   isBadMsgNotification,
   isMsgsAck,
-  getConstructor,
+  getConstructor, isAuthSentCode, isRpcResult,
 } from './utils';
 import parsePong from './parsePong';
 import parseNewSessionCreated from './parseNewSessionCreated';
 import parseMessageContainer from './parseMessageContainer';
 import parseBadMsgNotification from './parseBadMsgNotification';
 import parseMsgsAck from './parseMsgsAck';
+import parseAuthSentCode from './parseAuthSentCode';
+import parseRpcResult from './parseRpcResult';
 
 /**
  * Writes warning message into console and returns null
@@ -40,13 +42,17 @@ const parseUnexpectedMessage = R.pipe(
  * @param {ArrayBuffer} buffer
  * @returns {Array<*> | *}
  */
-const parsePlainMessage = R.cond([
-  [isPong, parsePong],
-  [isNewSessionCreated, parseNewSessionCreated],
-  [isBadMsgNotification, parseBadMsgNotification],
-  [isMsgsAck, parseMsgsAck],
-  [R.T, parseUnexpectedMessage],
-]);
+function parsePlainMessage(buffer) {
+  return R.cond([
+    [isPong, parsePong],
+    [isNewSessionCreated, parseNewSessionCreated],
+    [isBadMsgNotification, parseBadMsgNotification],
+    [isMsgsAck, parseMsgsAck],
+    [isAuthSentCode, parseAuthSentCode],
+    [isRpcResult, R.partialRight(parseRpcResult, [parsePlainMessage])],
+    [R.T, parseUnexpectedMessage],
+  ])(buffer);
+}
 
 /**
  * Allow to parse messageContainers

@@ -1,4 +1,7 @@
 // Values from my.telegram.com
+export const BOOL_TRUE = 0x997275b5;
+export const BOOL_FALSE = 0xbc799737;
+
 export const API_ID = 1005944;
 export const API_HASH = 'dfbf8ed1e37d1cd1ad370e7431ed8a87';
 
@@ -22,7 +25,7 @@ export const DH_GEN_RETRY = 0x46dc1fb9;
 export const DH_GEN_FAIL = 0xa69dae02;
 
 export const AUTH_SEND_CODE = 0xa677244f;
-export const AUTH_SENT_CODE = 0x5e002502;
+export const AUTH_SENT_CODE = 0x2215bcbd;
 export const CODE_SETTINGS = 0xdebebe83;
 
 export const PING = 0x7abe77ec;
@@ -40,3 +43,4 @@ export const BAD_MSG_NOTIFICATION = 0xa7eff811;
 export const MSGS_ACK = 0x62d6b459;
 
 export const VECTOR = 0x1cb5c415;
+export const RPC_RESULT = 0xf35c6d01;

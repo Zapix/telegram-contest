@@ -15,6 +15,8 @@ import {
   ping,
   httpWait,
   sendAuthCode,
+  parseMessage,
+  seqNoGenerator,
 } from 'utils/mtproto';
 import decryptMessage from 'utils/mtproto/decryptMessage';
 
@@ -41,17 +43,20 @@ dispatchInit();
 createAuthorizationKey().then(({ authKey, authKeyId, serverSalt }) => {
   const sessionId = getNRandomBytes(8);
   const decrypt = R.partial(decryptMessage, [authKey, authKeyId, serverSalt, sessionId]);
+  const genSeqNo = seqNoGenerator();
+  const getSeqNo = () => genSeqNo.next().value;
 
   action$.pipe(
     filter(isActionOf(PING_REQUESTED)),
   ).subscribe((item) => {
     console.log('Send ping request to telegram server ', item);
-    ping(authKey, authKeyId, serverSalt, sessionId)
+    ping(authKey, authKeyId, serverSalt, sessionId, getSeqNo())
       .then((response) => response.arrayBuffer())
       .then(decrypt)
       .then((message) => {
         console.log('Message byteLength', message.byteLength);
         console.log(uint8ArrayToHex(new Uint8Array(message)));
+        console.log(parseMessage(message));
       });
   });
 
@@ -60,11 +65,12 @@ createAuthorizationKey().then(({ authKey, authKeyId, serverSalt }) => {
   ).subscribe((item) => {
     console.log('Send Http Wait request ', item);
 
-    httpWait(authKey, authKeyId, serverSalt, sessionId)
+    httpWait(authKey, authKeyId, serverSalt, sessionId, getSeqNo())
       .then((response) => response.arrayBuffer())
       .then(decrypt)
       .then((message) => {
         console.log('Http Wait Result: ', uint8ArrayToHex(new Uint8Array(message)));
+        console.log(parseMessage(message));
       });
   });
 
@@ -73,11 +79,12 @@ createAuthorizationKey().then(({ authKey, authKeyId, serverSalt }) => {
   ).subscribe((item) => {
     console.log('Auth requested', item);
 
-    sendAuthCode(authKey, authKeyId, serverSalt, sessionId, '+79625213997')
+    sendAuthCode(authKey, authKeyId, serverSalt, sessionId, getSeqNo(), '+79625213997')
       .then((response) => response.arrayBuffer())
       .then(decrypt)
       .then((message) => {
         console.log(uint8ArrayToHex(new Uint8Array(message)));
+        console.log(parseMessage(message));
       });
   });
 });

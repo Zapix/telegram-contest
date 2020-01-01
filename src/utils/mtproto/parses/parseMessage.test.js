@@ -1,11 +1,15 @@
+import * as R from 'ramda';
+
 import parseMessage from './parseMessage';
 import {
   PONG,
   NEW_SESSION_CREATED,
   BAD_MSG_NOTIFICATION,
   MSGS_ACK,
+  AUTH_SENT_CODE, RPC_RESULT,
 } from '../constants';
 import { hexToArrayBuffer } from '../utils';
+import { getStringFromArrayBuffer, tlStringToString } from '../tlSerialization';
 
 describe('parseMessage', () => {
   it('pong', () => {
@@ -74,6 +78,33 @@ describe('parseMessage', () => {
         BigInt('0x5e0b700a00000000'),
         BigInt('0x5e0b800e00000000'),
       ],
+    });
+  });
+
+  it('auth code sent', () => {
+    const hexStr = 'bdbc1522b57572991235646130343337306165386264323132373800';
+    const buffer = hexToArrayBuffer(hexStr);
+    expect(parseMessage(buffer)).toEqual({
+      type: AUTH_SENT_CODE,
+      phoneRegistered: true,
+      phoneCodeHash: '5da04370ae8bd2127',
+    });
+  });
+
+  it('rpc result', () => {
+    /* eslint-disable */
+    const hexStr = '016d5cf300000000bc860b5ebdbc1522b57572991235646130343337306165386264323132373800';
+    /* eslint-enable */
+    const buffer = hexToArrayBuffer(hexStr);
+
+    expect(parseMessage(buffer)).toEqual({
+      type: RPC_RESULT,
+      msgId: BigInt('0x5e0b86bc00000000'),
+      message: {
+        type: AUTH_SENT_CODE,
+        phoneRegistered: true,
+        phoneCodeHash: '5da04370ae8bd2127',
+      },
     });
   });
 

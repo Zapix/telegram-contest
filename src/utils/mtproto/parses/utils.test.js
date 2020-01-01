@@ -6,6 +6,8 @@ import {
   isBadMsgNotification,
   isMsgsAck,
   isVector,
+  isRpcResult,
+  isAuthSentCode,
 } from './utils';
 import { hexToArrayBuffer } from '../utils';
 
@@ -90,5 +92,23 @@ describe('isVector', () => {
     const hexStr = '15c4b51c01000000000000007b050b5e';
     const buffer = hexToArrayBuffer(hexStr);
     expect(isVector(buffer)).toEqual(true);
+  });
+});
+
+describe('isRpcResult', () => {
+  it('success', () => {
+    /* eslint-disable */
+    const hexStr = '016d5cf300000000bc860b5ebdbc1522b57572991235646130343337306165386264323132373800';
+    /* eslint-enable */
+    const buffer = hexToArrayBuffer(hexStr);
+    expect(isRpcResult(buffer)).toEqual(true);
+  });
+});
+
+describe('isAuthSentCode', () => {
+  it('success', () => {
+    const hexStr = 'bdbc1522b57572991235646130343337306165386264323132373800';
+    const buffer = hexToArrayBuffer(hexStr);
+    expect(isAuthSentCode(buffer)).toEqual(true);
   });
 });

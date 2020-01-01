@@ -114,7 +114,7 @@ export function buildSecondInitPayload(initPayloadBuffer) {
  * @returns {Uint8Array}
  */
 export function stringToUint8(str) {
-  const encoder = new TextEncoder();
+  const encoder = new TextEncoder('utf8');
   return encoder.encode(str);
 }
 
@@ -124,7 +124,7 @@ export function stringToUint8(str) {
  * @returns {string}
  */
 export function uint8ToString(uint8arr) {
-  const decoder = new TextDecoder();
+  const decoder = new TextDecoder('utf8');
   return decoder.decode(uint8arr);
 }
 
