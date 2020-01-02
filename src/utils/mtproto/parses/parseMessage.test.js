@@ -1,5 +1,3 @@
-import * as R from 'ramda';
-
 import parseMessage from './parseMessage';
 import {
   PONG,
@@ -9,7 +7,6 @@ import {
   AUTH_SENT_CODE, RPC_RESULT,
 } from '../constants';
 import { hexToArrayBuffer } from '../utils';
-import { getStringFromArrayBuffer, tlStringToString } from '../tlSerialization';
 
 describe('parseMessage', () => {
   it('pong', () => {

@@ -1,7 +1,10 @@
 import * as R from 'ramda';
 
 import {
-  bigIntToUint8Array, stringToUint8, uint8ToBigInt, uint8ToString
+  bigIntToUint8Array,
+  stringToUint8,
+  uint8ToBigInt,
+  uint8ToString,
 } from './utils';
 
 export const isShortString = R.pipe(
