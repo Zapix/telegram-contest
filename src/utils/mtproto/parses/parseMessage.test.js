@@ -4,7 +4,7 @@ import {
   NEW_SESSION_CREATED,
   BAD_MSG_NOTIFICATION,
   MSGS_ACK,
-  AUTH_SENT_CODE, RPC_RESULT,
+  AUTH_SENT_CODE, RPC_RESULT, MESSAGE_CONTAINER,
 } from '../constants';
 import { hexToArrayBuffer } from '../utils';
 
@@ -38,19 +38,30 @@ describe('parseMessage', () => {
     /* eslint-enable */
     const buffer = hexToArrayBuffer(hexStr);
 
-    expect(parseMessage(buffer)).toEqual([
-      {
-        type: NEW_SESSION_CREATED,
-        firstMsgId: BigInt('0x5e072d4500000000'),
-        uniqueId: BigInt('0x8f5524a763de8c07'),
-        serverSalt: BigInt('0x6b02abc667623eb7'),
-      },
-      {
-        type: PONG,
-        msgId: BigInt('0x5e072d4500000000'),
-        pingId: BigInt('0x56efe14fe8ab347e'),
-      },
-    ]);
+    expect(parseMessage(buffer)).toEqual({
+      type: MESSAGE_CONTAINER,
+      messages: [
+        {
+          msgId: BigInt('0x5e072d4689993001'),
+          seqNo: 1,
+          message: {
+            type: NEW_SESSION_CREATED,
+            firstMsgId: BigInt('0x5e072d4500000000'),
+            uniqueId: BigInt('0x8f5524a763de8c07'),
+            serverSalt: BigInt('0x6b02abc667623eb7'),
+          },
+        },
+        {
+          msgId: BigInt('0x5e072d4689996801'),
+          seqNo: 2,
+          message: {
+            type: PONG,
+            msgId: BigInt('0x5e072d4500000000'),
+            pingId: BigInt('0x56efe14fe8ab347e'),
+          },
+        },
+      ],
+    });
   });
 
   it('bad message notification', () => {
