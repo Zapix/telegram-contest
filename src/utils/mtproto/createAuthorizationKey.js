@@ -24,12 +24,13 @@ import {
   copyBytes,
   getNRandomBytes,
   generateKeyDataFromNonce,
-  powModulo, hexToUint8Array,
+  powModulo, hexToUint8Array, uint8ToArrayBuffer, uint8ArrayToHex,
 } from './utils';
 import { fromTlString, getStringFromArrayBuffer, toTlString } from './tlSerialization';
 import { getPublicKey } from './pems';
 import { decryptIge as decryptAesIge, encryptIge as encryptAesIge } from './aes';
-import sha1 from './sha1';
+import sendRequest from './sendRequest';
+import { sha1 } from './sha';
 
 /**
  * Generates message for p q authorization
@@ -546,28 +547,44 @@ function buildAuthKeyHash(authKey) {
   const authKeyBuffer = new ArrayBuffer(authKey.length);
   const authKeyBufferBytes = new Uint8Array(authKeyBuffer);
   copyBytes(authKey, authKeyBufferBytes);
-
   return R.pipe(
     sha1,
     (x) => x.toHex(),
     hexToUint8Array,
-    R.reverse,
-    R.take(8),
   )(authKeyBuffer);
+}
+
+const buildAuthKeyId = R.slice(12, 20);
+const buildAuthKeyAuxHash = R.slice(0, 8);
+
+function verifyNewNonce(newNonce, authKeyAuxHash, verifyResponse) {
+  // Add 1 for nonceNumber
+  const nonceNumberWithAuxHash = R.flatten([newNonce, [1], authKeyAuxHash]);
+
+  const buffer = uint8ToArrayBuffer(nonceNumberWithAuxHash);
+  const result = sha1(buffer);
+  if (result.toHex().slice(8) !== uint8ArrayToHex(verifyResponse.new_nonce)) {
+    const message = 'Verify new nonce issue';
+    console.error(message);
+    throw new Error(message);
+  }
+}
+
+function buildSalt({ server_nonce: serverNonce, new_nonce: newNonce }) {
+  const salt = new Uint8Array(8);
+  for (let i = 0; i < 8; i += 1) {
+    /* eslint-disable */
+    salt[i] = newNonce[i] ^ serverNonce[i];
+    /* eslint-enable */
+  }
+  return salt;
 }
 
 export default function createAuthorizationKey() {
   const initDHMessage = getInitialDHExchangeMessage();
 
   return Promise.race([
-    fetch(
-      'http://149.154.167.40/apiw',
-      {
-        method: 'POST',
-        mode: 'cors',
-        body: initDHMessage.buffer,
-      },
-    )
+    sendRequest(initDHMessage.buffer)
       .then((response) => response.arrayBuffer())
       .then((buffer) => {
         console.log('Parse response PQ');
@@ -583,14 +600,8 @@ export default function createAuthorizationKey() {
         const exchangeMessage = buildDHExchangeMessage(responsePQ, pqInnerData, encryptedData);
 
         return Promise.all([
-          fetch(
-            'http://149.154.167.40/apiw',
-            {
-              method: 'POST',
-              mode: 'cors',
-              body: exchangeMessage.buffer,
-            },
-          ).then((response) => response.arrayBuffer()),
+          sendRequest(exchangeMessage.buffer)
+            .then((response) => response.arrayBuffer()),
           new Promise((resolve) => resolve(pqInnerData)),
         ]);
       })
@@ -608,26 +619,29 @@ export default function createAuthorizationKey() {
         const encryptedMessage = encryptInnerMessage(dhInnerMessage, dhParams.key, dhParams.iv);
         const setClientDHParamsMessage = buildSetClientDhParamsMessage(encryptedMessage, dhParams);
         return Promise.all([
-          fetch(
-            'http://149.154.167.40/apiw',
-            {
-              method: 'POST',
-              mode: 'cors',
-              body: setClientDHParamsMessage.buffer,
-            },
-          ).then((response) => response.arrayBuffer()),
+          sendRequest(setClientDHParamsMessage.buffer)
+            .then((response) => response.arrayBuffer()),
           Promise.resolve(dhValues),
+          Promise.resolve(pqInnerData),
         ]);
       })
-      .then(([responseBuffer, dhValues]) => {
+      .then(([responseBuffer, dhValues, pqInnerData]) => {
         const verifyResponse = parseDHVerifyResopnse(responseBuffer);
         checkDHVerifyResponse(verifyResponse);
+        const serverSalt = buildSalt(pqInnerData);
         const authKey = bigIntToUint8Array(dhValues.gab);
         const authKeyHash = buildAuthKeyHash(authKey);
+        console.log('Auth key hash: ', authKeyHash);
+        const authKeyId = buildAuthKeyId(authKeyHash);
+        console.log('Auth key id: ', authKeyId);
+        console.log('Auth key id hex: ', uint8ArrayToHex(authKeyId));
+        const authKeyAuxHash = buildAuthKeyAuxHash(authKeyHash);
 
-        return { authKey, authKeyHash };
+        verifyNewNonce(pqInnerData.new_nonce, authKeyAuxHash, verifyResponse);
+
+        return { authKey, authKeyId, serverSalt };
       }),
-    new Promise((resolve, reject) => setTimeout(reject, 120 * 100))
+    new Promise((resolve, reject) => setTimeout(reject, 600 * 100))
       .then(() => {
         console.log('request is too long');
       }),

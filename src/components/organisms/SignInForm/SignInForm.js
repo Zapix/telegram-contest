@@ -1,3 +1,4 @@
+import { requestAuth, requestPing, httpWait } from 'state/todo/actions';
 import { createElement } from 'utils/vdom';
 import mergeClasses from 'utils/mergeClasses';
 import { Input, Button } from 'components/atoms';
@@ -18,7 +19,17 @@ function handleChange(e) {
 function handleSubmit(e) {
   e.preventDefault();
   const phoneNumber = document.getElementById('phoneNumber').value;
-  console.log('Submit phone number:', phoneNumber);
+  requestAuth(phoneNumber);
+}
+
+function handleClick(e) {
+  e.preventDefault();
+  requestPing();
+}
+
+function handleHttpWait(e) {
+  e.preventDefault();
+  httpWait();
 }
 
 export default function SignInForm() {
@@ -65,7 +76,35 @@ export default function SignInForm() {
       ),
       createElement(
         'div',
-        { class: mergeClasses(styles.inputGroup, styles.submitGroup) },
+        { class: mergeClasses(styles.inputGroup) },
+        [
+          Button(
+            'Send Ping',
+            'button',
+            {
+              id: 'sendPing',
+              onclick: handleClick,
+            },
+          ),
+        ],
+      ),
+      createElement(
+        'div',
+        { class: mergeClasses(styles.inputGroup) },
+        [
+          Button(
+            'Http Wait',
+            'button',
+            {
+              id: 'httpWait',
+              onclick: handleHttpWait,
+            },
+          ),
+        ],
+      ),
+      createElement(
+        'div',
+        { class: mergeClasses(styles.inputGroup) },
         [
           Button(
             'Sign In',

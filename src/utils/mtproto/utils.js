@@ -43,6 +43,17 @@ const checkSecondInt = R.pipe(
 );
 
 /**
+ * Copy bytes from Uint8Array `from` to Uint*Array `to`;
+ * @param {Uint8Array|Number[]} fromArr
+ * @param {Uint8Array} toArr
+ */
+export function copyBytes(fromArr, toArr) {
+  for (let i = 0; i < fromArr.length; i += 1) {
+    toArr[i] = fromArr[i];
+  }
+}
+
+/**
  * Takes ArrayBuffer init payload and return is it valid or not
  * @param {ArrayBuffer} buffer
  * @returns {boolean}
@@ -52,7 +63,6 @@ export const isValidInitPayload = R.allPass([
   checkFirstInt,
   checkSecondInt,
 ]);
-
 
 /**
  * Generates init payload for websocket communication. Please check:
@@ -96,6 +106,26 @@ export function buildSecondInitPayload(initPayloadBuffer) {
   }
 
   return buffer;
+}
+
+/**
+ * Builds Uint8 Array from string
+ * @param {string} str - string that should be encoded;
+ * @returns {Uint8Array}
+ */
+export function stringToUint8(str) {
+  const encoder = new TextEncoder('utf8');
+  return encoder.encode(str);
+}
+
+/**
+ * Builds string form Uint8Array
+ * @param {Uint8Array} uint8arr
+ * @returns {string}
+ */
+export function uint8ToString(uint8arr) {
+  const decoder = new TextDecoder('utf8');
+  return decoder.decode(uint8arr);
 }
 
 /**
@@ -260,6 +290,14 @@ export function findPrimeFactors(pq) {
 }
 
 /**
+ * @param {Number} x
+ * @returns {string}
+ */
+export function numberToHex(x) {
+  return x.toString(16);
+}
+
+/**
  * Return hex variant of uint8array
  * @param {Uint8Array|Number[]} arr
  * @returns {string} - hex string
@@ -287,9 +325,23 @@ export const hexToUint8Array = R.pipe(
 );
 
 /**
+ * Parses hex string and returns ArrayBuffer of it
+ * @param hexStr
+ * @return {ArrayBuffer}
+ */
+export function hexToArrayBuffer(hexStr) {
+  const bytesArr = hexToUint8Array(hexStr);
+  const buffer = new ArrayBuffer(bytesArr.length);
+  const bufferBytes = new Uint8Array(buffer);
+
+  copyBytes(bytesArr, bufferBytes);
+  return buffer;
+}
+
+/**
  * Parse sequence of bytes to BigInt. Sequence has got big endian format as default
  * @param {Uint8Array|Number[]} arr
- * @param {boolean} littleEndian
+ * @param {boolean} [littleEndian]
  * @returns {BigInt}
  */
 export function uint8ToBigInt(arr, littleEndian) {
@@ -298,6 +350,18 @@ export function uint8ToBigInt(arr, littleEndian) {
   return BigInt(`0x${hex}`);
 }
 
+
+/**
+ * Moves all arr into buffer
+ * @param {Uint8Array} arr
+ * @returns {ArrayBuffer}
+ */
+export function uint8ToArrayBuffer(arr) {
+  const buffer = new ArrayBuffer(arr.length);
+  const bufferBytes = new Uint8Array(buffer);
+  copyBytes(arr, bufferBytes);
+  return buffer;
+}
 /**
  * Trans number or bigint to Uint8Array with big endian format if little endian doesn't set
  * @param bigint
@@ -345,23 +409,32 @@ export function arrayBufferToForgeBuffer(arrayBuffer) {
   return forgeBuffer;
 }
 
+
+/**
+ * @returns {number}
+ */
+export function getUnixTimestamp() {
+  return Math.floor(+Date.now() / 1000);
+}
+
 /**
  * Generates message id
  * @returns {bigint}
  */
 export function getMessageId() {
-  return BigInt(+Date.now()) * BigInt(2 ** 32);
+  return BigInt(getUnixTimestamp() * 2 ** 32);
 }
 
 /**
- * Copy bytes from Uint8Array `from` to Uint*Array `to`;
- * @param {Uint8Array} fromArr
- * @param {Uint8Array} toArr
+ * Copies whole buffer to another with recipient buffer offset
+ * @param fromBuffer
+ * @param toBuffer
+ * @param offset
  */
-export function copyBytes(fromArr, toArr) {
-  for (let i = 0; i < fromArr.length; i += 1) {
-    toArr[i] = fromArr[i];
-  }
+export function copyBuffer(fromBuffer, toBuffer, offset = 0) {
+  const fromBufferBytes = new Uint8Array(fromBuffer);
+  const toBufferBytes = new Uint8Array(toBuffer, offset);
+  copyBytes(fromBufferBytes, toBufferBytes);
 }
 
 
@@ -416,3 +489,17 @@ export function generateKeyDataFromNonce(serverNonce, newNonce) {
     iv: forge.util.createBuffer(ivBytes),
   };
 }
+
+export const uint8toForgeBuffer = R.pipe(
+  uint8ToArrayBuffer,
+  arrayBufferToForgeBuffer,
+);
+
+export const arrayBufferToUint8Array = (x) => new Uint8Array(x);
+
+export const dumpArrayBuffer = R.pipe(
+  arrayBufferToUint8Array,
+  uint8ArrayToHex,
+);
+
+export const arrayBufferToHex = dumpArrayBuffer;

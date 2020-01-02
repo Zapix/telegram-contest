@@ -1,6 +1,8 @@
 import * as R from 'ramda';
 
-import { bigIntToUint8Array, uint8ToBigInt } from './utils';
+import {
+  bigIntToUint8Array, stringToUint8, uint8ToBigInt, uint8ToString
+} from './utils';
 
 export const isShortString = R.pipe(
   R.prop('length'),
@@ -137,3 +139,13 @@ export function getStringFromArrayBuffer(arrayBuffer, offset) {
     offset: offset + (1 + stringLength) + paddingCount,
   };
 }
+
+export const stringToTlString = R.pipe(
+  stringToUint8,
+  toTlString,
+);
+
+export const tlStringToString = R.pipe(
+  fromTlString,
+  uint8ToString,
+);
