@@ -68,6 +68,15 @@ const nestedJsNode = {
 
 *MTproto* is a protocol that uses by Telegram for communication between clients and telegram servers;
 
+### Binary serialization 
+
+Instead of common text serialization that used by most of HTTP-base APIs Telegram uses its own
+binary serialization by schema https://core.telegram.org/schema
+
+`utils/mtproto/tl.dumps()` - dumps js object into ArrayBuffer by Telegrams binary serialization scheme
+
+`utils/mtproto/tl.loads()` - loads js object from ArrayBuffer by Telegrams binary serialization schema
+
 ## API Reference
 
 
