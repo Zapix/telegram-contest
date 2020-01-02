@@ -60,7 +60,7 @@ function parsePlainMessage(buffer) {
  * @returns {Array<*> | *}
  */
 const parseMessage = R.cond([
-  [isMessageContainer, R.pipe(parseMessageContainer, R.map(parsePlainMessage))],
+  [isMessageContainer, R.partialRight(parseMessageContainer, [parsePlainMessage])],
   [R.T, parsePlainMessage],
 ]);
 
