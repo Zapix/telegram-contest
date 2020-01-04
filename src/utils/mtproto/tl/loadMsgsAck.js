@@ -1,5 +1,5 @@
 import loadVector from './loadVector';
-import loadBigInt from './loadBigInt';
+import { loadBigInt } from './bigInt';
 
 /**
  * Parse messages acknowledgment by schema

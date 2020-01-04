@@ -1,4 +1,4 @@
-import { hexToArrayBuffer } from '../utils';
+import { hexToArrayBuffer } from '../../utils';
 import loadBigInt from './loadBigInt';
 
 describe('loadBigInt', () => {

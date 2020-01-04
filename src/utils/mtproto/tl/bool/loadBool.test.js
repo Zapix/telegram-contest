@@ -1,6 +1,6 @@
 import loadsBool from './loadBool';
 
-import { BOOL_FALSE, BOOL_TRUE } from '../constants';
+import { BOOL_FALSE, BOOL_TRUE } from '../../constants';
 
 describe('bool', () => {
   it('false', () => {

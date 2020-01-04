@@ -1,8 +1,8 @@
 import * as R from 'ramda';
 
-import { uint8ToString } from '../utils';
-import { getStringFromArrayBuffer } from './tlSerialization';
-import { isWithOffset } from './utils';
+import { uint8ToString } from '../../utils';
+import { getStringFromArrayBuffer } from '../tlSerialization';
+import { isWithOffset } from '../utils';
 
 const tlStringWithOffset = R.unary(R.partialRight(getStringFromArrayBuffer, [0]));
 

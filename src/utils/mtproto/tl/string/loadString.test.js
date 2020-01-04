@@ -1,6 +1,6 @@
 import * as R from 'ramda';
 
-import { copyBytes } from '../utils';
+import { copyBytes } from '../../utils';
 import loadString from './loadString';
 
 describe('loadString', () => {
