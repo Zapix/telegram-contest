@@ -8,15 +8,17 @@ import {
   isMessageContainer,
   isBadMsgNotification,
   isMsgsAck,
-  getConstructor, isAuthSentCode, isRpcResult,
+  getConstructor,
+  isAuthSentCode,
+  isRpcResult,
 } from './utils';
-import parsePong from './parsePong';
-import parseNewSessionCreated from './parseNewSessionCreated';
-import parseMessageContainer from './parseMessageContainer';
-import parseBadMsgNotification from './parseBadMsgNotification';
-import parseMsgsAck from './parseMsgsAck';
-import parseAuthSentCode from './parseAuthSentCode';
-import parseRpcResult from './parseRpcResult';
+import loadPong from './loadPong';
+import loadNewSessionCreated from './loadNewSessionCreated';
+import loadMessageContainer from './loadMessageContainer';
+import loadBadMsgNotification from './loadBadMsgNotification';
+import loadMsgsAck from './loadMsgsAck';
+import loadAuthSentCode from './loadAuthSentCode';
+import loadRpcResult from './loadRpcResult';
 
 /**
  * Writes warning message into console and returns null
@@ -44,12 +46,12 @@ const parseUnexpectedMessage = R.pipe(
  */
 function parsePlainMessage(buffer) {
   return R.cond([
-    [isPong, parsePong],
-    [isNewSessionCreated, parseNewSessionCreated],
-    [isBadMsgNotification, parseBadMsgNotification],
-    [isMsgsAck, parseMsgsAck],
-    [isAuthSentCode, parseAuthSentCode],
-    [isRpcResult, R.partialRight(parseRpcResult, [parsePlainMessage])],
+    [isPong, loadPong],
+    [isNewSessionCreated, loadNewSessionCreated],
+    [isBadMsgNotification, loadBadMsgNotification],
+    [isMsgsAck, loadMsgsAck],
+    [isAuthSentCode, loadAuthSentCode],
+    [isRpcResult, R.partialRight(loadRpcResult, [parsePlainMessage])],
     [R.T, parseUnexpectedMessage],
   ])(buffer);
 }
@@ -59,9 +61,9 @@ function parsePlainMessage(buffer) {
  * @param {ArrayBuffer} buffer
  * @returns {Array<*> | *}
  */
-const parseMessage = R.cond([
-  [isMessageContainer, R.partialRight(parseMessageContainer, [parsePlainMessage])],
+const loadMessage = R.cond([
+  [isMessageContainer, R.partialRight(loadMessageContainer, [parsePlainMessage])],
   [R.T, parsePlainMessage],
 ]);
 
-export default parseMessage;
+export default loadMessage;

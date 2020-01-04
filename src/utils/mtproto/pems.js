@@ -2,7 +2,7 @@ import * as R from 'ramda';
 import forge from 'node-forge';
 
 import { bigIntToUint8Array, uint8ArrayToHex } from './utils';
-import { toTlString } from './tlSerialization';
+import { toTlString } from './tl/tlSerialization';
 
 const pems = [`
 -----BEGIN RSA PUBLIC KEY-----

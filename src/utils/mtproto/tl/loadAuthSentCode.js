@@ -2,7 +2,7 @@ import * as R from 'ramda';
 
 import { getConstructor } from './utils';
 import { BOOL_TRUE } from '../constants';
-import { getStringFromArrayBuffer, tlStringToString } from '../tlSerialization';
+import { getStringFromArrayBuffer, tlStringToString } from './tlSerialization';
 
 /**
  * Parse auth.SentCode with schema v2:
@@ -14,7 +14,7 @@ import { getStringFromArrayBuffer, tlStringToString } from '../tlSerialization';
  *   phoneCodeHash: string,
  * }}
  */
-export default function parseAuthSentCode(buffer) {
+export default function loadAuthSentCode(buffer) {
   return {
     type: getConstructor(buffer),
     phoneRegistered: new Uint32Array(buffer.slice(4), 0, 1)[0] === BOOL_TRUE,

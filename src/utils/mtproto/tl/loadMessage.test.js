@@ -1,19 +1,21 @@
-import parseMessage from './parseMessage';
+import loadMessage from './loadMessage';
 import {
   PONG,
   NEW_SESSION_CREATED,
   BAD_MSG_NOTIFICATION,
   MSGS_ACK,
-  AUTH_SENT_CODE, RPC_RESULT, MESSAGE_CONTAINER,
+  AUTH_SENT_CODE,
+  RPC_RESULT,
+  MESSAGE_CONTAINER,
 } from '../constants';
 import { hexToArrayBuffer } from '../utils';
 
-describe('parseMessage', () => {
+describe('loadMessage', () => {
   it('pong', () => {
     const hexStr = 'c573773400000000452d075e7e34abe84fe1ef56';
     const buffer = hexToArrayBuffer(hexStr);
 
-    expect(parseMessage(buffer)).toEqual({
+    expect(loadMessage(buffer)).toEqual({
       type: PONG,
       msgId: BigInt('0x5e072d4500000000'),
       pingId: BigInt('0x56efe14fe8ab347e'),
@@ -24,7 +26,7 @@ describe('parseMessage', () => {
     const hexStr = '0809c29e00000000452d075e078cde63a724558fb73e6267c6ab026b';
     const buffer = hexToArrayBuffer(hexStr);
 
-    expect(parseMessage(buffer)).toEqual({
+    expect(loadMessage(buffer)).toEqual({
       type: NEW_SESSION_CREATED,
       firstMsgId: BigInt('0x5e072d4500000000'),
       uniqueId: BigInt('0x8f5524a763de8c07'),
@@ -38,7 +40,7 @@ describe('parseMessage', () => {
     /* eslint-enable */
     const buffer = hexToArrayBuffer(hexStr);
 
-    expect(parseMessage(buffer)).toEqual({
+    expect(loadMessage(buffer)).toEqual({
       type: MESSAGE_CONTAINER,
       messages: [
         {
@@ -68,7 +70,7 @@ describe('parseMessage', () => {
     const hexStr = '11f8efa70000000079f60a5e0200000023000000';
     const buffer = hexToArrayBuffer(hexStr);
 
-    expect(parseMessage(buffer)).toEqual({
+    expect(loadMessage(buffer)).toEqual({
       type: BAD_MSG_NOTIFICATION,
       badMsgId: BigInt('0x5e0af67900000000'),
       badSeqNo: 2,
@@ -80,7 +82,7 @@ describe('parseMessage', () => {
     const hexStr = '59b4d66215c4b51c02000000000000000a700b5e000000000e800b5e';
     const buffer = hexToArrayBuffer(hexStr);
 
-    expect(parseMessage(buffer)).toEqual({
+    expect(loadMessage(buffer)).toEqual({
       type: MSGS_ACK,
       msgIds: [
         BigInt('0x5e0b700a00000000'),
@@ -92,7 +94,7 @@ describe('parseMessage', () => {
   it('auth code sent', () => {
     const hexStr = 'bdbc1522b57572991235646130343337306165386264323132373800';
     const buffer = hexToArrayBuffer(hexStr);
-    expect(parseMessage(buffer)).toEqual({
+    expect(loadMessage(buffer)).toEqual({
       type: AUTH_SENT_CODE,
       phoneRegistered: true,
       phoneCodeHash: '5da04370ae8bd2127',
@@ -105,7 +107,7 @@ describe('parseMessage', () => {
     /* eslint-enable */
     const buffer = hexToArrayBuffer(hexStr);
 
-    expect(parseMessage(buffer)).toEqual({
+    expect(loadMessage(buffer)).toEqual({
       type: RPC_RESULT,
       msgId: BigInt('0x5e0b86bc00000000'),
       message: {
@@ -120,6 +122,6 @@ describe('parseMessage', () => {
     const hexStr = '12110320';
     const buffer = hexToArrayBuffer(hexStr);
 
-    expect(parseMessage(buffer)).toBeNull();
+    expect(loadMessage(buffer)).toBeNull();
   });
 });

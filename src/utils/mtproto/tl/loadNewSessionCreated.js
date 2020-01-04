@@ -5,7 +5,7 @@
  */
 import { getConstructor } from './utils';
 
-export default function parseNewSessionCreated(buffer) {
+export default function loadNewSessionCreated(buffer) {
   const constructor = getConstructor(buffer);
   const firstMsgIdArr = new BigUint64Array(buffer.slice(4), 0, 1);
   const uniqueIdArr = new BigUint64Array(buffer.slice(12), 0, 1);

@@ -1,6 +1,6 @@
 import * as R from 'ramda';
 
-import parseVector from './parseVector';
+import loadVector from './loadVector';
 
 /**
  * Parse messages acknowledgment by schema
@@ -8,10 +8,10 @@ import parseVector from './parseVector';
  * @param buffer
  * @returns {{ type: number, msgIds: Array<Number> }}
  */
-export default function parseMsgsAck(buffer) {
+export default function loadMsgsAck(buffer) {
   const constructor = (new Uint32Array(buffer, 0, 1))[0];
   const msgIds = R.pipe(
-    parseVector,
+    loadVector,
     R.map(R.pipe(
       (x) => (new BigUint64Array(x)),
       R.nth(0),

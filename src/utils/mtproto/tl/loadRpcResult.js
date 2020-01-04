@@ -12,7 +12,7 @@ import { getConstructor } from './utils';
  *   message: *
  * }}
  */
-export default function parseRpcResult(buffer, parseMessage) {
+export default function loadRpcResult(buffer, parseMessage) {
   return {
     type: getConstructor(buffer),
     msgId: (new BigUint64Array(buffer.slice(4), 0, 1))[0],

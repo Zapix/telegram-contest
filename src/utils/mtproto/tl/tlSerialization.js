@@ -5,7 +5,7 @@ import {
   stringToUint8,
   uint8ToBigInt,
   uint8ToString,
-} from './utils';
+} from '../utils';
 
 export const isShortString = R.pipe(
   R.prop('length'),

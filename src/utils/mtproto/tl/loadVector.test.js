@@ -1,6 +1,6 @@
 import * as R from 'ramda';
 
-import parseVector from './parseVector';
+import loadVector from './loadVector';
 import { hexToArrayBuffer } from '../utils';
 
 describe('parseVector', () => {
@@ -10,7 +10,7 @@ describe('parseVector', () => {
     const buffer = hexToArrayBuffer(hexStr);
 
     const vector = R.pipe(
-      parseVector,
+      loadVector,
       R.map(R.pipe(
         (x) => new Uint32Array(x),
         R.nth(0),

@@ -6,7 +6,7 @@
  */
 import { getConstructor } from './utils';
 
-export default function parseBadMsgNotification(buffer) {
+export default function loadBadMsgNotification(buffer) {
   return {
     type: getConstructor(buffer),
     badMsgId: (new BigUint64Array(buffer.slice(4), 0, 1))[0],

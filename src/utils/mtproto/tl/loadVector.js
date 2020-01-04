@@ -15,7 +15,7 @@ function sliceBuffer(buffer, start, end) {
  * @param {ArrayBuffer} buffer
  * @returns {*[]}
  */
-export default function parseVector(buffer) {
+export default function loadVector(buffer) {
   // TODO: allow to parse vectors with any values
   const count = (new Uint32Array(buffer.slice(4), 0, 1))[0];
   const messagesBuffer = buffer.slice(8);

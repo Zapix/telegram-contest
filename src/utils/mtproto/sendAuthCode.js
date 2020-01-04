@@ -6,7 +6,7 @@ import {
   AUTH_SEND_CODE,
   CODE_SETTINGS,
 } from './constants';
-import { stringToTlString } from './tlSerialization';
+import { stringToTlString } from './tl/tlSerialization';
 import { copyBytes } from './utils';
 import encryptMessage from './encryptMessage';
 import sendRequest from './sendRequest';

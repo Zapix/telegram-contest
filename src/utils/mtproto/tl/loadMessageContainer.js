@@ -6,7 +6,7 @@
  */
 import { getConstructor } from './utils';
 
-export default function parseMessageContainer(buffer, parseMessage) {
+export default function loadMessageContainer(buffer, parseMessage) {
   const countArr = new Uint32Array(buffer, 4, 1);
   const count = countArr[0];
 
