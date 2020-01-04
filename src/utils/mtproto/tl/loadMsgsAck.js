@@ -1,6 +1,5 @@
-import * as R from 'ramda';
-
 import loadVector from './loadVector';
+import loadBigInt from './loadBigInt';
 
 /**
  * Parse messages acknowledgment by schema
@@ -10,14 +9,7 @@ import loadVector from './loadVector';
  */
 export default function loadMsgsAck(buffer) {
   const constructor = (new Uint32Array(buffer, 0, 1))[0];
-  const msgIds = R.pipe(
-    loadVector,
-    R.map(R.pipe(
-      (x) => (new BigUint64Array(x)),
-      R.nth(0),
-    )),
-  )(buffer.slice(4));
-
+  const msgIds = loadVector(loadBigInt, buffer.slice(4));
   return {
     msgIds,
     type: constructor,
