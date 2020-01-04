@@ -91,3 +91,13 @@ export const isAuthSentCode = R.pipe(
   getConstructor,
   R.equals(AUTH_SENT_CODE),
 );
+
+export const isWithOffset = R.pipe(
+  R.nthArg(1),
+  R.equals(true),
+);
+
+export const withConstantOffset = (func, offset) => (x) => ({
+  offset,
+  value: func(x),
+});
