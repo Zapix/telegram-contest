@@ -522,3 +522,15 @@ export function mergeArrayBuffer(bufferA, bufferB) {
 
   return buffer;
 }
+
+/**
+ * @param {ArrayBuffer} buffer
+ * @param {Number} start
+ * @param {Number} [end]
+ * @returns {ArrayBuffer}
+ */
+export function sliceBuffer(buffer, start, end) {
+  return buffer.slice(start, end);
+}
+
+export const getEmptyArrayBuffer = R.always(new ArrayBuffer(0));

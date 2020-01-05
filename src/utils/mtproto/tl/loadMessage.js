@@ -15,7 +15,7 @@ import {
 import loadPong from './loadPong';
 import loadNewSessionCreated from './loadNewSessionCreated';
 import loadMessageContainer from './loadMessageContainer';
-import loadBadMsgNotification from './loadBadMsgNotification';
+import { loadBadMsgNotification } from './bad_msg_notification';
 import { loadMsgsAck } from './msgs_ack';
 import loadAuthSentCode from './loadAuthSentCode';
 import loadRpcResult from './loadRpcResult';

@@ -5,9 +5,7 @@ import { dumpBigInt } from '../bigInt';
 import { dumpBool } from '../bool';
 import { dumpString } from '../string';
 import { VECTOR } from '../../constants';
-import { mergeArrayBuffer } from '../../utils';
-
-const getEmptyArrayBuffer = R.always(new ArrayBuffer(0));
+import { getEmptyArrayBuffer, mergeArrayBuffer } from '../../utils';
 
 /**
  * @param {Array<*>} value

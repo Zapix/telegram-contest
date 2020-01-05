@@ -2,11 +2,12 @@ import loadMessage from './loadMessage';
 import {
   PONG,
   NEW_SESSION_CREATED,
-  BAD_MSG_NOTIFICATION,
-  MSGS_ACK,
   AUTH_SENT_CODE,
   RPC_RESULT,
-  MESSAGE_CONTAINER, TYPE_KEY,
+  MESSAGE_CONTAINER,
+  TYPE_KEY,
+  BAD_MSG_NOTIFICATION_TYPE,
+  MSGS_ACK_TYPE,
 } from '../constants';
 import { hexToArrayBuffer } from '../utils';
 
@@ -71,7 +72,7 @@ describe('loadMessage', () => {
     const buffer = hexToArrayBuffer(hexStr);
 
     expect(loadMessage(buffer)).toEqual({
-      type: BAD_MSG_NOTIFICATION,
+      [TYPE_KEY]: BAD_MSG_NOTIFICATION_TYPE,
       badMsgId: BigInt('0x5e0af67900000000'),
       badSeqNo: 2,
       errorCode: 0x23,
@@ -83,7 +84,7 @@ describe('loadMessage', () => {
     const buffer = hexToArrayBuffer(hexStr);
 
     expect(loadMessage(buffer)).toEqual({
-      [TYPE_KEY]: 'msgs_ack',
+      [TYPE_KEY]: MSGS_ACK_TYPE,
       msgIds: [
         BigInt('0x5e0b700a00000000'),
         BigInt('0x5e0b800e00000000'),
