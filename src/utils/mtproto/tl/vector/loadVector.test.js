@@ -1,10 +1,10 @@
 import * as R from 'ramda';
 import loadVector from './loadVector';
-import { copyBytes, hexToArrayBuffer } from '../utils';
-import { loadInt } from './int';
-import { stringToTlString } from './tlSerialization';
-import { VECTOR } from '../constants';
-import { loadString } from './string';
+import { copyBytes, hexToArrayBuffer } from '../../utils';
+import { loadInt } from '../int';
+import { stringToTlString } from '../tlSerialization';
+import { VECTOR } from '../../constants';
+import { loadString } from '../string';
 
 describe('loadVector', () => {
   describe('load vector of ints', () => {

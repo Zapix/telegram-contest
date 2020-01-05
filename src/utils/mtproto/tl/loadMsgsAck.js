@@ -1,4 +1,4 @@
-import loadVector from './loadVector';
+import { loadVector } from './vector';
 import { loadBigInt } from './bigInt';
 
 /**
