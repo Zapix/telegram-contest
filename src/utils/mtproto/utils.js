@@ -503,3 +503,22 @@ export const dumpArrayBuffer = R.pipe(
 );
 
 export const arrayBufferToHex = dumpArrayBuffer;
+
+/**
+ * @param {ArrayBuffer} bufferA
+ * @param {ArrayBuffer} bufferB
+ * @returns {ArrayBuffer}
+ */
+export function mergeArrayBuffer(bufferA, bufferB) {
+  const buffer = new ArrayBuffer(bufferA.byteLength + bufferB.byteLength);
+  const bufferAView = new Uint8Array(bufferA);
+  const bufferBView = new Uint8Array(bufferB);
+
+  const bufferPart1 = new Uint8Array(buffer, 0, bufferA.byteLength);
+  const bufferPart2 = new Uint8Array(buffer, bufferA.byteLength, bufferB.byteLength);
+
+  copyBytes(bufferAView, bufferPart1);
+  copyBytes(bufferBView, bufferPart2);
+
+  return buffer;
+}
