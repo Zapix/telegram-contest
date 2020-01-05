@@ -2,6 +2,8 @@
 export const BOOL_TRUE = 0x997275b5;
 export const BOOL_FALSE = 0xbc799737;
 
+export const TYPE_KEY = Symbol('type');
+
 export const API_ID = 1005944;
 export const API_HASH = 'dfbf8ed1e37d1cd1ad370e7431ed8a87';
 
@@ -41,6 +43,7 @@ export const NEW_SESSION_CREATED = 0x9ec20908;
 
 export const BAD_MSG_NOTIFICATION = 0xa7eff811;
 export const MSGS_ACK = 0x62d6b459;
+export const MSGS_ACK_TYPE = 'msgs_ack';
 
 export const VECTOR = 0x1cb5c415;
 export const RPC_RESULT = 0xf35c6d01;

@@ -6,7 +6,7 @@ import {
   MSGS_ACK,
   AUTH_SENT_CODE,
   RPC_RESULT,
-  MESSAGE_CONTAINER,
+  MESSAGE_CONTAINER, TYPE_KEY,
 } from '../constants';
 import { hexToArrayBuffer } from '../utils';
 
@@ -83,7 +83,7 @@ describe('loadMessage', () => {
     const buffer = hexToArrayBuffer(hexStr);
 
     expect(loadMessage(buffer)).toEqual({
-      type: MSGS_ACK,
+      [TYPE_KEY]: 'msgs_ack',
       msgIds: [
         BigInt('0x5e0b700a00000000'),
         BigInt('0x5e0b800e00000000'),
