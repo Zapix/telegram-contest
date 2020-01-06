@@ -3,6 +3,7 @@ import { sliceBuffer } from '../../utils';
 import { loadBigInt } from '../bigInt';
 import { loadInt } from '../int';
 import { BAD_MSG_NOTIFICATION_TYPE, TYPE_KEY } from '../../constants';
+import { isWithOffset, withConstantOffset } from '../utils';
 
 const getMsgId = R.pipe(
   R.partialRight(sliceBuffer, [4, 12]),
@@ -19,15 +20,19 @@ const getErrorCode = R.pipe(
   loadInt,
 );
 
-
 /**
  * Parse bad msg notification with schema:
  * bad_msg_notification#a7eff811 bad_msg_id:long bad_msg_seqno:int error_code:int
  * @param {ArrayBuffer} buffer
  * @returns {{}}
  */
-export default R.pipe(
+const loadBadMsgNotification = R.pipe(
   R.of,
   R.ap([R.always(BAD_MSG_NOTIFICATION_TYPE), getMsgId, getSeqNo, getErrorCode]),
   R.zipObj([TYPE_KEY, 'badMsgId', 'badSeqNo', 'errorCode']),
 );
+
+export default R.cond([
+  [isWithOffset, withConstantOffset(loadBadMsgNotification, 20)],
+  [R.T, loadBadMsgNotification],
+]);

@@ -3,6 +3,7 @@ import { sliceBuffer } from '../../utils';
 import { loadBigInt } from '../bigInt';
 import { loadInt } from '../int';
 import { BAD_SERVER_SALT_TYPE, TYPE_KEY } from '../../constants';
+import { isWithOffset, withConstantOffset } from '../utils';
 
 const getMsgId = R.pipe(
   R.partialRight(sliceBuffer, [4, 12]),
@@ -28,8 +29,13 @@ const getNewServerSalt = R.pipe(
  * @param {ArrayBuffer} buffer
  * @returns {*} - loaded message
  */
-export default R.pipe(
+const loadBadServerSalt = R.pipe(
   R.of,
   R.ap([R.always(BAD_SERVER_SALT_TYPE), getMsgId, getSeqNo, getErrorCode, getNewServerSalt]),
   R.zipObj([TYPE_KEY, 'badMsgId', 'badSeqNo', 'errorCode', 'newServerSalt']),
 );
+
+export default R.cond([
+  [isWithOffset, withConstantOffset(loadBadServerSalt, 28)],
+  [R.T, loadBadServerSalt],
+]);

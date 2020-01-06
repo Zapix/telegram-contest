@@ -5,14 +5,17 @@ import { MSGS_ACK_TYPE, TYPE_KEY } from '../../constants';
 /**
  * Parse messages acknowledgment by schema
  * msgs_ack#62d6b459 msg_ids:Vector long = MsgsAck;
- * @param buffer
+ * @param {ArrayBuffer} buffer
+ * @param {Boolean} withOffset
  * @returns {{ type: number, msgIds: Array<Number> }}
  */
-export default function loadMsgsAck(buffer) {
-  const msgIds = loadVector(loadBigInt, buffer.slice(4));
+export default function loadMsgsAck(buffer, withOffset) {
+  const { value: msgIds, offset } = loadVector(loadBigInt, buffer.slice(4), true);
 
-  return {
+  const value = {
     [TYPE_KEY]: MSGS_ACK_TYPE,
     msgIds,
   };
+
+  return (withOffset) ? { value, offset: (offset + 4) } : value;
 }
