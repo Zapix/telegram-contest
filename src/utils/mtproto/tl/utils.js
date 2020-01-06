@@ -7,7 +7,7 @@ import {
   MSGS_ACK,
   VECTOR,
   RPC_RESULT,
-  AUTH_SENT_CODE,
+  AUTH_SENT_CODE, BAD_SERVER_SALT,
 } from '../constants';
 
 /**
@@ -54,6 +54,11 @@ export const isNewSessionCreated = R.pipe(
 export const isBadMsgNotification = R.pipe(
   getConstructor,
   R.equals(BAD_MSG_NOTIFICATION),
+);
+
+export const isBadServerSalt = R.pipe(
+  getConstructor,
+  R.equals(BAD_SERVER_SALT),
 );
 
 /**

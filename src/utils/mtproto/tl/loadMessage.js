@@ -10,12 +10,13 @@ import {
   isMsgsAck,
   getConstructor,
   isAuthSentCode,
-  isRpcResult,
+  isRpcResult, isBadServerSalt,
 } from './utils';
 import loadPong from './loadPong';
 import loadNewSessionCreated from './loadNewSessionCreated';
 import loadMessageContainer from './loadMessageContainer';
 import { loadBadMsgNotification } from './bad_msg_notification';
+import { loadBadServerSalt } from './bad_server_salt';
 import { loadMsgsAck } from './msgs_ack';
 import loadAuthSentCode from './loadAuthSentCode';
 import loadRpcResult from './loadRpcResult';
@@ -51,6 +52,7 @@ function parsePlainMessage(buffer) {
     [isBadMsgNotification, loadBadMsgNotification],
     [isMsgsAck, loadMsgsAck],
     [isAuthSentCode, loadAuthSentCode],
+    [isBadServerSalt, loadBadServerSalt],
     [isRpcResult, R.partialRight(loadRpcResult, [parsePlainMessage])],
     [R.T, parseUnexpectedMessage],
   ])(buffer);

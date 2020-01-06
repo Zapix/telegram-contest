@@ -7,7 +7,7 @@ import {
   MESSAGE_CONTAINER,
   TYPE_KEY,
   BAD_MSG_NOTIFICATION_TYPE,
-  MSGS_ACK_TYPE,
+  MSGS_ACK_TYPE, BAD_SERVER_SALT_TYPE,
 } from '../constants';
 import { hexToArrayBuffer } from '../utils';
 
@@ -76,6 +76,20 @@ describe('loadMessage', () => {
       badMsgId: BigInt('0x5e0af67900000000'),
       badSeqNo: 2,
       errorCode: 0x23,
+    });
+  });
+
+  it('bad server salt ', () => {
+    // ed ab 44 7b
+    const hexStr = '7b44abed0000000079f60a5e0200000023000000000000000a700b5e';
+    const buffer = hexToArrayBuffer(hexStr);
+
+    expect(loadMessage(buffer)).toEqual({
+      [TYPE_KEY]: BAD_SERVER_SALT_TYPE,
+      badMsgId: BigInt('0x5e0af67900000000'),
+      badSeqNo: 2,
+      errorCode: 0x23,
+      newServerSalt: BigInt('0x5e0b700a00000000'),
     });
   });
 

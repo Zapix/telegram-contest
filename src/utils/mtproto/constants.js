@@ -44,6 +44,9 @@ export const NEW_SESSION_CREATED = 0x9ec20908;
 export const BAD_MSG_NOTIFICATION = 0xa7eff811;
 export const BAD_MSG_NOTIFICATION_TYPE = 'bad_msg_notification';
 
+export const BAD_SERVER_SALT = 0xedab447b;
+export const BAD_SERVER_SALT_TYPE = 'bad_server_salt';
+
 export const MSGS_ACK = 0x62d6b459;
 export const MSGS_ACK_TYPE = 'msgs_ack';
 
