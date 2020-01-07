@@ -53,5 +53,8 @@ export const MSGS_ACK_TYPE = 'msgs_ack';
 export const MSGS_STATE_REQ = 0xda69fb52;
 export const MSGS_STATE_REQ_TYPE = 'msgs_state_req';
 
+export const MSGS_STATE_INFO = 0x04deb57d;
+export const MSGS_STATE_INFO_TYPE = 'msgs_state_info';
+
 export const VECTOR = 0x1cb5c415;
 export const RPC_RESULT = 0xf35c6d01;
