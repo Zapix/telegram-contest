@@ -7,7 +7,7 @@ import {
   MSGS_ACK,
   VECTOR,
   RPC_RESULT,
-  AUTH_SENT_CODE, BAD_SERVER_SALT,
+  AUTH_SENT_CODE, BAD_SERVER_SALT, MSGS_STATE_REQ,
 } from '../constants';
 
 /**
@@ -68,6 +68,15 @@ export const isBadServerSalt = R.pipe(
 export const isMsgsAck = R.pipe(
   getConstructor,
   R.equals(MSGS_ACK),
+);
+
+/**
+ * @param {ArrayBuffer} - message buffer
+ * @returns {boolean}
+ */
+export const isMsgsStateReq = R.pipe(
+  getConstructor,
+  R.equals(MSGS_STATE_REQ),
 );
 
 /**
