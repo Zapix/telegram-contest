@@ -9,7 +9,7 @@ import {
   BAD_MSG_NOTIFICATION_TYPE,
   MSGS_ACK_TYPE,
   BAD_SERVER_SALT_TYPE,
-  MSGS_STATE_REQ_TYPE, MSGS_STATE_INFO_TYPE, MSGS_ALL_INFO_TYPE,
+  MSGS_STATE_REQ_TYPE, MSGS_STATE_INFO_TYPE, MSGS_ALL_INFO_TYPE, MSG_DETAILED_INFO_TYPE,
 } from '../constants';
 import { hexToArrayBuffer } from '../utils';
 
@@ -170,6 +170,19 @@ describe('loadMessage', () => {
         BigInt('0x5e0b800e00000000'),
       ],
       info: [12, 13],
+    });
+  });
+
+  it('load msg_detailed_info', () => {
+    const hexStr = 'c63e6d27000000000a700b5e000000000e800b5e7b00000000000000';
+    const buffer = hexToArrayBuffer(hexStr);
+
+    expect(loadMessage(buffer)).toEqual({
+      [TYPE_KEY]: MSG_DETAILED_INFO_TYPE,
+      msgId: BigInt('0x5e0b700a00000000'),
+      answerMsgId: BigInt('0x5e0b800e00000000'),
+      bytes: 123,
+      status: 0,
     });
   });
 
