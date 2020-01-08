@@ -122,7 +122,7 @@ const getPaddingCount = R.pipe(
  * @param offset
  * @returns {{incomingString: number[], offset: number}}
  */
-export function getStringFromArrayBuffer(arrayBuffer, offset) {
+export function getStringFromArrayBuffer(arrayBuffer, offset = 0) {
   const stringMarker = new Uint8Array(arrayBuffer, offset);
   if (stringMarker[0] === 254) {
     const stringLengthUint = new Uint8Array(arrayBuffer, offset + 1, 3);

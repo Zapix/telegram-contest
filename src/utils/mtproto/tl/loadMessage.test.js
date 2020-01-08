@@ -9,7 +9,7 @@ import {
   BAD_MSG_NOTIFICATION_TYPE,
   MSGS_ACK_TYPE,
   BAD_SERVER_SALT_TYPE,
-  MSGS_STATE_REQ_TYPE, MSGS_STATE_INFO_TYPE,
+  MSGS_STATE_REQ_TYPE, MSGS_STATE_INFO_TYPE, MSGS_ALL_INFO_TYPE,
 } from '../constants';
 import { hexToArrayBuffer } from '../utils';
 
@@ -114,7 +114,7 @@ describe('loadMessage', () => {
     expect(loadMessage(buffer)).toEqual({
       type: AUTH_SENT_CODE,
       phoneRegistered: true,
-      phoneCodeHash: '5da04370ae8bd2127',
+      phoneCodeHash: 'da04370ae8bd21278',
     });
   });
 
@@ -130,7 +130,7 @@ describe('loadMessage', () => {
       message: {
         type: AUTH_SENT_CODE,
         phoneRegistered: true,
-        phoneCodeHash: '5da04370ae8bd2127',
+        phoneCodeHash: 'da04370ae8bd21278',
       },
     });
   });
@@ -156,6 +156,20 @@ describe('loadMessage', () => {
       [TYPE_KEY]: MSGS_STATE_INFO_TYPE,
       reqMsgId: BigInt('0x5e072d4500000000'),
       info: [1, 1, 4, 12],
+    });
+  });
+
+  it('load msgs_all_info', () => {
+    const hexStr = '31d1c08c15c4b51c02000000000000000a700b5e000000000e800b5e020c0d00';
+    const buffer = hexToArrayBuffer(hexStr);
+
+    expect(loadMessage(buffer)).toEqual({
+      [TYPE_KEY]: MSGS_ALL_INFO_TYPE,
+      msgIds: [
+        BigInt('0x5e0b700a00000000'),
+        BigInt('0x5e0b800e00000000'),
+      ],
+      info: [12, 13],
     });
   });
 

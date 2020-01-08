@@ -13,7 +13,7 @@ import {
   isRpcResult,
   isBadServerSalt,
   isMsgsStateReq,
-  isMsgsStateInfo,
+  isMsgsStateInfo, isMsgsAllInfo,
 } from './utils';
 import loadPong from './loadPong';
 import loadNewSessionCreated from './loadNewSessionCreated';
@@ -25,6 +25,7 @@ import loadAuthSentCode from './loadAuthSentCode';
 import loadRpcResult from './loadRpcResult';
 import { loadMsgsStateReq } from './msgs_state_req';
 import { loadMsgsStateInfo } from './msgs_state_info';
+import loadMsgsAllInfo from './msgs_all_info/loadMsgsAllInfo';
 
 /**
  * Writes warning message into console and returns null
@@ -60,6 +61,7 @@ function parsePlainMessage(buffer) {
     [isBadServerSalt, loadBadServerSalt],
     [isMsgsStateReq, loadMsgsStateReq],
     [isMsgsStateInfo, loadMsgsStateInfo],
+    [isMsgsAllInfo, loadMsgsAllInfo],
     [isRpcResult, R.partialRight(loadRpcResult, [parsePlainMessage])],
     [R.T, parseUnexpectedMessage],
   ])(buffer);
