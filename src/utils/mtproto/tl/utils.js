@@ -11,7 +11,7 @@ import {
   BAD_SERVER_SALT,
   MSGS_STATE_REQ,
   MSGS_STATE_INFO,
-  MSGS_ALL_INFO, MSG_DETAILED_INFO, MSG_NEW_DETAILED_INFO,
+  MSGS_ALL_INFO, MSG_DETAILED_INFO, MSG_NEW_DETAILED_INFO, MSG_RESEND_REQ,
 } from '../constants';
 
 /**
@@ -110,9 +110,22 @@ export const isMsgDetailedInfo = R.pipe(
   R.equals(MSG_DETAILED_INFO),
 );
 
+/**
+ * @param {ArrayBuffer} - message buffer
+ * @returns {boolean}
+ */
 export const isMsgNewDetailedInfo = R.pipe(
   getConstructor,
   R.equals(MSG_NEW_DETAILED_INFO),
+);
+
+/**
+ * @param {ArrayBuffer} - message buffer
+ * @returns {boolean}
+ */
+export const isMsgResendReq = R.pipe(
+  getConstructor,
+  R.equals(MSG_RESEND_REQ),
 );
 
 /**
