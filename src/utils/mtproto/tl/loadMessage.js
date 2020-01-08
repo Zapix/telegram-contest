@@ -17,7 +17,7 @@ import {
   isMsgsAllInfo,
   isMsgDetailedInfo,
   isMsgNewDetailedInfo,
-  isMsgResendReq,
+  isMsgResendReq, isMsgResendAnsReq,
 } from './utils';
 import loadPong from './loadPong';
 import loadNewSessionCreated from './loadNewSessionCreated';
@@ -33,6 +33,7 @@ import loadMsgsAllInfo from './msgs_all_info/loadMsgsAllInfo';
 import { loadMsgDetailedInfo } from './msg_detailed_info';
 import { loadMsgNewDetailedInfo } from './msg_new_detailed_info';
 import { loadMsgResendReq } from './msg_resend_req';
+import { loadMsgResendAnsReq } from './msg_resend_ans_req';
 
 /**
  * Writes warning message into console and returns null
@@ -72,6 +73,7 @@ function parsePlainMessage(buffer) {
     [isMsgDetailedInfo, loadMsgDetailedInfo],
     [isMsgNewDetailedInfo, loadMsgNewDetailedInfo],
     [isMsgResendReq, loadMsgResendReq],
+    [isMsgResendAnsReq, loadMsgResendAnsReq],
     [isRpcResult, R.partialRight(loadRpcResult, [parsePlainMessage])],
     [R.T, parseUnexpectedMessage],
   ])(buffer);
