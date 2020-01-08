@@ -62,5 +62,8 @@ export const MSGS_ALL_INFO_TYPE = 'msgs_all_info';
 export const MSG_DETAILED_INFO_TYPE = 'msg_detailed_info';
 export const MSG_DETAILED_INFO = 0x276d3ec6;
 
+export const MSG_NEW_DETAILED_INFO = 0x809db6df;
+export const MSG_NEW_DETAILED_INFO_TYPE = 'msg_new_detailed_info';
+
 export const VECTOR = 0x1cb5c415;
 export const RPC_RESULT = 0xf35c6d01;

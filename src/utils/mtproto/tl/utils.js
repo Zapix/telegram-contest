@@ -11,7 +11,7 @@ import {
   BAD_SERVER_SALT,
   MSGS_STATE_REQ,
   MSGS_STATE_INFO,
-  MSGS_ALL_INFO, MSG_DETAILED_INFO,
+  MSGS_ALL_INFO, MSG_DETAILED_INFO, MSG_NEW_DETAILED_INFO,
 } from '../constants';
 
 /**
@@ -108,6 +108,11 @@ export const isMsgsAllInfo = R.pipe(
 export const isMsgDetailedInfo = R.pipe(
   getConstructor,
   R.equals(MSG_DETAILED_INFO),
+);
+
+export const isMsgNewDetailedInfo = R.pipe(
+  getConstructor,
+  R.equals(MSG_NEW_DETAILED_INFO),
 );
 
 /**
