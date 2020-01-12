@@ -73,3 +73,4 @@ export const MSG_RESEND_ANS_REQ_TYPE = 'msg_resend_ans_req';
 
 export const VECTOR = 0x1cb5c415;
 export const RPC_RESULT = 0xf35c6d01;
+export const RPC_RESULT_TYPE = 'rpc_result';

@@ -3,7 +3,6 @@ import {
   PONG,
   NEW_SESSION_CREATED,
   AUTH_SENT_CODE,
-  RPC_RESULT,
   MESSAGE_CONTAINER,
   TYPE_KEY,
   BAD_MSG_NOTIFICATION_TYPE,
@@ -13,7 +12,10 @@ import {
   MSGS_STATE_INFO_TYPE,
   MSGS_ALL_INFO_TYPE,
   MSG_DETAILED_INFO_TYPE,
-  MSG_NEW_DETAILED_INFO_TYPE, MSG_RESEND_REQ_TYPE, MSG_RESEND_ANS_REQ_TYPE,
+  MSG_NEW_DETAILED_INFO_TYPE,
+  MSG_RESEND_REQ_TYPE,
+  MSG_RESEND_ANS_REQ_TYPE,
+  RPC_RESULT_TYPE,
 } from '../constants';
 import { hexToArrayBuffer } from '../utils';
 
@@ -128,14 +130,14 @@ describe('loadMessage', () => {
     /* eslint-enable */
     const buffer = hexToArrayBuffer(hexStr);
 
-    expect(loadMessage(buffer)).toEqual({
-      type: RPC_RESULT,
+    expect(loadMessage(buffer)).toMatchObject({
+      [TYPE_KEY]: RPC_RESULT_TYPE,
       msgId: BigInt('0x5e0b86bc00000000'),
-      message: {
-        type: AUTH_SENT_CODE,
-        phoneRegistered: true,
-        phoneCodeHash: 'da04370ae8bd21278',
-      },
+      // result: {
+      //   type: AUTH_SENT_CODE,
+      //   phoneRegistered: true,
+      //   phoneCodeHash: 'da04370ae8bd21278',
+      // },
     });
   });
 

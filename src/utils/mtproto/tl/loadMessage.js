@@ -26,7 +26,7 @@ import { loadBadMsgNotification } from './bad_msg_notification';
 import { loadBadServerSalt } from './bad_server_salt';
 import { loadMsgsAck } from './msgs_ack';
 import loadAuthSentCode from './loadAuthSentCode';
-import loadRpcResult from './loadRpcResult';
+import { loadRpcResult } from './rpc_result';
 import { loadMsgsStateReq } from './msgs_state_req';
 import { loadMsgsStateInfo } from './msgs_state_info';
 import loadMsgsAllInfo from './msgs_all_info/loadMsgsAllInfo';
