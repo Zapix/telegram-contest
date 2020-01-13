@@ -1,17 +1,22 @@
 import * as R from 'ramda';
 import {
-  MESSAGE_CONTAINER,
-  PONG,
-  NEW_SESSION_CREATED,
-  BAD_MSG_NOTIFICATION,
-  MSGS_ACK,
-  VECTOR,
-  RPC_RESULT,
   AUTH_SENT_CODE,
+  BAD_MSG_NOTIFICATION,
   BAD_SERVER_SALT,
-  MSGS_STATE_REQ,
+  MESSAGE_CONTAINER,
+  MSG_DETAILED_INFO,
+  MSG_NEW_DETAILED_INFO,
+  MSG_RESEND_ANS_REQ,
+  MSG_RESEND_REQ,
+  MSGS_ACK,
+  MSGS_ALL_INFO,
   MSGS_STATE_INFO,
-  MSGS_ALL_INFO, MSG_DETAILED_INFO, MSG_NEW_DETAILED_INFO, MSG_RESEND_REQ, MSG_RESEND_ANS_REQ,
+  MSGS_STATE_REQ,
+  NEW_SESSION_CREATED,
+  PONG,
+  RPC_ERROR,
+  RPC_RESULT,
+  VECTOR,
 } from '../constants';
 
 /**
@@ -159,6 +164,15 @@ export const isRpcResult = R.pipe(
  * @param {ArrayBuffer} - message buffer
  * @returns {boolean}
  */
+export const isRpcError = R.pipe(
+  getConstructor,
+  R.equals(RPC_ERROR),
+);
+
+/**
+ * @param {ArrayBuffer} - message buffer
+ * @returns {boolean}
+ */
 export const isAuthSentCode = R.pipe(
   getConstructor,
   R.equals(AUTH_SENT_CODE),
@@ -173,3 +187,13 @@ export const withConstantOffset = (func, offset) => (x) => ({
   offset,
   value: func(x),
 });
+
+/**
+ * Computes offset of whole message
+ * @param {Array<{ offset: Number }>} - list of loaded data
+ * @returns {Number} - offset of whole message
+ */
+export const computeOffset = R.pipe(
+  R.ap([R.prop('offset')]),
+  R.sum,
+);

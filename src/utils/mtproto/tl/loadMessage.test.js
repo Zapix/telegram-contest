@@ -15,7 +15,7 @@ import {
   MSG_NEW_DETAILED_INFO_TYPE,
   MSG_RESEND_REQ_TYPE,
   MSG_RESEND_ANS_REQ_TYPE,
-  RPC_RESULT_TYPE,
+  RPC_RESULT_TYPE, RPC_ERROR_TYPE,
 } from '../constants';
 import { hexToArrayBuffer } from '../utils';
 
@@ -138,6 +138,17 @@ describe('loadMessage', () => {
       //   phoneRegistered: true,
       //   phoneCodeHash: 'da04370ae8bd21278',
       // },
+    });
+  });
+
+  it('rpc error', () => {
+    const hex = '19ca4421120000000c48656c6c6f20576f726c6421000000';
+    const buffer = hexToArrayBuffer(hex);
+
+    expect(loadMessage(buffer)).toEqual({
+      errorCode: 18,
+      [TYPE_KEY]: RPC_ERROR_TYPE,
+      errorMessage: 'Hello World!',
     });
   });
 

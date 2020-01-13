@@ -5,7 +5,7 @@ import * as R from 'ramda';
 import { RPC_RESULT_TYPE, TYPE_KEY } from '../../constants';
 import { sliceBuffer } from '../../utils';
 import { loadBigInt } from '../bigInt';
-import { isWithOffset } from '../utils';
+import { computeOffset, isWithOffset } from '../utils';
 
 const loadType = R.pipe(
   R.always(RPC_RESULT_TYPE),
@@ -41,11 +41,6 @@ function loadRpcResult(buffer, withOffset, parseMessage) {
   const buildRpcResult = R.pipe(
     R.ap([R.prop('value')]),
     R.zipObj([TYPE_KEY, 'msgId', 'result']),
-  );
-
-  const computeOffset = R.pipe(
-    R.ap([R.prop('offset')]),
-    R.sum,
   );
 
   const buildWithOffset = R.pipe(

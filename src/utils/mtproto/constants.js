@@ -72,5 +72,9 @@ export const MSG_RESEND_ANS_REQ = 0x8610baeb;
 export const MSG_RESEND_ANS_REQ_TYPE = 'msg_resend_ans_req';
 
 export const VECTOR = 0x1cb5c415;
+
 export const RPC_RESULT = 0xf35c6d01;
 export const RPC_RESULT_TYPE = 'rpc_result';
+
+export const RPC_ERROR = 0x2144ca19;
+export const RPC_ERROR_TYPE = 'rpc_error_type';
