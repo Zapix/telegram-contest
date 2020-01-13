@@ -76,5 +76,8 @@ export const VECTOR = 0x1cb5c415;
 export const RPC_RESULT = 0xf35c6d01;
 export const RPC_RESULT_TYPE = 'rpc_result';
 
+export const RPC_DROP_ANSWER = 0x58e4a740;
+export const RPC_DROP_ANSWER_TYPE = 'rpc_drop_answer';
+
 export const RPC_ERROR = 0x2144ca19;
 export const RPC_ERROR_TYPE = 'rpc_error_type';

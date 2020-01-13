@@ -534,3 +534,5 @@ export function sliceBuffer(buffer, start, end) {
 }
 
 export const getEmptyArrayBuffer = R.always(new ArrayBuffer(0));
+
+export const mergeAllArrayBuffers = R.reduce(mergeArrayBuffer, getEmptyArrayBuffer());

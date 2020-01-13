@@ -13,7 +13,7 @@ import {
   MSGS_STATE_INFO,
   MSGS_STATE_REQ,
   NEW_SESSION_CREATED,
-  PONG,
+  PONG, RPC_DROP_ANSWER,
   RPC_ERROR,
   RPC_RESULT,
   VECTOR,
@@ -173,6 +173,15 @@ export const isRpcError = R.pipe(
  * @param {ArrayBuffer} - message buffer
  * @returns {boolean}
  */
+export const isRpcDropAnswer = R.pipe(
+  getConstructor,
+  R.equals(RPC_DROP_ANSWER),
+);
+
+/**
+ * @param {ArrayBuffer} - message buffer
+ * @returns {boolean}
+ */
 export const isAuthSentCode = R.pipe(
   getConstructor,
   R.equals(AUTH_SENT_CODE),
@@ -184,8 +193,8 @@ export const isWithOffset = R.pipe(
 );
 
 export const withConstantOffset = (func, offset) => (x) => ({
-  offset,
   value: func(x),
+  offset,
 });
 
 /**

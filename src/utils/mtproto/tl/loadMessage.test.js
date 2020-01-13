@@ -15,7 +15,7 @@ import {
   MSG_NEW_DETAILED_INFO_TYPE,
   MSG_RESEND_REQ_TYPE,
   MSG_RESEND_ANS_REQ_TYPE,
-  RPC_RESULT_TYPE, RPC_ERROR_TYPE,
+  RPC_RESULT_TYPE, RPC_ERROR_TYPE, RPC_DROP_ANSWER_TYPE,
 } from '../constants';
 import { hexToArrayBuffer } from '../utils';
 
@@ -149,6 +149,16 @@ describe('loadMessage', () => {
       errorCode: 18,
       [TYPE_KEY]: RPC_ERROR_TYPE,
       errorMessage: 'Hello World!',
+    });
+  });
+
+  it('rpc drop answer', () => {
+    const hexStr = '40a7e458000000000e800b5e';
+    const buffer = hexToArrayBuffer(hexStr);
+
+    expect(loadMessage(buffer)).toEqual({
+      [TYPE_KEY]: RPC_DROP_ANSWER_TYPE,
+      reqMsgId: BigInt('0x5e0b800e00000000'),
     });
   });
 
