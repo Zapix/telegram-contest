@@ -20,7 +20,7 @@ import {
   RPC_RESULT,
   RPC_ANSWER_DROPPED_RUNNING,
   RPC_ANSWER_DROPPED,
-  VECTOR,
+  VECTOR, GET_FUTURE_SALTS,
 } from '../constants';
 
 /**
@@ -216,6 +216,15 @@ export const isRpcAnswerDropped = R.pipe(
 export const isAuthSentCode = R.pipe(
   getConstructor,
   R.equals(AUTH_SENT_CODE),
+);
+
+/**
+ * @param {ArrayBuffer} - message buffer
+ * @returns {boolean}
+ */
+export const isGetFutureSalts = R.pipe(
+  getConstructor,
+  R.equals(GET_FUTURE_SALTS),
 );
 
 export const isWithOffset = R.pipe(

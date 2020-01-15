@@ -90,3 +90,6 @@ export const RPC_ANSWER_DROPPED_TYPE = 'rpc_answer_dropped';
 
 export const RPC_ERROR = 0x2144ca19;
 export const RPC_ERROR_TYPE = 'rpc_error_type';
+
+export const GET_FUTURE_SALTS = 0xb921bd04;
+export const GET_FUTURE_SALTS_TYPE = 'get_future_salts';
