@@ -1,5 +1,5 @@
 import * as R from 'ramda';
-import { isWithOffset, withConstantOffset } from '../utils';
+import { isWithOffset, withConstantOffset } from '../../utils';
 
 function loadInt(buffer) {
   return new Uint32Array(buffer, 0, 1)[0];

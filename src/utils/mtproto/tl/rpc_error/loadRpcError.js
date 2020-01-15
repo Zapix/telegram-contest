@@ -3,8 +3,7 @@ import * as R from 'ramda';
 import { RPC_ERROR_TYPE, TYPE_KEY } from '../../constants';
 import { loadInt } from '../int';
 import { loadString } from '../string';
-import { sliceBuffer } from '../../utils';
-import { computeOffset, isWithOffset } from '../utils';
+import { computeOffset, isWithOffset, sliceBuffer } from '../../utils';
 
 const loadType = R.always({ value: RPC_ERROR_TYPE, offset: 4 });
 const loadErrorCode = R.partialRight(loadInt, [true]);

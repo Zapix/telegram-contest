@@ -1,7 +1,7 @@
 import * as R from 'ramda';
 
 import { getStringFromArrayBuffer } from '../tlSerialization';
-import { isWithOffset } from '../utils';
+import { isWithOffset } from '../../utils';
 
 const loadBytes = R.pipe(
   R.nthArg(0),

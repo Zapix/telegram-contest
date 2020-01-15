@@ -1,9 +1,8 @@
 import * as R from 'ramda';
 import { RPC_ANSWER_DROPPED_TYPE, TYPE_KEY } from '../../constants';
-import { sliceBuffer } from '../../utils';
+import { isWithOffset, sliceBuffer, withConstantOffset } from '../../utils';
 import { loadBigInt } from '../bigInt';
 import { loadInt } from '../int';
-import { isWithOffset, withConstantOffset } from '../utils';
 
 
 const getType = R.always(RPC_ANSWER_DROPPED_TYPE);

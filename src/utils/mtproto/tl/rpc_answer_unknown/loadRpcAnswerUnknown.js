@@ -1,7 +1,7 @@
 import * as R from 'ramda';
 
 import { RPC_DROP_ANSWER_TYPE, TYPE_KEY } from '../../constants';
-import { isWithOffset } from '../utils';
+import { isWithOffset } from '../../utils';
 
 const msg = {
   value: {

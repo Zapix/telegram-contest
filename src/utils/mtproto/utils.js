@@ -536,3 +536,65 @@ export function sliceBuffer(buffer, start, end) {
 export const getEmptyArrayBuffer = R.always(new ArrayBuffer(0));
 
 export const mergeAllArrayBuffers = R.reduce(mergeArrayBuffer, getEmptyArrayBuffer());
+
+export const buildDumpFunc = R.pipe(
+  R.ap,
+  R.partial(R.binary(R.pipe), [R.of]),
+  R.partialRight(R.binary(R.pipe), [mergeAllArrayBuffers]),
+);
+
+export const isWithOffset = R.pipe(
+  R.nthArg(1),
+  R.equals(true),
+);
+
+export const withConstantOffset = (func, offset) => (x) => ({
+  value: func(x),
+  offset,
+});
+/**
+ * Computes offset of whole message
+ * @param {Array<{ offset: Number }>} - list of loaded data
+ * @returns {Number} - offset of whole message
+ */
+export const computeOffset = R.pipe(
+  R.ap([R.prop('offset')]),
+  R.sum,
+);
+
+/**
+ * loads data from pairs with array buffer
+ * @param {{ value: *, offset: Number }} result
+ * @param {Number} idx
+ * @param {Array<[string, Function]>} pairs
+ * @param {ArrayBuffer} buffer
+ */
+function loadByPairs(result, idx, pairs, buffer) {
+  const [attrName, loader] = pairs[idx];
+  const { offset, value } = result;
+  const slicedBuffer = sliceBuffer(buffer, offset, undefined);
+  const { value: loadedValue, offset: loadedOffset } = loader(slicedBuffer, true);
+  const updatedResult = {
+    value: {
+      [attrName]: loadedValue,
+      ...value,
+    },
+    offset: offset + loadedOffset,
+  };
+
+  const nIdx = idx + 1;
+  return (pairs.length === nIdx) ? updatedResult : loadByPairs(updatedResult, nIdx, pairs, buffer);
+}
+
+/**
+ * Build function to load data for object from ArrayBuffer
+ * @param {Array<[string, Function]>} pairs - tuple where first argument is a name of attribute,
+ * second argument is a function to load data
+ */
+export function buildLoadFunction(pairs) {
+  const load = R.partial(loadByPairs, [{ value: {}, offset: 0 }, 0, pairs]);
+  return R.cond([
+    [isWithOffset, R.pipe(R.nthArg(0), load)],
+    [R.T, R.pipe(R.nthArg(0), load, R.prop('value'))],
+  ]);
+}

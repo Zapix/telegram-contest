@@ -1,9 +1,8 @@
 import * as R from 'ramda';
 
 import { RPC_DROP_ANSWER_TYPE, TYPE_KEY } from '../../constants';
-import { sliceBuffer } from '../../utils';
+import { isWithOffset, sliceBuffer, withConstantOffset } from '../../utils';
 import { loadBigInt } from '../bigInt';
-import { isWithOffset, withConstantOffset } from '../utils';
 
 const loadType = R.always(RPC_DROP_ANSWER_TYPE);
 const loadReqMsgId = R.pipe(R.partialRight(sliceBuffer, [4, 12]), loadBigInt);

@@ -1,5 +1,5 @@
 import * as R from 'ramda';
-import { isWithOffset, withConstantOffset } from '../utils';
+import { isWithOffset, withConstantOffset } from '../../utils';
 
 /**
  * @param {ArrayBuffer} buffer

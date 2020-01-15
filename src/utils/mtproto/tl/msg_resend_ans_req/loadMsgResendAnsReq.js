@@ -1,10 +1,9 @@
 import * as R from 'ramda';
 
-import { sliceBuffer } from '../../utils';
+import { isWithOffset, sliceBuffer } from '../../utils';
 import { loadBigInt } from '../bigInt';
 import { loadVector } from '../vector';
 import { MSG_RESEND_ANS_REQ_TYPE, TYPE_KEY } from '../../constants';
-import { isWithOffset } from '../utils';
 
 
 const loadIdsWithOffset = R.pipe(

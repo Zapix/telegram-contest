@@ -3,6 +3,7 @@ import {
   AUTH_SENT_CODE,
   BAD_MSG_NOTIFICATION,
   BAD_SERVER_SALT,
+  GET_FUTURE_SALTS,
   MESSAGE_CONTAINER,
   MSG_DETAILED_INFO,
   MSG_NEW_DETAILED_INFO,
@@ -14,13 +15,13 @@ import {
   MSGS_STATE_REQ,
   NEW_SESSION_CREATED,
   PONG,
-  RPC_DROP_ANSWER,
+  RPC_ANSWER_DROPPED,
+  RPC_ANSWER_DROPPED_RUNNING,
   RPC_ANSWER_UNKNOWN,
+  RPC_DROP_ANSWER,
   RPC_ERROR,
   RPC_RESULT,
-  RPC_ANSWER_DROPPED_RUNNING,
-  RPC_ANSWER_DROPPED,
-  VECTOR, GET_FUTURE_SALTS,
+  VECTOR,
 } from '../constants';
 
 /**
@@ -225,24 +226,4 @@ export const isAuthSentCode = R.pipe(
 export const isGetFutureSalts = R.pipe(
   getConstructor,
   R.equals(GET_FUTURE_SALTS),
-);
-
-export const isWithOffset = R.pipe(
-  R.nthArg(1),
-  R.equals(true),
-);
-
-export const withConstantOffset = (func, offset) => (x) => ({
-  value: func(x),
-  offset,
-});
-
-/**
- * Computes offset of whole message
- * @param {Array<{ offset: Number }>} - list of loaded data
- * @returns {Number} - offset of whole message
- */
-export const computeOffset = R.pipe(
-  R.ap([R.prop('offset')]),
-  R.sum,
 );

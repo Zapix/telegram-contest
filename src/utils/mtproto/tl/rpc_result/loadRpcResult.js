@@ -3,9 +3,8 @@
 import * as R from 'ramda';
 
 import { RPC_RESULT_TYPE, TYPE_KEY } from '../../constants';
-import { sliceBuffer } from '../../utils';
+import { computeOffset, isWithOffset, sliceBuffer } from '../../utils';
 import { loadBigInt } from '../bigInt';
-import { computeOffset, isWithOffset } from '../utils';
 
 const loadType = R.pipe(
   R.always(RPC_RESULT_TYPE),

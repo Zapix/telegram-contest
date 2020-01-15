@@ -1,9 +1,8 @@
 import * as R from 'ramda';
-import { sliceBuffer } from '../../utils';
+import { isWithOffset, sliceBuffer, withConstantOffset } from '../../utils';
 import { loadBigInt } from '../bigInt';
 import { loadInt } from '../int';
 import { BAD_SERVER_SALT_TYPE, TYPE_KEY } from '../../constants';
-import { isWithOffset, withConstantOffset } from '../utils';
 
 const getMsgId = R.pipe(
   R.partialRight(sliceBuffer, [4, 12]),
