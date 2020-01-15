@@ -13,7 +13,9 @@ import {
   MSGS_STATE_INFO,
   MSGS_STATE_REQ,
   NEW_SESSION_CREATED,
-  PONG, RPC_DROP_ANSWER,
+  PONG,
+  RPC_DROP_ANSWER,
+  RPC_ANSWER_UNKNOWN,
   RPC_ERROR,
   RPC_RESULT,
   VECTOR,
@@ -176,6 +178,11 @@ export const isRpcError = R.pipe(
 export const isRpcDropAnswer = R.pipe(
   getConstructor,
   R.equals(RPC_DROP_ANSWER),
+);
+
+export const isRpcAnswerUnknown = R.pipe(
+  getConstructor,
+  R.equals(RPC_ANSWER_UNKNOWN),
 );
 
 /**
