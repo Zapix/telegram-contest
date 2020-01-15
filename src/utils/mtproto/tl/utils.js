@@ -18,6 +18,7 @@ import {
   RPC_ANSWER_UNKNOWN,
   RPC_ERROR,
   RPC_RESULT,
+  RPC_ANSWER_DROPPED_RUNNING,
   VECTOR,
 } from '../constants';
 
@@ -180,9 +181,18 @@ export const isRpcDropAnswer = R.pipe(
   R.equals(RPC_DROP_ANSWER),
 );
 
+/**
+ * @param {ArrayBuffer} - message buffer
+ * @returns {boolean}
+ */
 export const isRpcAnswerUnknown = R.pipe(
   getConstructor,
   R.equals(RPC_ANSWER_UNKNOWN),
+);
+
+export const isRpcAnswerDroppedRunning = R.pipe(
+  getConstructor,
+  R.equals(RPC_ANSWER_DROPPED_RUNNING),
 );
 
 /**

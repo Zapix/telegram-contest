@@ -17,7 +17,7 @@ import {
   MSG_RESEND_ANS_REQ_TYPE,
   RPC_RESULT_TYPE,
   RPC_ERROR_TYPE,
-  RPC_DROP_ANSWER_TYPE,
+  RPC_DROP_ANSWER_TYPE, RPC_ANSWER_DROPPED_RUNNING_TYPE,
 } from '../constants';
 import { hexToArrayBuffer } from '../utils';
 
@@ -169,6 +169,13 @@ describe('loadMessage', () => {
     const buffer = hexToArrayBuffer(hexStr);
 
     expect(loadMessage(buffer)).toEqual({ [TYPE_KEY]: RPC_DROP_ANSWER_TYPE });
+  });
+
+  it('rpc answer dropped running', () => {
+    const hexStr = '86e578cd';
+    const buffer = hexToArrayBuffer(hexStr);
+
+    expect(loadMessage(buffer)).toEqual({ [TYPE_KEY]: RPC_ANSWER_DROPPED_RUNNING_TYPE });
   });
 
   it('load msgs_state_req', () => {

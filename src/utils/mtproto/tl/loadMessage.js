@@ -17,7 +17,12 @@ import {
   isMsgsAllInfo,
   isMsgDetailedInfo,
   isMsgNewDetailedInfo,
-  isMsgResendReq, isMsgResendAnsReq, isRpcError, isRpcDropAnswer, isRpcAnswerUnknown,
+  isMsgResendReq,
+  isMsgResendAnsReq,
+  isRpcError,
+  isRpcDropAnswer,
+  isRpcAnswerUnknown,
+  isRpcAnswerDroppedRunning,
 } from './utils';
 import loadPong from './loadPong';
 import loadNewSessionCreated from './loadNewSessionCreated';
@@ -37,6 +42,7 @@ import { loadMsgResendAnsReq } from './msg_resend_ans_req';
 import { loadRpcError } from './rpc_error';
 import { loadRpcDropAnswer } from './rpc_drop_answer';
 import { loadRpcAnswerUnknown } from './rpc_answer_unknown';
+import { loadRpcAnswerDroppedRunning } from './rpc_answer_dropped_running';
 
 /**
  * Writes warning message into console and returns null
@@ -80,6 +86,7 @@ function parsePlainMessage(buffer) {
     [isRpcError, loadRpcError],
     [isRpcDropAnswer, loadRpcDropAnswer],
     [isRpcAnswerUnknown, loadRpcAnswerUnknown],
+    [isRpcAnswerDroppedRunning, loadRpcAnswerDroppedRunning],
     [isRpcResult, R.partialRight(loadRpcResult, [parsePlainMessage])],
     [R.T, parseUnexpectedMessage],
   ])(buffer);
