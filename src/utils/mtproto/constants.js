@@ -93,3 +93,6 @@ export const RPC_ERROR_TYPE = 'rpc_error_type';
 
 export const GET_FUTURE_SALTS = 0xb921bd04;
 export const GET_FUTURE_SALTS_TYPE = 'get_future_salts';
+
+export const FUTURE_SALT = 0x0949d9dc;
+export const FUTURE_SALT_TYPE = 'future_salt';

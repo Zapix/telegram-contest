@@ -598,3 +598,10 @@ export function buildLoadFunction(pairs) {
     [R.T, R.pipe(R.nthArg(0), load, R.prop('value'))],
   ]);
 }
+
+export const buildTypeLoader = R.pipe(
+  R.of,
+  R.ap([R.identity, R.always(4)]),
+  R.zipObj(['value', 'offset']),
+  R.always,
+);

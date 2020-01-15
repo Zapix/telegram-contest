@@ -17,7 +17,11 @@ import {
   MSG_RESEND_ANS_REQ_TYPE,
   RPC_RESULT_TYPE,
   RPC_ERROR_TYPE,
-  RPC_DROP_ANSWER_TYPE, RPC_ANSWER_DROPPED_RUNNING_TYPE, RPC_ANSWER_DROPPED_TYPE, GET_FUTURE_SALTS,
+  RPC_DROP_ANSWER_TYPE,
+  RPC_ANSWER_DROPPED_RUNNING_TYPE,
+  RPC_ANSWER_DROPPED_TYPE,
+  GET_FUTURE_SALTS,
+  FUTURE_SALT_TYPE,
 } from '../constants';
 import { hexToArrayBuffer } from '../utils';
 
@@ -286,6 +290,18 @@ describe('loadMessage', () => {
     expect(loadMessage(buffer)).toEqual({
       [TYPE_KEY]: GET_FUTURE_SALTS,
       num: 18,
+    });
+  });
+
+  it('future_salt', () => {
+    const hexStr = 'dcd9490900010000000001000101000000000000';
+    const buffer = hexToArrayBuffer(hexStr);
+
+    expect(loadMessage(buffer)).toEqual({
+      [TYPE_KEY]: FUTURE_SALT_TYPE,
+      validSince: 256,
+      validUntil: 65536,
+      salt: BigInt(257),
     });
   });
 
