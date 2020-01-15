@@ -17,7 +17,7 @@ import {
   MSG_RESEND_ANS_REQ_TYPE,
   RPC_RESULT_TYPE,
   RPC_ERROR_TYPE,
-  RPC_DROP_ANSWER_TYPE, RPC_ANSWER_DROPPED_RUNNING_TYPE,
+  RPC_DROP_ANSWER_TYPE, RPC_ANSWER_DROPPED_RUNNING_TYPE, RPC_ANSWER_DROPPED_TYPE,
 } from '../constants';
 import { hexToArrayBuffer } from '../utils';
 
@@ -176,6 +176,18 @@ describe('loadMessage', () => {
     const buffer = hexToArrayBuffer(hexStr);
 
     expect(loadMessage(buffer)).toEqual({ [TYPE_KEY]: RPC_ANSWER_DROPPED_RUNNING_TYPE });
+  });
+
+  it('rpc answer dropped', () => {
+    const hexStr = 'b7d83aa4000000000e800b5e1c000000ff000000';
+    const buffer = hexToArrayBuffer(hexStr);
+
+    expect(loadMessage(buffer)).toEqual({
+      [TYPE_KEY]: RPC_ANSWER_DROPPED_TYPE,
+      msgId: BigInt('0x5e0b800e00000000'),
+      seqNo: 28,
+      bytes: 255,
+    });
   });
 
   it('load msgs_state_req', () => {
