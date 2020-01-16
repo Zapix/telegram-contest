@@ -4,7 +4,8 @@ import { dumpInt } from '../int';
 import { dumpBigInt } from '../bigInt';
 import { dumpBool } from '../bool';
 import { dumpString } from '../string';
-import { VECTOR } from '../../constants';
+import { dumpFutureSalt } from '../future_salt';
+import { FUTURE_SALT_TYPE, TYPE_KEY, VECTOR } from '../../constants';
 import { getEmptyArrayBuffer, mergeArrayBuffer } from '../../utils';
 
 /**
@@ -29,6 +30,7 @@ export default function dumpVector(value) {
     [R.is(BigInt), R.always(dumpBigInt)],
     [R.is(String), R.always(dumpString)],
     [R.is(Array), R.always(dumpVector)],
+    [R.pipe(R.prop(TYPE_KEY), R.equals(FUTURE_SALT_TYPE)), R.always(dumpFutureSalt)],
     [R.T, R.always(getEmptyArrayBuffer)],
   ]);
 

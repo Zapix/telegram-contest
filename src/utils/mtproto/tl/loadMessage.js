@@ -24,7 +24,9 @@ import {
   isRpcAnswerUnknown,
   isRpcAnswerDroppedRunning,
   isRpcAnswerDropped,
-  isGetFutureSalts, isFutureSalt,
+  isGetFutureSalts,
+  isFutureSalt,
+  isFutureSalts,
 } from './utils';
 import loadPong from './loadPong';
 import loadNewSessionCreated from './loadNewSessionCreated';
@@ -48,6 +50,7 @@ import { loadRpcAnswerDroppedRunning } from './rpc_answer_dropped_running';
 import { loadRpcAnswerDropped } from './rpc_answer_dropped';
 import { loadGetFutureSalts } from './get_future_salts';
 import { loadFutureSalt } from './future_salt';
+import { loadFutureSalts } from './future_salts';
 
 /**
  * Writes warning message into console and returns null
@@ -95,6 +98,7 @@ function parsePlainMessage(buffer) {
     [isRpcAnswerDropped, loadRpcAnswerDropped],
     [isGetFutureSalts, loadGetFutureSalts],
     [isFutureSalt, loadFutureSalt],
+    [isFutureSalts, loadFutureSalts],
     [isRpcResult, R.partialRight(loadRpcResult, [parsePlainMessage])],
     [R.T, parseUnexpectedMessage],
   ])(buffer);

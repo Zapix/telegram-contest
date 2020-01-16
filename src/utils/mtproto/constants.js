@@ -96,3 +96,6 @@ export const GET_FUTURE_SALTS_TYPE = 'get_future_salts';
 
 export const FUTURE_SALT = 0x0949d9dc;
 export const FUTURE_SALT_TYPE = 'future_salt';
+
+export const FUTURE_SALTS = 0xae500895;
+export const FUTURE_SALTS_TYPE = 'future_salts';

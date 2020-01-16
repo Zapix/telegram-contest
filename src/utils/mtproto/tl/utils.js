@@ -2,7 +2,7 @@ import * as R from 'ramda';
 import {
   AUTH_SENT_CODE,
   BAD_MSG_NOTIFICATION,
-  BAD_SERVER_SALT, FUTURE_SALT,
+  BAD_SERVER_SALT, FUTURE_SALT, FUTURE_SALTS,
   GET_FUTURE_SALTS,
   MESSAGE_CONTAINER,
   MSG_DETAILED_INFO,
@@ -235,4 +235,13 @@ export const isGetFutureSalts = R.pipe(
 export const isFutureSalt = R.pipe(
   getConstructor,
   R.equals(FUTURE_SALT),
+);
+
+/**
+ * @param {ArrayBuffer} - message buffer
+ * @returns {boolean}
+ */
+export const isFutureSalts = R.pipe(
+  getConstructor,
+  R.equals(FUTURE_SALTS),
 );

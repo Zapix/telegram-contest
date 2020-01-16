@@ -537,6 +537,10 @@ export const getEmptyArrayBuffer = R.always(new ArrayBuffer(0));
 
 export const mergeAllArrayBuffers = R.reduce(mergeArrayBuffer, getEmptyArrayBuffer());
 
+/**
+ * @param {Array<Function>>} dumpFuncs
+ * @returns {ArrayBuffer}
+ */
 export const buildDumpFunc = R.pipe(
   R.ap,
   R.partial(R.binary(R.pipe), [R.of]),
