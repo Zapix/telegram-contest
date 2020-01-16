@@ -27,6 +27,7 @@ import {
   isGetFutureSalts,
   isFutureSalt,
   isFutureSalts,
+  isPing,
 } from './utils';
 import loadPong from './loadPong';
 import loadNewSessionCreated from './loadNewSessionCreated';
@@ -51,6 +52,7 @@ import { loadRpcAnswerDropped } from './rpc_answer_dropped';
 import { loadGetFutureSalts } from './get_future_salts';
 import { loadFutureSalt } from './future_salt';
 import { loadFutureSalts } from './future_salts';
+import { loadPing } from './ping';
 
 /**
  * Writes warning message into console and returns null
@@ -79,6 +81,7 @@ const parseUnexpectedMessage = R.pipe(
 function parsePlainMessage(buffer) {
   return R.cond([
     [isPong, loadPong],
+    [isPing, loadPing],
     [isNewSessionCreated, loadNewSessionCreated],
     [isBadMsgNotification, loadBadMsgNotification],
     [isMsgsAck, loadMsgsAck],

@@ -21,7 +21,7 @@ import {
   RPC_ANSWER_DROPPED_RUNNING_TYPE,
   RPC_ANSWER_DROPPED_TYPE,
   GET_FUTURE_SALTS,
-  FUTURE_SALT_TYPE, FUTURE_SALTS_TYPE,
+  FUTURE_SALT_TYPE, FUTURE_SALTS_TYPE, PING_TYPE,
 } from '../constants';
 import { hexToArrayBuffer } from '../utils';
 
@@ -34,6 +34,16 @@ describe('loadMessage', () => {
       type: PONG,
       msgId: BigInt('0x5e072d4500000000'),
       pingId: BigInt('0x56efe14fe8ab347e'),
+    });
+  });
+
+  it('ping', () => {
+    const hexStr = 'ec77be7a000000000e800b5e';
+    const buffer = hexToArrayBuffer(hexStr);
+
+    expect(loadMessage(buffer)).toEqual({
+      [TYPE_KEY]: PING_TYPE,
+      pingId: BigInt('0x5e0b800e00000000'),
     });
   });
 

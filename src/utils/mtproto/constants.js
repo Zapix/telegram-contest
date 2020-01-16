@@ -31,7 +31,9 @@ export const AUTH_SENT_CODE = 0x2215bcbd;
 export const CODE_SETTINGS = 0xdebebe83;
 
 export const PING = 0x7abe77ec;
+export const PING_TYPE = 'ping';
 export const PONG = 0x347773c5;
+export const PONG_TYPE = 'pong';
 
 export const GET_CONFIG = 0xc4f9186b;
 

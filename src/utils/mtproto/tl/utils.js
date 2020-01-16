@@ -15,6 +15,7 @@ import {
   MSGS_STATE_REQ,
   NEW_SESSION_CREATED,
   PONG,
+  PING,
   RPC_ANSWER_DROPPED,
   RPC_ANSWER_DROPPED_RUNNING,
   RPC_ANSWER_UNKNOWN,
@@ -50,6 +51,15 @@ export const isMessageContainer = R.pipe(
 export const isPong = R.pipe(
   getConstructor,
   R.equals(PONG),
+);
+
+/**
+ * @param {ArrayBuffer} - message buffer
+ * @returns {boolean}
+ */
+export const isPing = R.pipe(
+  getConstructor,
+  R.equals(PING),
 );
 
 /**
