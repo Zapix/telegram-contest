@@ -1,6 +1,5 @@
 import loadMessage from './loadMessage';
 import {
-  PONG,
   NEW_SESSION_CREATED,
   AUTH_SENT_CODE,
   MESSAGE_CONTAINER,
@@ -21,7 +20,10 @@ import {
   RPC_ANSWER_DROPPED_RUNNING_TYPE,
   RPC_ANSWER_DROPPED_TYPE,
   GET_FUTURE_SALTS,
-  FUTURE_SALT_TYPE, FUTURE_SALTS_TYPE, PING_TYPE,
+  FUTURE_SALT_TYPE,
+  FUTURE_SALTS_TYPE,
+  PING_TYPE,
+  PONG_TYPE,
 } from '../constants';
 import { hexToArrayBuffer } from '../utils';
 
@@ -31,7 +33,7 @@ describe('loadMessage', () => {
     const buffer = hexToArrayBuffer(hexStr);
 
     expect(loadMessage(buffer)).toEqual({
-      type: PONG,
+      [TYPE_KEY]: PONG_TYPE,
       msgId: BigInt('0x5e072d4500000000'),
       pingId: BigInt('0x56efe14fe8ab347e'),
     });
@@ -82,7 +84,7 @@ describe('loadMessage', () => {
           msgId: BigInt('0x5e072d4689996801'),
           seqNo: 2,
           message: {
-            type: PONG,
+            [TYPE_KEY]: PONG_TYPE,
             msgId: BigInt('0x5e072d4500000000'),
             pingId: BigInt('0x56efe14fe8ab347e'),
           },

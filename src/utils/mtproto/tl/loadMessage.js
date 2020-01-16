@@ -29,7 +29,6 @@ import {
   isFutureSalts,
   isPing,
 } from './utils';
-import loadPong from './loadPong';
 import loadNewSessionCreated from './loadNewSessionCreated';
 import loadMessageContainer from './loadMessageContainer';
 import { loadBadMsgNotification } from './bad_msg_notification';
@@ -53,6 +52,7 @@ import { loadGetFutureSalts } from './get_future_salts';
 import { loadFutureSalt } from './future_salt';
 import { loadFutureSalts } from './future_salts';
 import { loadPing } from './ping';
+import { loadPong } from './pong';
 
 /**
  * Writes warning message into console and returns null
