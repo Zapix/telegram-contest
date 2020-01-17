@@ -29,7 +29,7 @@ import {
   isFutureSalts,
   isPing,
   isPingDelayDisconnect,
-  isDestroySession,
+  isDestroySession, isDestroySessionOk,
 } from './utils';
 import loadNewSessionCreated from './loadNewSessionCreated';
 import loadMessageContainer from './loadMessageContainer';
@@ -57,6 +57,7 @@ import { loadPing } from './ping';
 import { loadPong } from './pong';
 import { loadPingDelayDisconnect } from './ping_delay_disconnect';
 import { loadDestroySession } from './destory_session';
+import { loadDestroySessionOk } from './destory_session_ok';
 
 /**
  * Writes warning message into console and returns null
@@ -109,6 +110,7 @@ function parsePlainMessage(buffer) {
     [isFutureSalts, loadFutureSalts],
     [isRpcResult, R.partialRight(loadRpcResult, [parsePlainMessage])],
     [isDestroySession, loadDestroySession],
+    [isDestroySessionOk, loadDestroySessionOk],
     [R.T, parseUnexpectedMessage],
   ])(buffer);
 }

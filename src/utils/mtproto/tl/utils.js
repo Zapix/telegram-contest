@@ -23,7 +23,7 @@ import {
   RPC_ERROR,
   RPC_RESULT,
   VECTOR,
-  PING_DELAY_DISCONNECT, DESTROY_SESSION,
+  PING_DELAY_DISCONNECT, DESTROY_SESSION, DESTROY_SESSION_OK,
 } from '../constants';
 
 /**
@@ -273,4 +273,9 @@ export const isFutureSalts = R.pipe(
 export const isDestroySession = R.pipe(
   getConstructor,
   R.equals(DESTROY_SESSION),
+);
+
+export const isDestroySessionOk = R.pipe(
+  getConstructor,
+  R.equals(DESTROY_SESSION_OK),
 );

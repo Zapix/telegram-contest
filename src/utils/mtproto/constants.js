@@ -107,3 +107,6 @@ export const FUTURE_SALTS_TYPE = 'future_salts';
 
 export const DESTROY_SESSION = 0xe7512126;
 export const DESTROY_SESSION_TYPE = 'destroy_session';
+
+export const DESTROY_SESSION_OK = 0xe22045fc;
+export const DESTROY_SESSION_OK_TYPE = 'destroy_session_ok';

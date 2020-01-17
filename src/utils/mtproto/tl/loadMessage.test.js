@@ -23,7 +23,7 @@ import {
   FUTURE_SALT_TYPE,
   FUTURE_SALTS_TYPE,
   PING_TYPE,
-  PONG_TYPE, PING_DELAY_DISCONNECT_TYPE, DESTROY_SESSION_TYPE,
+  PONG_TYPE, PING_DELAY_DISCONNECT_TYPE, DESTROY_SESSION_TYPE, DESTROY_SESSION_OK_TYPE,
 } from '../constants';
 import { hexToArrayBuffer } from '../utils';
 
@@ -361,6 +361,17 @@ describe('loadMessage', () => {
 
     expect(loadMessage(buffer)).toEqual({
       [TYPE_KEY]: DESTROY_SESSION_TYPE,
+      sessionId: BigInt('0x56efe14fe8ab347e'),
+    });
+  });
+
+
+  it('destroy_session_ok', () => {
+    const hexStr = 'fc4520e27e34abe84fe1ef56';
+    const buffer = hexToArrayBuffer(hexStr);
+
+    expect(loadMessage(buffer)).toEqual({
+      [TYPE_KEY]: DESTROY_SESSION_OK_TYPE,
       sessionId: BigInt('0x56efe14fe8ab347e'),
     });
   });
