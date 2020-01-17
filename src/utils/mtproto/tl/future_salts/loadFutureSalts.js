@@ -1,6 +1,6 @@
 import * as R from 'ramda';
 
-import { buildTypeLoader, buildLoadFunction } from '../../utils';
+import { buildTypeLoader, buildLoadFunc } from '../../utils';
 import { FUTURE_SALTS_TYPE, TYPE_KEY } from '../../constants';
 import { loadBigInt } from '../bigInt';
 import { loadVector } from '../vector';
@@ -17,7 +17,7 @@ const loadSalts = R.partial(loadVector, [loadFutureSalt]);
  * @param {ArrayBuffer} buffer
  * @returns {{}}
  */
-export default buildLoadFunction([
+export default buildLoadFunc([
   [TYPE_KEY, loadType],
   ['reqMsgId', loadReqMsgId],
   ['now', loadNow],

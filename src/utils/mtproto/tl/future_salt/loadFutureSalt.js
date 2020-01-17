@@ -1,4 +1,4 @@
-import { buildTypeLoader, buildLoadFunction } from '../../utils';
+import { buildTypeLoader, buildLoadFunc } from '../../utils';
 import { FUTURE_SALT_TYPE, TYPE_KEY } from '../../constants';
 import { loadInt } from '../int';
 import { loadBigInt } from '../bigInt';
@@ -10,7 +10,7 @@ const loadType = buildTypeLoader(FUTURE_SALT_TYPE);
  * @param {ArrayBuffer} buffer
  * @param {boolean} - withOffset
  */
-export default buildLoadFunction([
+export default buildLoadFunc([
   [TYPE_KEY, loadType],
   ['validSince', loadInt],
   ['validUntil', loadInt],

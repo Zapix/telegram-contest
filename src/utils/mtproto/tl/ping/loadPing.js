@@ -1,4 +1,4 @@
-import { buildTypeLoader, buildLoadFunction } from '../../utils';
+import { buildTypeLoader, buildLoadFunc } from '../../utils';
 import { PING_TYPE, TYPE_KEY } from '../../constants';
 import { loadBigInt } from '../bigInt';
 
@@ -11,7 +11,7 @@ const loadPingId = loadBigInt;
  * @param {boolean} [withOffset]
  * @returns {{}}
  */
-export default buildLoadFunction([
+export default buildLoadFunc([
   [TYPE_KEY, loadType],
   ['pingId', loadPingId],
 ]);

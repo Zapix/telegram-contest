@@ -27,7 +27,7 @@ import {
   isGetFutureSalts,
   isFutureSalt,
   isFutureSalts,
-  isPing,
+  isPing, isPingDelayDisconnect,
 } from './utils';
 import loadNewSessionCreated from './loadNewSessionCreated';
 import loadMessageContainer from './loadMessageContainer';
@@ -53,6 +53,7 @@ import { loadFutureSalt } from './future_salt';
 import { loadFutureSalts } from './future_salts';
 import { loadPing } from './ping';
 import { loadPong } from './pong';
+import { loadPingDelayDisconnect } from './ping_delay_disconnect';
 
 /**
  * Writes warning message into console and returns null
@@ -82,6 +83,7 @@ function parsePlainMessage(buffer) {
   return R.cond([
     [isPong, loadPong],
     [isPing, loadPing],
+    [isPingDelayDisconnect, loadPingDelayDisconnect],
     [isNewSessionCreated, loadNewSessionCreated],
     [isBadMsgNotification, loadBadMsgNotification],
     [isMsgsAck, loadMsgsAck],

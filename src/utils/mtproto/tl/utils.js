@@ -23,6 +23,7 @@ import {
   RPC_ERROR,
   RPC_RESULT,
   VECTOR,
+  PING_DELAY_DISCONNECT,
 } from '../constants';
 
 /**
@@ -60,6 +61,15 @@ export const isPong = R.pipe(
 export const isPing = R.pipe(
   getConstructor,
   R.equals(PING),
+);
+
+/**
+ * @param {ArrayBuffer} - message buffer
+ * @returns {boolean}
+ */
+export const isPingDelayDisconnect = R.pipe(
+  getConstructor,
+  R.equals(PING_DELAY_DISCONNECT),
 );
 
 /**

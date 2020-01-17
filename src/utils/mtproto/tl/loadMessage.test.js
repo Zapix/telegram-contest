@@ -23,7 +23,7 @@ import {
   FUTURE_SALT_TYPE,
   FUTURE_SALTS_TYPE,
   PING_TYPE,
-  PONG_TYPE,
+  PONG_TYPE, PING_DELAY_DISCONNECT_TYPE,
 } from '../constants';
 import { hexToArrayBuffer } from '../utils';
 
@@ -46,6 +46,17 @@ describe('loadMessage', () => {
     expect(loadMessage(buffer)).toEqual({
       [TYPE_KEY]: PING_TYPE,
       pingId: BigInt('0x5e0b800e00000000'),
+    });
+  });
+
+  it('ping_delay_disconnect', () => {
+    const hexStr = '8c7b42f3000000000e800b5e4b000000';
+    const buffer = hexToArrayBuffer(hexStr);
+
+    expect(loadMessage(buffer)).toEqual({
+      [TYPE_KEY]: PING_DELAY_DISCONNECT_TYPE,
+      pingId: BigInt('0x5e0b800e00000000'),
+      disconnectDelay: 75,
     });
   });
 

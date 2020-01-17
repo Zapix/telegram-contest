@@ -538,7 +538,7 @@ export const getEmptyArrayBuffer = R.always(new ArrayBuffer(0));
 export const mergeAllArrayBuffers = R.reduce(mergeArrayBuffer, getEmptyArrayBuffer());
 
 /**
- * @param {Array<Function>>} dumpFuncs
+ * @param {Array<Function>} dumpFuncs
  * @returns {ArrayBuffer}
  */
 export const buildDumpFunc = R.pipe(
@@ -595,7 +595,7 @@ function loadByPairs(result, idx, pairs, buffer) {
  * @param {Array<[string, Function]>} pairs - tuple where first argument is a name of attribute,
  * second argument is a function to load data
  */
-export function buildLoadFunction(pairs) {
+export function buildLoadFunc(pairs) {
   const load = R.partial(loadByPairs, [{ value: {}, offset: 0 }, 0, pairs]);
   return R.cond([
     [isWithOffset, R.pipe(R.nthArg(0), load)],

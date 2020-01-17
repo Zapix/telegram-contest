@@ -35,6 +35,9 @@ export const PING_TYPE = 'ping';
 export const PONG = 0x347773c5;
 export const PONG_TYPE = 'pong';
 
+export const PING_DELAY_DISCONNECT = 0xf3427b8c;
+export const PING_DELAY_DISCONNECT_TYPE = 'ping_delay_disconnect';
+
 export const GET_CONFIG = 0xc4f9186b;
 
 export const GET_NEAREST_DC = 0x1fb33026;
