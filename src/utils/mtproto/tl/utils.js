@@ -23,7 +23,7 @@ import {
   RPC_ERROR,
   RPC_RESULT,
   VECTOR,
-  PING_DELAY_DISCONNECT,
+  PING_DELAY_DISCONNECT, DESTROY_SESSION,
 } from '../constants';
 
 /**
@@ -264,4 +264,13 @@ export const isFutureSalt = R.pipe(
 export const isFutureSalts = R.pipe(
   getConstructor,
   R.equals(FUTURE_SALTS),
+);
+
+/**
+ * @param {ArrayBuffer} - message buffer
+ * @returns {boolean}
+ */
+export const isDestroySession = R.pipe(
+  getConstructor,
+  R.equals(DESTROY_SESSION),
 );
