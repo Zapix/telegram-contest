@@ -29,9 +29,10 @@ import {
   isFutureSalts,
   isPing,
   isPingDelayDisconnect,
-  isDestroySession, isDestroySessionOk, isDestroySessionNone,
+  isDestroySession,
+  isDestroySessionOk,
+  isDestroySessionNone,
 } from './utils';
-import loadNewSessionCreated from './loadNewSessionCreated';
 import loadMessageContainer from './loadMessageContainer';
 import { loadBadMsgNotification } from './bad_msg_notification';
 import { loadBadServerSalt } from './bad_server_salt';
@@ -59,6 +60,7 @@ import { loadPingDelayDisconnect } from './ping_delay_disconnect';
 import { loadDestroySession } from './destory_session';
 import { loadDestroySessionOk } from './destory_session_ok';
 import { loadDestroySessionNone } from './destory_session_none';
+import { loadNewSessionCreated } from './new_session_created';
 
 /**
  * Writes warning message into console and returns null

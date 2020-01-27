@@ -1,6 +1,5 @@
 import loadMessage from './loadMessage';
 import {
-  NEW_SESSION_CREATED,
   AUTH_SENT_CODE,
   MESSAGE_CONTAINER,
   TYPE_KEY,
@@ -28,6 +27,7 @@ import {
   DESTROY_SESSION_TYPE,
   DESTROY_SESSION_OK_TYPE,
   DESTROY_SESSION_NONE_TYPE,
+  NEW_SESSION_CREATED_TYPE,
 } from '../constants';
 import { hexToArrayBuffer } from '../utils';
 
@@ -69,7 +69,7 @@ describe('loadMessage', () => {
     const buffer = hexToArrayBuffer(hexStr);
 
     expect(loadMessage(buffer)).toEqual({
-      type: NEW_SESSION_CREATED,
+      [TYPE_KEY]: NEW_SESSION_CREATED_TYPE,
       firstMsgId: BigInt('0x5e072d4500000000'),
       uniqueId: BigInt('0x8f5524a763de8c07'),
       serverSalt: BigInt('0x6b02abc667623eb7'),
@@ -89,7 +89,7 @@ describe('loadMessage', () => {
           msgId: BigInt('0x5e072d4689993001'),
           seqNo: 1,
           message: {
-            type: NEW_SESSION_CREATED,
+            [TYPE_KEY]: NEW_SESSION_CREATED_TYPE,
             firstMsgId: BigInt('0x5e072d4500000000'),
             uniqueId: BigInt('0x8f5524a763de8c07'),
             serverSalt: BigInt('0x6b02abc667623eb7'),
