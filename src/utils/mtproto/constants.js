@@ -41,9 +41,11 @@ export const PING_DELAY_DISCONNECT_TYPE = 'ping_delay_disconnect';
 export const GET_CONFIG = 0xc4f9186b;
 
 export const GET_NEAREST_DC = 0x1fb33026;
+
 export const HTTP_WAIT = 0x9299359f;
 
 export const MESSAGE_CONTAINER = 0x73f1f8dc;
+export const MESSAGE_CONTAINER_TYPE = 'msg_container';
 
 export const NEW_SESSION_CREATED = 0x9ec20908;
 export const NEW_SESSION_CREATED_TYPE = 'new_session_created';

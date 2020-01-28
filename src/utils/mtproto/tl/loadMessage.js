@@ -33,7 +33,7 @@ import {
   isDestroySessionOk,
   isDestroySessionNone,
 } from './utils';
-import loadMessageContainer from './loadMessageContainer';
+import { loadMessageContainer } from './msg_container';
 import { loadBadMsgNotification } from './bad_msg_notification';
 import { loadBadServerSalt } from './bad_server_salt';
 import { loadMsgsAck } from './msgs_ack';
@@ -84,9 +84,10 @@ const parseUnexpectedMessage = R.pipe(
  * Takes array buffer of encoded message and returns message as parsed object or
  * list of parsed objects
  * @param {ArrayBuffer} buffer
+ * @param {boolean} [withOffset]
  * @returns {Array<*> | *}
  */
-function parsePlainMessage(buffer) {
+function parsePlainMessage(buffer, withOffset) {
   return R.cond([
     [isPong, loadPong],
     [isPing, loadPing],
@@ -115,8 +116,9 @@ function parsePlainMessage(buffer) {
     [isDestroySession, loadDestroySession],
     [isDestroySessionOk, loadDestroySessionOk],
     [isDestroySessionNone, loadDestroySessionNone],
+    [isMessageContainer, R.partialRight(loadMessageContainer, [parsePlainMessage])],
     [R.T, parseUnexpectedMessage],
-  ])(buffer);
+  ])(buffer, withOffset);
 }
 
 /**
@@ -124,9 +126,6 @@ function parsePlainMessage(buffer) {
  * @param {ArrayBuffer} buffer
  * @returns {Array<*> | *}
  */
-const loadMessage = R.cond([
-  [isMessageContainer, R.partialRight(loadMessageContainer, [parsePlainMessage])],
-  [R.T, parsePlainMessage],
-]);
+const loadMessage = parsePlainMessage;
 
 export default loadMessage;

@@ -1,7 +1,6 @@
 import loadMessage from './loadMessage';
 import {
   AUTH_SENT_CODE,
-  MESSAGE_CONTAINER,
   TYPE_KEY,
   BAD_MSG_NOTIFICATION_TYPE,
   MSGS_ACK_TYPE,
@@ -27,7 +26,7 @@ import {
   DESTROY_SESSION_TYPE,
   DESTROY_SESSION_OK_TYPE,
   DESTROY_SESSION_NONE_TYPE,
-  NEW_SESSION_CREATED_TYPE,
+  NEW_SESSION_CREATED_TYPE, MESSAGE_CONTAINER_TYPE,
 } from '../constants';
 import { hexToArrayBuffer } from '../utils';
 
@@ -83,12 +82,13 @@ describe('loadMessage', () => {
     const buffer = hexToArrayBuffer(hexStr);
 
     expect(loadMessage(buffer)).toEqual({
-      type: MESSAGE_CONTAINER,
+      [TYPE_KEY]: MESSAGE_CONTAINER_TYPE,
       messages: [
         {
           msgId: BigInt('0x5e072d4689993001'),
           seqNo: 1,
-          message: {
+          bytes: 28,
+          body: {
             [TYPE_KEY]: NEW_SESSION_CREATED_TYPE,
             firstMsgId: BigInt('0x5e072d4500000000'),
             uniqueId: BigInt('0x8f5524a763de8c07'),
@@ -98,7 +98,8 @@ describe('loadMessage', () => {
         {
           msgId: BigInt('0x5e072d4689996801'),
           seqNo: 2,
-          message: {
+          bytes: 20,
+          body: {
             [TYPE_KEY]: PONG_TYPE,
             msgId: BigInt('0x5e072d4500000000'),
             pingId: BigInt('0x56efe14fe8ab347e'),
