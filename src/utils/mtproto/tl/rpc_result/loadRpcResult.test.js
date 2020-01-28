@@ -26,7 +26,7 @@ describe('loadRpcResult', () => {
   it.only('without offset', () => {
     expect(load(buffer)).toEqual({
       [TYPE_KEY]: RPC_RESULT_TYPE,
-      msgId: BigInt('0x5e0b86bc00000000'),
+      reqMsgId: BigInt('0x5e0b86bc00000000'),
       result: new Uint8Array(sliceBuffer(buffer, 12)),
     });
   });
@@ -35,7 +35,7 @@ describe('loadRpcResult', () => {
     expect(load(buffer, true)).toEqual({
       value: {
         [TYPE_KEY]: RPC_RESULT_TYPE,
-        msgId: BigInt('0x5e0b86bc00000000'),
+        reqMsgId: BigInt('0x5e0b86bc00000000'),
         result: new Uint8Array(sliceBuffer(buffer, 12)),
       },
       offset: 40,

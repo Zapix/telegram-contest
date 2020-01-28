@@ -3,22 +3,11 @@
 import * as R from 'ramda';
 
 import { RPC_RESULT_TYPE, TYPE_KEY } from '../../constants';
-import { computeOffset, isWithOffset, sliceBuffer } from '../../utils';
+import { buildTypeLoader, buildLoadFunc } from '../../utils';
 import { loadBigInt } from '../bigInt';
 
-const loadType = R.pipe(
-  R.always(RPC_RESULT_TYPE),
-  R.of,
-  R.ap([R.identity, R.always(4)]),
-  R.zipObj(['value', 'offset']),
-);
-
-const loadMsgId = R.pipe(
-  R.partialRight(sliceBuffer, [4, 12]),
-  R.partialRight(loadBigInt, [true]),
-);
-
-const loadWithOffset = R.partialRight(R.__, [true]);
+const loadType = buildTypeLoader(RPC_RESULT_TYPE);
+const loadReqMsgId = loadBigInt;
 
 /**
  * Parse rpc result by schema
@@ -31,26 +20,10 @@ const loadWithOffset = R.partialRight(R.__, [true]);
  * }}
  */
 function loadRpcResult(buffer, withOffset, parseMessage) {
-  const loadRpcMessage = R.pipe(
-    R.partialRight(sliceBuffer, [12, undefined]),
-    loadWithOffset(parseMessage),
-  );
-  const loadData = R.ap([loadType, loadMsgId, loadRpcMessage]);
-
-  const buildRpcResult = R.pipe(
-    R.ap([R.prop('value')]),
-    R.zipObj([TYPE_KEY, 'msgId', 'result']),
-  );
-
-  const buildWithOffset = R.pipe(
-    R.of,
-    R.ap([buildRpcResult, computeOffset]),
-    R.zipObj(['value', 'offset']),
-  );
-
-  return R.cond([
-    [isWithOffset, R.pipe(R.of, loadData, buildWithOffset)],
-    [R.T, R.pipe(R.of, loadData, buildRpcResult)],
+  return buildLoadFunc([
+    [TYPE_KEY, loadType],
+    ['reqMsgId', loadReqMsgId],
+    ['result', parseMessage],
   ])(buffer, withOffset);
 }
 

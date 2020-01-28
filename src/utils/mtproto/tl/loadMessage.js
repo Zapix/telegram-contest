@@ -70,6 +70,7 @@ import { loadHttpWait } from './http_wait';
  * @returns {null}
  */
 const parseUnexpectedMessage = R.pipe(
+  R.nthArg(0),
   R.of,
   R.ap([
     R.pipe(getConstructor, numberToHex),

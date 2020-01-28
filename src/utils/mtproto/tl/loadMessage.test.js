@@ -166,7 +166,7 @@ describe('loadMessage', () => {
 
     expect(loadMessage(buffer)).toMatchObject({
       [TYPE_KEY]: RPC_RESULT_TYPE,
-      msgId: BigInt('0x5e0b86bc00000000'),
+      reqMsgId: BigInt('0x5e0b86bc00000000'),
       // result: {
       //   type: AUTH_SENT_CODE,
       //   phoneRegistered: true,
