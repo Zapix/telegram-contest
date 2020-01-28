@@ -1,24 +1,8 @@
 import * as R from 'ramda';
 import encryptMessage from './encryptMessage';
 import sendRequest from './sendRequest';
-import { HTTP_WAIT } from './constants';
-
-function httpWaitMessage() {
-  const buffer = new ArrayBuffer(16);
-  const constructor = new Uint32Array(buffer, 0, 1);
-  constructor[0] = HTTP_WAIT;
-
-  const maxDelay = new Uint32Array(buffer, 4, 1);
-  maxDelay[0] = 0;
-
-  const waitAfter = new Uint32Array(buffer, 8, 1);
-  waitAfter[0] = 0;
-
-  const maxWait = new Uint32Array(buffer, 12, 1);
-  maxWait[0] = 25 * 1000;
-
-  return { buffer };
-}
+import { HTTP_WAIT_TYPE, TYPE_KEY } from './constants';
+import { dumpHttpWait } from './tl/http_wait';
 
 export default function httpWait(authKey, authKeyId, salt, sessionId, seqNo) {
   const encrypt = R.partial(
@@ -27,9 +11,10 @@ export default function httpWait(authKey, authKeyId, salt, sessionId, seqNo) {
   );
 
   return R.pipe(
-    httpWaitMessage,
-    R.prop('buffer'),
+    dumpHttpWait,
     encrypt,
     sendRequest,
-  )();
+  )({
+    [TYPE_KEY]: HTTP_WAIT_TYPE, maxDelay: 0, waitAfter: 0, maxWait: 25000,
+  });
 }

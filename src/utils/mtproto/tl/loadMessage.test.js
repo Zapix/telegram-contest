@@ -26,7 +26,7 @@ import {
   DESTROY_SESSION_TYPE,
   DESTROY_SESSION_OK_TYPE,
   DESTROY_SESSION_NONE_TYPE,
-  NEW_SESSION_CREATED_TYPE, MESSAGE_CONTAINER_TYPE,
+  NEW_SESSION_CREATED_TYPE, MESSAGE_CONTAINER_TYPE, HTTP_WAIT_TYPE,
 } from '../constants';
 import { hexToArrayBuffer } from '../utils';
 
@@ -396,5 +396,17 @@ describe('loadMessage', () => {
     const buffer = hexToArrayBuffer(hexStr);
 
     expect(loadMessage(buffer)).toBeNull();
+  });
+
+  it('http wait', () => {
+    const hexStr = '9f3599920000000000000000a8610000';
+    const buffer = hexToArrayBuffer(hexStr);
+
+    expect(loadMessage(buffer)).toEqual({
+      [TYPE_KEY]: HTTP_WAIT_TYPE,
+      maxDelay: 0,
+      waitAfter: 0,
+      maxWait: 25000,
+    });
   });
 });

@@ -32,6 +32,7 @@ import {
   isDestroySession,
   isDestroySessionOk,
   isDestroySessionNone,
+  isHttpWait,
 } from './utils';
 import { loadMessageContainer } from './msg_container';
 import { loadBadMsgNotification } from './bad_msg_notification';
@@ -41,7 +42,7 @@ import loadAuthSentCode from './loadAuthSentCode';
 import { loadRpcResult } from './rpc_result';
 import { loadMsgsStateReq } from './msgs_state_req';
 import { loadMsgsStateInfo } from './msgs_state_info';
-import loadMsgsAllInfo from './msgs_all_info/loadMsgsAllInfo';
+import { loadMsgsAllInfo } from './msgs_all_info';
 import { loadMsgDetailedInfo } from './msg_detailed_info';
 import { loadMsgNewDetailedInfo } from './msg_new_detailed_info';
 import { loadMsgResendReq } from './msg_resend_req';
@@ -61,6 +62,7 @@ import { loadDestroySession } from './destory_session';
 import { loadDestroySessionOk } from './destory_session_ok';
 import { loadDestroySessionNone } from './destory_session_none';
 import { loadNewSessionCreated } from './new_session_created';
+import { loadHttpWait } from './http_wait';
 
 /**
  * Writes warning message into console and returns null
@@ -89,6 +91,7 @@ const parseUnexpectedMessage = R.pipe(
  */
 function parsePlainMessage(buffer, withOffset) {
   return R.cond([
+    [isHttpWait, loadHttpWait],
     [isPong, loadPong],
     [isPing, loadPing],
     [isPingDelayDisconnect, loadPingDelayDisconnect],

@@ -23,7 +23,7 @@ import {
   RPC_ERROR,
   RPC_RESULT,
   VECTOR,
-  PING_DELAY_DISCONNECT, DESTROY_SESSION, DESTROY_SESSION_OK, DESTROY_SESSION_NONE,
+  PING_DELAY_DISCONNECT, DESTROY_SESSION, DESTROY_SESSION_OK, DESTROY_SESSION_NONE, HTTP_WAIT,
 } from '../constants';
 
 /**
@@ -291,4 +291,13 @@ export const isDestroySessionOk = R.pipe(
 export const isDestroySessionNone = R.pipe(
   getConstructor,
   R.equals(DESTROY_SESSION_NONE),
+);
+
+/**
+ * @param {ArrayBuffer} - message buffer
+ * @returns {boolean}
+ */
+export const isHttpWait = R.pipe(
+  getConstructor,
+  R.equals(HTTP_WAIT),
 );
