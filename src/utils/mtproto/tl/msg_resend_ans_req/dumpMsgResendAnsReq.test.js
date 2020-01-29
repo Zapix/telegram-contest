@@ -1,11 +1,11 @@
-import { MSG_RESEND_REQ_TYPE, TYPE_KEY } from '../../constants';
+import { MSG_RESEND_ANS_REQ_TYPE, TYPE_KEY } from '../../constants';
 import dumpMsgResendAnsReq from './dumpMsgResendAnsReq';
 import { arrayBufferToHex } from '../../utils';
 
 describe('dumpMsgResendReq', () => {
   it('dump', () => {
     const msg = {
-      [TYPE_KEY]: MSG_RESEND_REQ_TYPE,
+      [TYPE_KEY]: MSG_RESEND_ANS_REQ_TYPE,
       msgIds: [
         BigInt('0x5e0b700a00000000'),
         BigInt('0x5e0b800e00000000'),
