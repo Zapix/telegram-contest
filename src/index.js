@@ -84,7 +84,7 @@ createAuthorizationKey().then(({ authKey, authKeyId, serverSalt }) => {
       .then(decrypt)
       .then((message) => {
         console.log(uint8ArrayToHex(new Uint8Array(message)));
-        console.log(tlLoads);
+        console.log(tlLoads(message));
       });
   });
 });
