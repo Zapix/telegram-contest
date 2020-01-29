@@ -26,7 +26,7 @@ import {
   generateKeyDataFromNonce,
   powModulo, hexToUint8Array, uint8ToArrayBuffer, uint8ArrayToHex,
 } from './utils';
-import { fromTlString, getStringFromArrayBuffer, toTlString } from './tlSerialization';
+import { fromTlString, getStringFromArrayBuffer, toTlString } from './tl/tlSerialization';
 import { getPublicKey } from './pems';
 import { decryptIge as decryptAesIge, encryptIge as encryptAesIge } from './aes';
 import sendRequest from './sendRequest';

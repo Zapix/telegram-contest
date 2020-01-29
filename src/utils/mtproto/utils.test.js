@@ -7,6 +7,9 @@ import {
   primeGenerator,
   generateKeyDataFromNonce,
   hexToUint8Array,
+  arrayBufferToHex,
+  mergeArrayBuffer,
+  hexToArrayBuffer,
 } from './utils';
 
 describe('isValidInitPayload()', () => {
@@ -104,4 +107,13 @@ describe('generateKeyDataFromNonce()', () => {
       '3212D579EE35452ED23E0D0C92841AA7D31B2E9BDEF2151E80D15860311C85DB',
     );
   });
+});
+
+describe('mergeArrayBuffers', () => {
+  const bufferA = hexToArrayBuffer('aabbcc');
+  const bufferB = hexToArrayBuffer('ffeec0dd');
+
+  const buffer = mergeArrayBuffer(bufferA, bufferB);
+  expect(buffer.byteLength).toEqual(7);
+  expect(arrayBufferToHex(buffer)).toEqual('aabbccffeec0dd');
 });

@@ -15,8 +15,8 @@ import {
   ping,
   httpWait,
   sendAuthCode,
-  parseMessage,
   seqNoGenerator,
+  tlLoads,
 } from 'utils/mtproto';
 import decryptMessage from 'utils/mtproto/decryptMessage';
 
@@ -56,7 +56,7 @@ createAuthorizationKey().then(({ authKey, authKeyId, serverSalt }) => {
       .then((message) => {
         console.log('Message byteLength', message.byteLength);
         console.log(uint8ArrayToHex(new Uint8Array(message)));
-        console.log(parseMessage(message));
+        console.log(tlLoads(message));
       });
   });
 
@@ -70,7 +70,7 @@ createAuthorizationKey().then(({ authKey, authKeyId, serverSalt }) => {
       .then(decrypt)
       .then((message) => {
         console.log('Http Wait Result: ', uint8ArrayToHex(new Uint8Array(message)));
-        console.log(parseMessage(message));
+        console.log(tlLoads(message));
       });
   });
 
@@ -84,7 +84,7 @@ createAuthorizationKey().then(({ authKey, authKeyId, serverSalt }) => {
       .then(decrypt)
       .then((message) => {
         console.log(uint8ArrayToHex(new Uint8Array(message)));
-        console.log(parseMessage(message));
+        console.log(tlLoads(message));
       });
   });
 });
