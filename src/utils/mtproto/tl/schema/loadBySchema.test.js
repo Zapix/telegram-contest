@@ -33,5 +33,34 @@ describe('loadBySchema', () => {
         });
       });
     });
+
+    describe('messageActionChatCreate', () => {
+      /* eslint-disable */
+      const hexStr = '9a8b63a60c48656c6c6f20576f726c642100000015c4b51c03000000020000000300000004000000';
+      /* eslint-enable */
+      const buffer = hexToArrayBuffer(hexStr);
+
+
+      it('without offset', () => {
+        expect(load(buffer)).toEqual({
+          [CONSTRUCTOR_KEY]: 'messageActionChatCreate',
+          [TYPE_KEY]: 'MessageAction',
+          title: 'Hello World!',
+          users: [2, 3, 4]
+        });
+      });
+
+      it('with offset', () => {
+        expect(load(buffer, true)).toEqual({
+          value: {
+            [CONSTRUCTOR_KEY]: 'messageActionChatCreate',
+            [TYPE_KEY]: 'MessageAction',
+            title: 'Hello World!',
+            users: [2, 3, 4]
+          },
+          offset: 40
+        });
+      });
+    });
   });
 });

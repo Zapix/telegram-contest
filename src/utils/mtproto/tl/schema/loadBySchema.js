@@ -4,6 +4,7 @@ import { loadString } from '../string';
 import { loadInt } from '../int';
 import { loadBigInt } from '../bigInt';
 import { loadBool } from '../bool';
+import { loadVector } from '../vector';
 
 import { getParseSchemaById } from './utils';
 import { getConstructor } from '../utils';
@@ -23,6 +24,36 @@ const bareTypeLoaders = {
   long: loadBigInt,
   string: loadString,
 };
+
+const isBareType = R.has(R.__, bareTypeLoaders);
+const getBareTypeLoader = R.prop(R.__, bareTypeLoaders);
+
+const matchVector = R.match(/Vector<(\w+)>/);
+
+const isVector = R.pipe(
+  matchVector,
+  R.length,
+  R.lte(0)
+) ;
+
+const getVectorType = R.pipe(
+  matchVector,
+  R.nth(1),
+);
+
+function getLoaderForType(type) {
+  return R.cond([
+    [isBareType, getBareTypeLoader],
+    [isVector, R.pipe(getVectorType, getLoaderForType, R.of, R.partial(loadVector))],
+    [
+      R.T,
+      (x) => {
+        console.warn(`Unknown type: ${x}`);
+        return withConstantOffset(R.always(`Unknown type ${x}`), 0);
+      },
+    ],
+  ])(type);
+}
 
 const getTypePair = R.pipe(
   R.of,
@@ -82,7 +113,7 @@ const getLoadPairs = R.pipe(
         R.prop('name'),
         R.pipe(
           R.prop('type'),
-          R.prop(R.__, bareTypeLoaders),
+          getLoaderForType,
         ),
       ]),
     ),
