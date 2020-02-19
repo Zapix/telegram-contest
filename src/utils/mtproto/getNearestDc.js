@@ -6,14 +6,14 @@ import sendRequest from './sendRequest';
 
 function buildGetNearestDcMessage() {
   const buffer = new ArrayBuffer(4);
-  const constructorArr = new Uint8Array(buffer, 1);
+  const constructorArr = new Uint32Array(buffer);
   constructorArr[0] = GET_NEAREST_DC;
 
   return buffer;
 }
 
-export default function getNearestDC(authKey, authKeyId, salt, sessionId) {
-  const encrypt = R.partial(encryptMessage, [authKey, authKeyId, salt, sessionId]);
+export default function getNearestDc(authKey, authKeyId, salt, sessionId, seqNo) {
+  const encrypt = R.partial(encryptMessage, [authKey, authKeyId, salt, sessionId, seqNo]);
   return R.pipe(
     buildGetNearestDcMessage,
     encrypt,
