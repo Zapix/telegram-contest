@@ -1,4 +1,5 @@
 import * as R from 'ramda';
+import { getConstructor } from '../utils';
 
 /**
  * Converts int 32 value to unsigned int 32 value without changing bytes
@@ -79,4 +80,13 @@ export const getParseSchemaById = R.unapply(
     R.ap([R.nth(1), R.pipe(R.nth(0), buildSchemaIdMap)]),
     R.apply(R.prop),
   ),
+);
+
+/**
+ * Takes schema and returns function that will tell can schema parse array buffer or not
+ * @type {(function(...[*]=))|*}
+ */
+export const isFromSchemaFactory = R.pipe(
+  buildSchemaIdMap,
+  (x) => R.pipe(getConstructor, R.has(R.__, x)),
 );

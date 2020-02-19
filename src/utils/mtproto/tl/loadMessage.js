@@ -9,7 +9,6 @@ import {
   isBadMsgNotification,
   isMsgsAck,
   getConstructor,
-  isAuthSentCode,
   isRpcResult,
   isBadServerSalt,
   isMsgsStateReq,
@@ -38,7 +37,6 @@ import { loadMessageContainer } from './msg_container';
 import { loadBadMsgNotification } from './bad_msg_notification';
 import { loadBadServerSalt } from './bad_server_salt';
 import { loadMsgsAck } from './msgs_ack';
-import loadAuthSentCode from './loadAuthSentCode';
 import { loadRpcResult } from './rpc_result';
 import { loadMsgsStateReq } from './msgs_state_req';
 import { loadMsgsStateInfo } from './msgs_state_info';
@@ -63,6 +61,8 @@ import { loadDestroySessionOk } from './destory_session_ok';
 import { loadDestroySessionNone } from './destory_session_none';
 import { loadNewSessionCreated } from './new_session_created';
 import { loadHttpWait } from './http_wait';
+import { loadBySchema, isFromSchemaFactory } from './schema';
+import layer5 from './schema/layer5';
 
 /**
  * Writes warning message into console and returns null
@@ -99,7 +99,6 @@ function parsePlainMessage(buffer, withOffset) {
     [isNewSessionCreated, loadNewSessionCreated],
     [isBadMsgNotification, loadBadMsgNotification],
     [isMsgsAck, loadMsgsAck],
-    [isAuthSentCode, loadAuthSentCode],
     [isBadServerSalt, loadBadServerSalt],
     [isMsgsStateReq, loadMsgsStateReq],
     [isMsgsStateInfo, loadMsgsStateInfo],
@@ -121,6 +120,7 @@ function parsePlainMessage(buffer, withOffset) {
     [isDestroySessionOk, loadDestroySessionOk],
     [isDestroySessionNone, loadDestroySessionNone],
     [isMessageContainer, R.partialRight(loadMessageContainer, [parsePlainMessage])],
+    [isFromSchemaFactory(layer5), R.partial(loadBySchema, [layer5])],
     [R.T, parseUnexpectedMessage],
   ])(buffer, withOffset);
 }

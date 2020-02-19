@@ -1,6 +1,7 @@
-import { intToUint, getParseSchemaById } from './utils';
+import { intToUint, getParseSchemaById, isFromSchemaFactory } from './utils';
 
 import oldSchema from './layer5.json';
+import { hexToArrayBuffer } from '../../utils';
 
 describe('utils', () => {
   describe('intToUint', () => {
@@ -87,6 +88,21 @@ describe('utils', () => {
 
       test('not found', () => {
         expect(getParseSchemaById(oldSchema, 0x00110000)).toBeUndefined();
+      });
+    });
+  });
+
+  describe('isFromSchemaFactory', () => {
+    describe('layer5 schema', () => {
+      const isLoadableBySchema = isFromSchemaFactory(oldSchema);
+      test('found constructor', () => {
+        const buffer = hexToArrayBuffer('3bcc00e3');
+        expect(isLoadableBySchema(buffer)).toEqual(true);
+      });
+
+      test('found method', () => {
+        const buffer = hexToArrayBuffer('4d5f8d76');
+        expect(isLoadableBySchema(buffer)).toEqual(true);
       });
     });
   });
