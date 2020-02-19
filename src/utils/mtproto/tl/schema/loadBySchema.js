@@ -33,27 +33,13 @@ const matchVector = R.match(/Vector<(\w+)>/);
 const isVector = R.pipe(
   matchVector,
   R.length,
-  R.lte(0)
-) ;
+  R.lt(0),
+);
 
 const getVectorType = R.pipe(
   matchVector,
   R.nth(1),
 );
-
-function getLoaderForType(type) {
-  return R.cond([
-    [isBareType, getBareTypeLoader],
-    [isVector, R.pipe(getVectorType, getLoaderForType, R.of, R.partial(loadVector))],
-    [
-      R.T,
-      (x) => {
-        console.warn(`Unknown type: ${x}`);
-        return withConstantOffset(R.always(`Unknown type ${x}`), 0);
-      },
-    ],
-  ])(type);
-}
 
 const getTypePair = R.pipe(
   R.of,
@@ -98,27 +84,6 @@ const getObjectConstructorPair = R.cond([
   ],
 ]);
 
-/**
- * Takes schema to build load function, returns list of pairs with name of attribute and function
- * to load it
- * @param {*} schema - how load object
- * @returns {Array<[string, Function]>}
- */
-const getLoadPairs = R.pipe(
-  R.prop('params'),
-  R.map(
-    R.pipe(
-      R.of,
-      R.ap([
-        R.prop('name'),
-        R.pipe(
-          R.prop('type'),
-          getLoaderForType,
-        ),
-      ]),
-    ),
-  ),
-);
 
 /**
  * Loads object from buffer array by schema. First of all tries to find how to parse array buffer by
@@ -130,6 +95,36 @@ const getLoadPairs = R.pipe(
  * @param {boolean} withOffset
  */
 function loadBySchema(schema, buffer, withOffset) {
+  function getLoaderForType(type) {
+    return R.cond([
+      [isBareType, getBareTypeLoader],
+      [isVector, R.pipe(getVectorType, getLoaderForType, R.of, R.partial(loadVector))],
+      [R.T, R.always(R.partial(loadBySchema, [schema]))],
+    ])(type);
+  }
+
+  /**
+   * Takes schema to build load function, returns list of pairs with name of attribute and function
+   * to load it
+   * @param {*} schema - how load object
+   * @returns {Array<[string, Function]>}
+   */
+  const getLoadPairs = R.pipe(
+    R.prop('params'),
+    R.map(
+      R.pipe(
+        R.of,
+        R.ap([
+          R.prop('name'),
+          R.pipe(
+            R.prop('type'),
+            getLoaderForType,
+          ),
+        ]),
+      ),
+    ),
+  );
+
   const getLoadFuncs = R.pipe(
     R.partial(getSchemaFromBufferArray, [schema]),
     R.of,

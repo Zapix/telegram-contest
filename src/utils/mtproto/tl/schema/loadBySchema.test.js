@@ -46,7 +46,7 @@ describe('loadBySchema', () => {
           [CONSTRUCTOR_KEY]: 'messageActionChatCreate',
           [TYPE_KEY]: 'MessageAction',
           title: 'Hello World!',
-          users: [2, 3, 4]
+          users: [2, 3, 4],
         });
       });
 
@@ -56,9 +56,61 @@ describe('loadBySchema', () => {
             [CONSTRUCTOR_KEY]: 'messageActionChatCreate',
             [TYPE_KEY]: 'MessageAction',
             title: 'Hello World!',
-            users: [2, 3, 4]
+            users: [2, 3, 4],
           },
-          offset: 40
+          offset: 40,
+        });
+      });
+    });
+
+    describe('config', () => {
+      /* eslint-disable */
+      const hexStr = '05592d230f784d5eb57572990200000015c4b51c010000003ca4c22e01000000000000000e3134392e3135342e3137352e313000500000001e000000';
+      /* eslint-enable */
+      const buffer = hexToArrayBuffer(hexStr);
+
+      it('without offset', () => {
+        expect(load(buffer)).toEqual({
+          [CONSTRUCTOR_KEY]: 'config',
+          [TYPE_KEY]: 'Config',
+          date: 0x5e4d780f,
+          test_mode: true,
+          this_dc: 2,
+          dc_options: [
+            {
+              [CONSTRUCTOR_KEY]: 'dcOption',
+              [TYPE_KEY]: 'DcOption',
+              id: 1,
+              hostname: '',
+              port: 80,
+              ip_address: '149.154.175.10',
+            },
+          ],
+          chat_size_max: 0x1e,
+        });
+      });
+
+      it('with offset', () => {
+        expect(load(buffer, true)).toEqual({
+          value: {
+            [CONSTRUCTOR_KEY]: 'config',
+            [TYPE_KEY]: 'Config',
+            date: 0x5e4d780f,
+            test_mode: true,
+            this_dc: 2,
+            dc_options: [
+              {
+                [CONSTRUCTOR_KEY]: 'dcOption',
+                [TYPE_KEY]: 'DcOption',
+                id: 1,
+                hostname: '',
+                port: 80,
+                ip_address: '149.154.175.10',
+              },
+            ],
+            chat_size_max: 0x1e,
+          },
+          offset: 60,
         });
       });
     });

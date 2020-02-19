@@ -1,6 +1,5 @@
 import loadMessage from './loadMessage';
 import {
-  AUTH_SENT_CODE,
   TYPE_KEY,
   BAD_MSG_NOTIFICATION_TYPE,
   MSGS_ACK_TYPE,
