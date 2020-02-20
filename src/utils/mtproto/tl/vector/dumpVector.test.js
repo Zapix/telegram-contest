@@ -5,6 +5,7 @@ import { loadBool } from '../bool';
 import { loadInt } from '../int';
 import { loadBigInt } from '../bigInt';
 import { loadString } from '../string';
+import { arrayBufferToHex, hexToArrayBuffer } from '../../utils';
 
 describe('dumpVector', () => {
   it('of bool', () => {
@@ -25,5 +26,17 @@ describe('dumpVector', () => {
   it('of string', () => {
     const buffer = dumpVector(['Hello', 'MTProto', 'implementation']);
     expect(loadVector(loadString, buffer)).toEqual(['Hello', 'MTProto', 'implementation']);
+  });
+
+  it('dump with custom dumpFunction function', () => {
+    const dump = jest.fn();
+    dump.mockReturnValueOnce(hexToArrayBuffer('11111111'));
+    dump.mockReturnValueOnce(hexToArrayBuffer('22222222'));
+
+    const buffer = dumpVector(dump, [1, 2]);
+
+    // 0x1c b5 c4 15
+    const hexStr = '15c4b51c020000001111111122222222';
+    expect(arrayBufferToHex(buffer)).toEqual(hexStr);
   });
 });
