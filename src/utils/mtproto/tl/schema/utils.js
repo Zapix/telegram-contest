@@ -1,6 +1,6 @@
 import * as R from 'ramda';
 import { getConstructor } from '../utils';
-import { CONSTRUCTOR_KEY, METHOD_KEY } from '../../constants';
+import { CONSTRUCTOR_KEY, METHOD_KEY, TYPE_KEY } from '../../constants';
 
 
 /**
@@ -181,4 +181,21 @@ export const isVector = R.pipe(
 export const getVectorType = R.pipe(
   matchVector,
   R.nth(1),
+);
+
+export const getMsgType = R.prop(TYPE_KEY);
+
+/**
+ * @param {{constructors: *, methods: *}} schema - that should be used to parse message
+ * @param {*} msg - object that should be dumped
+ */
+export const isMsgCouldBeDump = R.unapply(
+  R.pipe(
+    R.of,
+    R.ap([
+      R.pipe(R.nth(0), isDumpingTypeFactory),
+      R.pipe(R.nth(1), R.prop(TYPE_KEY)),
+    ]),
+    R.apply(R.call),
+  ),
 );

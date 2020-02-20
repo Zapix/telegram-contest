@@ -1,2 +1,3 @@
 export { default as loadBySchema } from './loadBySchema';
-export { isFromSchemaFactory } from './utils';
+export { default as dumpBySchema } from './dumpBySchema';
+export { isFromSchemaFactory, isMsgCouldBeDump } from './utils';

@@ -3,11 +3,10 @@ import * as R from 'ramda';
 import {
   API_ID,
   API_HASH,
-  AUTH_SEND_CODE,
-  CODE_SETTINGS,
+  TYPE_KEY,
+  METHOD_KEY,
 } from './constants';
-import { stringToTlString } from './tl/tlSerialization';
-import { copyBytes } from './utils';
+import { dumps } from './tl';
 import encryptMessage from './encryptMessage';
 import sendRequest from './sendRequest';
 
@@ -16,45 +15,23 @@ import sendRequest from './sendRequest';
  * @param {string} phone
  */
 export function buildAuthSendCodeMessage(phone) {
-  const phoneTl = stringToTlString(phone);
-  const apiHashTl = stringToTlString(API_HASH);
-
-  const buffer = new ArrayBuffer(4 + phoneTl.length + 4 + apiHashTl.length + 4 + 4);
-
-  const constructor = new Uint32Array(buffer, 0, 1);
-  constructor[0] = AUTH_SEND_CODE;
-
-  const phoneTlBytes = new Uint8Array(buffer, 4, phoneTl.length);
-  copyBytes(phoneTl, phoneTlBytes);
-
-  const apiId = new Uint32Array(buffer, 4 + phoneTl.length, 1);
-  apiId[0] = API_ID;
-
-  const apiHashTlBytes = new Uint8Array(buffer, 4 + phoneTl.length + 4, apiHashTl.length);
-  copyBytes(apiHashTl, apiHashTlBytes);
-
-  const codeSettings = new Uint32Array(
-    buffer,
-    4 + phoneTl.length + 4 + apiHashTlBytes.length,
-    2,
-  );
-  codeSettings[0] = CODE_SETTINGS;
-
-  return {
-    buffer,
-    constructor,
-    phoneTl,
-    apiId,
-    apiHashTl,
-    codeSettings,
+  const message = {
+    [TYPE_KEY]: 'auth.SentCode',
+    [METHOD_KEY]: 'auth.sendCode',
+    phone_number: phone,
+    sms_type: 0,
+    api_id: API_ID,
+    api_hash: API_HASH,
+    lang_code: 'ru-ru',
   };
+
+  return dumps(message);
 }
 
 export default function sendAuthCode(authKey, authKeyId, salt, sessionId, seqNo, phone) {
   const encrypt = R.partial(encryptMessage, [authKey, authKeyId, salt, sessionId, seqNo]);
   return R.pipe(
     buildAuthSendCodeMessage,
-    R.prop('buffer'),
     encrypt,
     sendRequest,
   )(phone);
