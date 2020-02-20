@@ -1,5 +1,7 @@
 import * as R from 'ramda';
 import { getConstructor } from '../utils';
+import { CONSTRUCTOR_KEY, METHOD_KEY } from '../../constants';
+
 
 /**
  * Converts int 32 value to unsigned int 32 value without changing bytes
@@ -89,4 +91,94 @@ export const getParseSchemaById = R.unapply(
 export const isFromSchemaFactory = R.pipe(
   buildSchemaIdMap,
   (x) => R.pipe(getConstructor, R.has(R.__, x)),
+);
+
+
+export const isMethodObject = R.has(METHOD_KEY);
+
+
+export const isConstuctorObject = R.has(CONSTRUCTOR_KEY);
+
+
+/**
+ * Takes schema and return map for methods
+ * @param {{constructors: *, methods: *}} schema - layer to build method schema
+ * @return {{[string]: *}}
+ */
+export const buildMethodsSchemaMap = R.pipe(
+  R.prop('methods'),
+  R.map(R.pipe(R.of, R.ap([R.prop('method'), updateSchemaWithUintId]))),
+  R.fromPairs,
+);
+
+/**
+ * Takes schema and return map for constructors
+ * @param {{constructors: *, methods: *}} schema - layer to build constructors schema
+ * @return {{[string]: *}}
+ */
+export const buildConstructorsSchemaMap = R.pipe(
+  R.prop('constructors'),
+  R.map(R.pipe(R.of, R.ap([R.prop('predicate'), updateSchemaWithUintId]))),
+  R.fromPairs,
+);
+
+/**
+ * Returns all constructors/methods that could be loaded/dumped
+ * @type {(function(...[*]=))|*}
+ */
+export const getAvailableTypes = R.pipe(
+  R.of,
+  R.ap([
+    R.pipe(buildMethodsSchemaMap, R.values, R.map(R.prop('type'))),
+    R.pipe(buildConstructorsSchemaMap, R.values, R.map(R.prop('type'))),
+  ]),
+  R.flatten,
+  (x) => new Set(x),
+);
+
+export const isDumpingTypeFactory = R.pipe(
+  getAvailableTypes,
+  (x) => (type) => x.has(type),
+);
+
+
+/**
+ * @param {{constructors: *, methods: *}} schema - layer to build method schema
+ * @param {string} methodName - method name
+ * @returns {*} - schema for current name
+ */
+export const getSchemaForMethod = R.unapply(R.pipe(
+  R.of,
+  R.ap([
+    R.nth(1),
+    R.pipe(R.nth(0), buildMethodsSchemaMap),
+  ]),
+  R.apply(R.prop),
+));
+
+/**
+ * @param {{constructors: *, methods: *}} schema - layer to build method schema
+ * @param {string} methodName - method name
+ * @returns {*} - schema for current name
+ */
+export const getSchemaForConstructor = R.unapply(R.pipe(
+  R.of,
+  R.ap([
+    R.nth(1),
+    R.pipe(R.nth(0), buildConstructorsSchemaMap),
+  ]),
+  R.apply(R.prop),
+));
+
+const matchVector = R.match(/Vector<(\w+)>/);
+
+export const isVector = R.pipe(
+  matchVector,
+  R.length,
+  R.lt(0),
+);
+
+export const getVectorType = R.pipe(
+  matchVector,
+  R.nth(1),
 );

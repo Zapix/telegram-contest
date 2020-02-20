@@ -1,4 +1,10 @@
-import { intToUint, getParseSchemaById, isFromSchemaFactory } from './utils';
+import {
+  intToUint,
+  getParseSchemaById,
+  isFromSchemaFactory,
+  getSchemaForMethod,
+  getSchemaForConstructor,
+} from './utils';
 
 import oldSchema from './layer5.json';
 import { hexToArrayBuffer } from '../../utils';
@@ -103,6 +109,62 @@ describe('utils', () => {
       test('found method', () => {
         const buffer = hexToArrayBuffer('4d5f8d76');
         expect(isLoadableBySchema(buffer)).toEqual(true);
+      });
+    });
+  });
+
+  describe('getSchemaForMethod', () => {
+    it('layer5 schema', () => {
+      expect(getSchemaForMethod(oldSchema, 'auth.sendCode')).toEqual({
+        id: 1988976461,
+        method: 'auth.sendCode',
+        params: [
+          {
+            name: 'phone_number',
+            type: 'string',
+          },
+          {
+            name: 'sms_type',
+            type: 'int',
+          },
+          {
+            name: 'api_id',
+            type: 'int',
+          },
+          {
+            name: 'api_hash',
+            type: 'string',
+          },
+          {
+            name: 'lang_code',
+            type: 'string',
+          },
+        ],
+        type: 'auth.SentCode',
+      });
+    });
+  });
+
+  describe('getSchemaForConstructor', () => {
+    describe('layer5 schema', () => {
+      expect(getSchemaForConstructor(oldSchema, 'photos.photosSlice')).toEqual({
+        id: 352657236,
+        predicate: 'photos.photosSlice',
+        params: [
+          {
+            name: 'count',
+            type: 'int',
+          },
+          {
+            name: 'photos',
+            type: 'Vector<Photo>',
+          },
+          {
+            name: 'users',
+            type: 'Vector<User>',
+          },
+        ],
+        type: 'photos.Photos',
       });
     });
   });

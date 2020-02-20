@@ -6,7 +6,7 @@ import { loadBigInt } from '../bigInt';
 import { loadBool } from '../bool';
 import { loadVector } from '../vector';
 
-import { getParseSchemaById } from './utils';
+import { getParseSchemaById, getVectorType, isVector } from './utils';
 import { getConstructor } from '../utils';
 import { buildLoadFunc, withConstantOffset } from '../../utils';
 import { CONSTRUCTOR_KEY, METHOD_KEY, TYPE_KEY } from '../../constants';
@@ -27,19 +27,6 @@ const bareTypeLoaders = {
 
 const isBareType = R.has(R.__, bareTypeLoaders);
 const getBareTypeLoader = R.prop(R.__, bareTypeLoaders);
-
-const matchVector = R.match(/Vector<(\w+)>/);
-
-const isVector = R.pipe(
-  matchVector,
-  R.length,
-  R.lt(0),
-);
-
-const getVectorType = R.pipe(
-  matchVector,
-  R.nth(1),
-);
 
 const getTypePair = R.pipe(
   R.of,
@@ -90,7 +77,7 @@ const getObjectConstructorPair = R.cond([
  * first 4 bytes (int 32). Searches way to load it in both constructors and methods ten
  * load param by param. if param has got bare type (int, string, bool) then load them.
  * if param is complex type then load with recursive, same for vector types
- * @param {{constucors: *, methods: *}} schema
+ * @param {{constructors: *, methods: *}} schema
  * @param {ArrayBuffer} buffer
  * @param {boolean} withOffset
  */
