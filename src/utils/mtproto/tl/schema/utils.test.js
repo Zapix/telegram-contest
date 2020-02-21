@@ -4,6 +4,8 @@ import {
   isFromSchemaFactory,
   getSchemaForMethod,
   getSchemaForConstructor,
+  loadFlag,
+  dumpFlag,
 } from './utils';
 
 import oldSchema from './layer5.json';
@@ -167,5 +169,21 @@ describe('utils', () => {
         type: 'photos.Photos',
       });
     });
+  });
+
+  it('loadFlag', () => {
+    expect(loadFlag(14381)).toEqual(
+      /* eslint-disable */
+      [true, false, true, true, false, true, false, false, false, false, false, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false]
+      /* eslint-enable */
+    );
+  });
+
+  it('dumpFlag', () => {
+    expect(dumpFlag(
+      /* eslint-disable */
+      [true, false, true, true, false, true, false, false, false, false, false, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false]
+      /* eslint-enable */
+    )).toEqual(14381);
   });
 });

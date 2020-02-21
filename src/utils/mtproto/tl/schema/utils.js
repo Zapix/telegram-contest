@@ -194,8 +194,31 @@ export const isMsgCouldBeDump = R.unapply(
     R.of,
     R.ap([
       R.pipe(R.nth(0), isDumpingTypeFactory),
-      R.pipe(R.nth(1), R.prop(TYPE_KEY)),
+      R.pipe(R.nth(1), getMsgType),
     ]),
     R.apply(R.call),
   ),
+);
+
+
+/**
+ * @param {Number} number
+ * @returns {Array<boolean>} 32 sized array of boolean values
+ */
+export const loadFlag = R.pipe(
+  (x) => x.toString(2).padStart(32, '0'),
+  R.split(''),
+  R.map(R.pipe(R.partialRight(parseInt, [2]), Boolean)),
+  R.reverse,
+);
+
+/**
+ * @param {Array<boolean>} flags - 32 sized array of boolean values
+ * @returns {Number}
+ */
+export const dumpFlag = R.pipe(
+  R.map((x) => +x),
+  R.reverse,
+  R.join(''),
+  R.partialRight(parseInt, [2]),
 );
