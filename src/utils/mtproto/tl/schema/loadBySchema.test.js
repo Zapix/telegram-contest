@@ -2,6 +2,8 @@ import * as R from 'ramda';
 import { hexToArrayBuffer } from '../../utils';
 
 import layer5 from './layer5.json';
+import layer108 from './layer108.json';
+
 import loadBySchema from './loadBySchema';
 import { CONSTRUCTOR_KEY, TYPE_KEY } from '../../constants';
 
@@ -111,6 +113,48 @@ describe('loadBySchema', () => {
             chat_size_max: 0x1e,
           },
           offset: 60,
+        });
+      });
+    });
+  });
+  describe('user api layer 108', () => {
+    const load = R.partial(loadBySchema, [layer108]);
+    describe('codeSettings', () => {
+      describe('2 flags on', () => {
+        const hexStr = '83bebede1200000039d3ed3f39d3ed3f';
+        const buffer = hexToArrayBuffer(hexStr);
+
+        it('without offset', () => {
+          expect(load(buffer)).toEqual({
+            [CONSTRUCTOR_KEY]: 'codeSettings',
+            [TYPE_KEY]: 'CodeSettings',
+            current_number: {
+              [CONSTRUCTOR_KEY]: 'true',
+              [TYPE_KEY]: 'True',
+            },
+            allow_app_hash: {
+              [CONSTRUCTOR_KEY]: 'true',
+              [TYPE_KEY]: 'True',
+            },
+          });
+        });
+
+        it('with offset', () => {
+          expect(load(buffer, true)).toEqual({
+            value: {
+              [CONSTRUCTOR_KEY]: 'codeSettings',
+              [TYPE_KEY]: 'CodeSettings',
+              current_number: {
+                [CONSTRUCTOR_KEY]: 'true',
+                [TYPE_KEY]: 'True',
+              },
+              allow_app_hash: {
+                [CONSTRUCTOR_KEY]: 'true',
+                [TYPE_KEY]: 'True',
+              },
+            },
+            offset: 16,
+          });
         });
       });
     });

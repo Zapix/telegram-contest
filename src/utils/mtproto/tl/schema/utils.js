@@ -222,3 +222,20 @@ export const dumpFlag = R.pipe(
   R.join(''),
   R.partialRight(parseInt, [2]),
 );
+
+/**
+ * Checks has obj schema conditional field or not
+ */
+export const hasConditionalField = R.pipe(
+  R.prop('params'),
+  R.filter(R.propEq('type', '#')),
+  R.prop('length'),
+  R.lt(0),
+);
+
+export const flagOptionMatch = R.match(/flags\.(\d+)\?(\w+)/);
+export const isFlagOption = R.pipe(
+  flagOptionMatch,
+  R.prop('length'),
+  R.lt(0),
+);

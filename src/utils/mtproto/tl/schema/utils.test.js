@@ -5,7 +5,7 @@ import {
   getSchemaForMethod,
   getSchemaForConstructor,
   loadFlag,
-  dumpFlag,
+  dumpFlag, hasConditionalField,
 } from './utils';
 
 import oldSchema from './layer5.json';
@@ -185,5 +185,79 @@ describe('utils', () => {
       [true, false, true, true, false, true, false, false, false, false, false, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false]
       /* eslint-enable */
     )).toEqual(14381);
+  });
+
+  describe('hasConditionalField', () => {
+    it('has', () => {
+      expect(hasConditionalField({
+        id: '1355435489',
+        predicate: 'phoneCallDiscarded',
+        params: [
+          {
+            name: 'flags',
+            type: '#',
+          },
+          {
+            name: 'need_rating',
+            type: 'flags.2?true',
+          },
+          {
+            name: 'need_debug',
+            type: 'flags.3?true',
+          },
+          {
+            name: 'video',
+            type: 'flags.5?true',
+          },
+          {
+            name: 'id',
+            type: 'long',
+          },
+          {
+            name: 'reason',
+            type: 'flags.0?PhoneCallDiscardReason',
+          },
+          {
+            name: 'duration',
+            type: 'flags.1?int',
+          },
+        ],
+        type: 'PhoneCall',
+      })).toEqual(true);
+    });
+
+    it('hasn`t', () => {
+      expect(hasConditionalField({
+        id: '1355435489',
+        predicate: 'phoneCallDiscarded',
+        params: [
+          {
+            name: 'need_rating',
+            type: 'flags.2?true',
+          },
+          {
+            name: 'need_debug',
+            type: 'flags.3?true',
+          },
+          {
+            name: 'video',
+            type: 'flags.5?true',
+          },
+          {
+            name: 'id',
+            type: 'long',
+          },
+          {
+            name: 'reason',
+            type: 'flags.0?PhoneCallDiscardReason',
+          },
+          {
+            name: 'duration',
+            type: 'flags.1?int',
+          },
+        ],
+        type: 'PhoneCall',
+      })).toEqual(false);
+    });
   });
 });

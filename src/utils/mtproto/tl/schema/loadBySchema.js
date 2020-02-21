@@ -6,9 +6,16 @@ import { loadBigInt } from '../bigInt';
 import { loadBool } from '../bool';
 import { loadVector } from '../vector';
 
-import { getParseSchemaById, getVectorType, isVector } from './utils';
+import {
+  flagOptionMatch,
+  getParseSchemaById,
+  getVectorType,
+  hasConditionalField, isFlagOption,
+  isVector,
+  loadFlag,
+} from './utils';
 import { getConstructor } from '../utils';
-import { buildLoadFunc, withConstantOffset } from '../../utils';
+import { buildLoadFunc, sliceBuffer, withConstantOffset } from '../../utils';
 import { CONSTRUCTOR_KEY, METHOD_KEY, TYPE_KEY } from '../../constants';
 
 const getSchemaFromBufferArray = R.unapply(R.pipe(
@@ -112,12 +119,74 @@ function loadBySchema(schema, buffer, withOffset) {
     ),
   );
 
-  const getLoadFuncs = R.pipe(
-    R.partial(getSchemaFromBufferArray, [schema]),
+  const buildSimpleLoader = R.pipe(
     R.of,
     R.ap([getTypePair, getObjectConstructorPair, getLoadPairs]),
     (x) => [x[0], x[1], ...x[2]],
     buildLoadFunc,
+  );
+
+  /**
+   * Loads with flag
+   * TODO: write in functional style
+   * @param {*} objSchema object to load array buffer
+   * @param {ArrayBuffer} objBuffer array buffer that should be loaded
+   * @param {boolean} withObjOffset - offset
+   * @returns {{}}
+   */
+  function loadWithFlag(objSchema, objBuffer, withObjOffset) {
+    let value = {};
+    let flags;
+    let currentBuffer;
+    let commonOffset = 0;
+
+    const { value: typeData, offset: baseOffset } = buildLoadFunc([
+      getTypePair(objSchema),
+      getObjectConstructorPair(objSchema),
+    ])(objBuffer, true);
+
+    commonOffset += baseOffset;
+    value = { ...value, ...typeData };
+
+    currentBuffer = sliceBuffer(objBuffer, commonOffset);
+    const params = R.prop('params', objSchema);
+
+    for (let i = 0; i < params.length; i += 1) {
+      const { name, type } = params[i];
+      if (type === '#') {
+        const { value: flagInt, offset: currentOffset } = loadInt(currentBuffer, true);
+        commonOffset += currentOffset;
+        flags = loadFlag(flagInt);
+        currentBuffer = sliceBuffer(currentBuffer, currentOffset);
+      } else if (isFlagOption(type)) {
+        const data = flagOptionMatch(type);
+        const flagId = parseInt(data[1], 10);
+        if (flags[flagId]) {
+          const currentType = data[2];
+          const loader = getLoaderForType(currentType);
+          const { value: param, offset: currentOffset } = loader(currentBuffer, true);
+          value = { ...value, [name]: param };
+          commonOffset += currentOffset;
+          currentBuffer = sliceBuffer(currentBuffer, currentOffset);
+        }
+      } else {
+        const loader = getLoaderForType(type);
+        const { value: param, offset: currentOffset } = loader(currentBuffer, true);
+        value = { ...value, [name]: param };
+        commonOffset += currentOffset;
+        currentBuffer = sliceBuffer(currentBuffer, currentOffset);
+      }
+    }
+
+    return withObjOffset ? { value, offset: commonOffset } : value;
+  }
+
+  const getLoadFuncs = R.pipe(
+    R.partial(getSchemaFromBufferArray, [schema]),
+    R.cond([
+      [hasConditionalField, R.pipe(R.of, R.partial(loadWithFlag))],
+      [R.T, buildSimpleLoader],
+    ]),
   );
 
   return getLoadFuncs(buffer)(buffer, withOffset);
