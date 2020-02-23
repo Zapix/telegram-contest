@@ -234,6 +234,7 @@ export const hasConditionalField = R.pipe(
 );
 
 export const flagOptionMatch = R.match(/flags\.(\d+)\?(\w+)/);
+
 export const isFlagOption = R.pipe(
   flagOptionMatch,
   R.prop('length'),

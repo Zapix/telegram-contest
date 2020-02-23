@@ -4,9 +4,14 @@ import {
   isMethodObject,
   isConstuctorObject,
   getSchemaForMethod,
-  getSchemaForConstructor, isVector, getVectorType, isDumpingTypeFactory,
+  getSchemaForConstructor,
+  isVector,
+  getVectorType,
+  isDumpingTypeFactory,
+  hasConditionalField,
+  isFlagOption, flagOptionMatch, dumpFlag,
 } from './utils';
-import { getEmptyArrayBuffer, buildDumpFunc } from '../../utils';
+import { getEmptyArrayBuffer, buildDumpFunc, mergeAllArrayBuffers } from '../../utils';
 import { CONSTRUCTOR_KEY, METHOD_KEY } from '../../constants';
 import { dumpInt } from '../int';
 import { dumpBool } from '../bool';
@@ -59,16 +64,18 @@ export default function dumpBySchema(schema, message) {
     R.apply(R.binary(R.pipe)),
   );
 
+  const dumpId = R.pipe(R.prop('id'), dumpInt, R.always);
+
   /**
    * Builds function by schema
    * @param {*} objSchema
    * @returns {Function} function to dump object
    */
   function buildDumpBySchemaFunc(objSchema) {
-    return R.pipe(
+    const buildPlainDump = R.pipe(
       R.of,
       R.ap([
-        R.pipe(R.prop('id'), dumpInt, R.always),
+        dumpId,
         R.pipe(
           R.prop('params'),
           R.map(buildDumpAttrFunc),
@@ -76,7 +83,47 @@ export default function dumpBySchema(schema, message) {
       ]),
       R.flatten,
       buildDumpFunc,
-    )(objSchema);
+    );
+
+    function dumpWithFlag(obj) {
+      console.log(`Dump ${obj} by ${objSchema}`);
+
+      const buffers = [dumpId(objSchema)(obj)];
+      let flagId = 0;
+      const flags = (new Array(32)).fill(false);
+
+      const params = R.prop('params', objSchema);
+
+      for (let i = 0; i < params.length; i += 1) {
+        const { name, type } = params[i];
+        if (type === '#') {
+          buffers.push(new ArrayBuffer());
+          flagId = i;
+        } else if (isFlagOption(type)) {
+          if (R.has(name, obj)) {
+            const match = flagOptionMatch(type);
+            flags[parseInt(match[1], 10)] = true;
+
+            const dumpType = match[2] === 'true' ? 'True' : match[2]; // dirty thing need to check
+
+            buffers.push(getDumpFunction(dumpType)(R.prop(name, obj)));
+          }
+        } else {
+          buffers.push(getDumpFunction(type)(R.prop(name, obj)));
+        }
+      }
+
+      buffers[flagId] = dumpInt(dumpFlag(flags));
+      return mergeAllArrayBuffers([
+        dumpId(objSchema)(obj),
+        ...buffers,
+      ]);
+    }
+
+    return R.cond([
+      [hasConditionalField, R.always(dumpWithFlag)],
+      [R.T, buildPlainDump],
+    ])(objSchema);
   }
 
   return R.unapply(

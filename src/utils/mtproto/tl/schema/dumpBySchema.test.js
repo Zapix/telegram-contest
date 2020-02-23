@@ -2,6 +2,7 @@ import * as R from 'ramda';
 
 import dumpBySchema from './dumpBySchema';
 import layer5 from './layer5.json';
+import layer108 from './layer108.json';
 import { CONSTRUCTOR_KEY, METHOD_KEY, TYPE_KEY } from '../../constants';
 import { arrayBufferToHex } from '../../utils';
 
@@ -58,7 +59,7 @@ describe('dumpBySchema', () => {
       expect(arrayBufferToHex(buffer)).toEqual(hexStr);
     });
 
-    it.only('config', () => {
+    it('config', () => {
       const obj = {
         [CONSTRUCTOR_KEY]: 'config',
         [TYPE_KEY]: 'Config',
@@ -84,6 +85,31 @@ describe('dumpBySchema', () => {
       const hexStr = '05592d230f784d5eb57572990200000015c4b51c010000003ca4c22e01000000000000000e3134392e3135342e3137352e313000500000001e000000';
       /* eslint-enable */
 
+      expect(arrayBufferToHex(buffer)).toEqual(hexStr);
+    });
+  });
+
+  describe('layer 108 schema', () => {
+    const dump = R.partial(dumpBySchema, [layer108]);
+    it('codeSettings', () => {
+      const obj = {
+        [CONSTRUCTOR_KEY]: 'codeSettings',
+        [TYPE_KEY]: 'CodeSettings',
+        current_number: {
+          [CONSTRUCTOR_KEY]: 'true',
+          [TYPE_KEY]: 'True',
+        },
+        allow_app_hash: {
+          [CONSTRUCTOR_KEY]: 'true',
+          [TYPE_KEY]: 'True',
+        },
+      };
+
+      const buffer = dump(obj);
+
+      const hexStr = '83bebede1200000039d3ed3f39d3ed3f';
+
+      console.log(buffer);
       expect(arrayBufferToHex(buffer)).toEqual(hexStr);
     });
   });

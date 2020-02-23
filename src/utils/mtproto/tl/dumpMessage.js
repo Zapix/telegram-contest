@@ -1,6 +1,6 @@
 import * as R from 'ramda';
-import layer5 from './schema/layer5';
 
+import layer5 from './schema/layer5';
 import { dumpBadMsgNotification } from './bad_msg_notification';
 import {
   BAD_MSG_NOTIFICATION_TYPE,
