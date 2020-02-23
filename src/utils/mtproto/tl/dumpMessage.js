@@ -1,6 +1,5 @@
 import * as R from 'ramda';
 
-import layer5 from './schema/layer5';
 import { dumpBadMsgNotification } from './bad_msg_notification';
 import {
   BAD_MSG_NOTIFICATION_TYPE,
@@ -60,6 +59,7 @@ import { dumpRpcDropAnswer } from './rpc_drop_answer';
 import { dumpRpcError } from './rpc_error';
 import { dumpRpcResult } from './rpc_result';
 import { dumpBySchema, isMsgCouldBeDump } from './schema';
+import layer from './schema/layer5';
 
 
 const isMessageOf = R.propEq(TYPE_KEY);
@@ -109,7 +109,7 @@ export default function dumpMessage(msg) {
     [isMessageOf(RPC_DROP_ANSWER_TYPE), dumpRpcDropAnswer],
     [isMessageOf(RPC_ERROR_TYPE), dumpRpcError],
     [isMessageOf(RPC_RESULT_TYPE), R.partialRight(dumpRpcResult, [dumpMessage])],
-    [R.partial(isMsgCouldBeDump, [layer5]), R.partial(dumpBySchema, [layer5])],
+    [R.partial(isMsgCouldBeDump, [layer]), R.partial(dumpBySchema, [layer])],
     [R.T, dumpUnexpectedMessage],
   ])(msg);
 }

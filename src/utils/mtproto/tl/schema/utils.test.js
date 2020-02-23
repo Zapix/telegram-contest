@@ -101,7 +101,7 @@ describe('utils', () => {
   });
 
   describe('isFromSchemaFactory', () => {
-    describe('layer5 schema', () => {
+    describe('layer schema', () => {
       const isLoadableBySchema = isFromSchemaFactory(oldSchema);
       test('found constructor', () => {
         const buffer = hexToArrayBuffer('3bcc00e3');
@@ -116,7 +116,7 @@ describe('utils', () => {
   });
 
   describe('getSchemaForMethod', () => {
-    it('layer5 schema', () => {
+    it('layer schema', () => {
       expect(getSchemaForMethod(oldSchema, 'auth.sendCode')).toEqual({
         id: 1988976461,
         method: 'auth.sendCode',
@@ -148,7 +148,7 @@ describe('utils', () => {
   });
 
   describe('getSchemaForConstructor', () => {
-    describe('layer5 schema', () => {
+    describe('layer schema', () => {
       expect(getSchemaForConstructor(oldSchema, 'photos.photosSlice')).toEqual({
         id: 352657236,
         predicate: 'photos.photosSlice',

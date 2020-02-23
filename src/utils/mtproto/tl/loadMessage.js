@@ -62,7 +62,7 @@ import { loadDestroySessionNone } from './destory_session_none';
 import { loadNewSessionCreated } from './new_session_created';
 import { loadHttpWait } from './http_wait';
 import { loadBySchema, isFromSchemaFactory } from './schema';
-import layer5 from './schema/layer5';
+import layer from './schema/layer5';
 
 /**
  * Writes warning message into console and returns null
@@ -120,7 +120,7 @@ function parsePlainMessage(buffer, withOffset) {
     [isDestroySessionOk, loadDestroySessionOk],
     [isDestroySessionNone, loadDestroySessionNone],
     [isMessageContainer, R.partialRight(loadMessageContainer, [parsePlainMessage])],
-    [isFromSchemaFactory(layer5), R.partial(loadBySchema, [layer5])],
+    [isFromSchemaFactory(layer), R.partial(loadBySchema, [layer])],
     [R.T, parseUnexpectedMessage],
   ])(buffer, withOffset);
 }
