@@ -1,6 +1,5 @@
 import loadMessage from './loadMessage';
 import {
-  AUTH_SENT_CODE,
   TYPE_KEY,
   BAD_MSG_NOTIFICATION_TYPE,
   MSGS_ACK_TYPE,
@@ -26,7 +25,7 @@ import {
   DESTROY_SESSION_TYPE,
   DESTROY_SESSION_OK_TYPE,
   DESTROY_SESSION_NONE_TYPE,
-  NEW_SESSION_CREATED_TYPE, MESSAGE_CONTAINER_TYPE, HTTP_WAIT_TYPE,
+  NEW_SESSION_CREATED_TYPE, MESSAGE_CONTAINER_TYPE, HTTP_WAIT_TYPE, CONSTRUCTOR_KEY,
 } from '../constants';
 import { hexToArrayBuffer } from '../utils';
 
@@ -148,16 +147,6 @@ describe('loadMessage', () => {
     });
   });
 
-  it('auth code sent', () => {
-    const hexStr = 'bdbc1522b57572991235646130343337306165386264323132373800';
-    const buffer = hexToArrayBuffer(hexStr);
-    expect(loadMessage(buffer)).toEqual({
-      type: AUTH_SENT_CODE,
-      phoneRegistered: true,
-      phoneCodeHash: 'da04370ae8bd21278',
-    });
-  });
-
   it('rpc result', () => {
     /* eslint-disable */
     const hexStr = '016d5cf300000000bc860b5ebdbc1522b57572991235646130343337306165386264323132373800';
@@ -167,11 +156,12 @@ describe('loadMessage', () => {
     expect(loadMessage(buffer)).toMatchObject({
       [TYPE_KEY]: RPC_RESULT_TYPE,
       reqMsgId: BigInt('0x5e0b86bc00000000'),
-      // result: {
-      //   type: AUTH_SENT_CODE,
-      //   phoneRegistered: true,
-      //   phoneCodeHash: 'da04370ae8bd21278',
-      // },
+      result: {
+        [CONSTRUCTOR_KEY]: 'auth.sentCode',
+        [TYPE_KEY]: 'auth.SentCode',
+        phone_registered: true,
+        phone_code_hash: '5da04370ae8bd21278',
+      },
     });
   });
 
@@ -407,6 +397,18 @@ describe('loadMessage', () => {
       maxDelay: 0,
       waitAfter: 0,
       maxWait: 25000,
+    });
+  });
+
+  it('load auth.sentCode', () => {
+    const hexStr = 'bdbc1522b57572991237363064393638363661326264366539343500';
+    const buffer = hexToArrayBuffer(hexStr);
+
+    expect(loadMessage(buffer)).toEqual({
+      [CONSTRUCTOR_KEY]: 'auth.sentCode',
+      [TYPE_KEY]: 'auth.SentCode',
+      phone_registered: true,
+      phone_code_hash: '760d96866a2bd6e945',
     });
   });
 });

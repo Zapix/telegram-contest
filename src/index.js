@@ -78,8 +78,9 @@ createAuthorizationKey().then(({ authKey, authKeyId, serverSalt }) => {
     filter(isActionOf(AUTH_REQUESTED)),
   ).subscribe((item) => {
     console.log('Auth requested', item);
+    const { payload } = item;
 
-    sendAuthCode(authKey, authKeyId, serverSalt, sessionId, getSeqNo(), '+79625213997')
+    sendAuthCode(authKey, authKeyId, serverSalt, sessionId, getSeqNo(), payload)
       .then((response) => response.arrayBuffer())
       .then(decrypt)
       .then((message) => {
