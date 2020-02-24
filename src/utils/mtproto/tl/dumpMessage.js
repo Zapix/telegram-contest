@@ -59,7 +59,6 @@ import { dumpRpcDropAnswer } from './rpc_drop_answer';
 import { dumpRpcError } from './rpc_error';
 import { dumpRpcResult } from './rpc_result';
 import { dumpBySchema, isMsgCouldBeDump } from './schema';
-import layer from './schema/layer5';
 
 
 const isMessageOf = R.propEq(TYPE_KEY);
@@ -76,10 +75,13 @@ export const dumpUnexpectedMessage = (x) => {
 
 /**
  * Dumps any mt-proto message to array buffer
+ * @param {{constructors: *, methods: *}} schema - schema that should be used for dumping objects
  * @param {*} msg
  * @returns {ArrayBuffer}
  */
-export default function dumpMessage(msg) {
+export default function dumpMessage(schema, msg) {
+  const dump = R.partial(dumpMessage, [schema]);
+
   return R.cond([
     [isMessageOf(BAD_MSG_NOTIFICATION_TYPE), dumpBadMsgNotification],
     [isMessageOf(BAD_SERVER_SALT_TYPE), dumpBadServerSalt],
@@ -90,7 +92,7 @@ export default function dumpMessage(msg) {
     [isMessageOf(FUTURE_SALTS_TYPE), dumpFutureSalts],
     [isMessageOf(GET_FUTURE_SALTS_TYPE), dumpGetFutureSalts],
     [isMessageOf(HTTP_WAIT_TYPE), dumpHttpWait],
-    [isMessageOf(MESSAGE_CONTAINER_TYPE), R.partialRight(dumpMessageContainer, [dumpMessage])],
+    [isMessageOf(MESSAGE_CONTAINER_TYPE), R.partialRight(dumpMessageContainer, [dump])],
     [isMessageOf(MSG_DETAILED_INFO_TYPE), dumpMsgDetailedInfo],
     [isMessageOf(MSG_NEW_DETAILED_INFO_TYPE), dumpMsgNewDetailedInfo],
     [isMessageOf(MSG_RESEND_ANS_REQ_TYPE), dumpMsgResendAnsReq],
@@ -108,8 +110,8 @@ export default function dumpMessage(msg) {
     [isMessageOf(RPC_ANSWER_UNKNOWN_TYPE), dumpRpcAnswerUnknown],
     [isMessageOf(RPC_DROP_ANSWER_TYPE), dumpRpcDropAnswer],
     [isMessageOf(RPC_ERROR_TYPE), dumpRpcError],
-    [isMessageOf(RPC_RESULT_TYPE), R.partialRight(dumpRpcResult, [dumpMessage])],
-    [R.partial(isMsgCouldBeDump, [layer]), R.partial(dumpBySchema, [layer])],
+    [isMessageOf(RPC_RESULT_TYPE), R.partialRight(dumpRpcResult, [dump])],
+    [R.partial(isMsgCouldBeDump, [schema]), R.partial(dumpBySchema, [schema])],
     [R.T, dumpUnexpectedMessage],
   ])(msg);
 }

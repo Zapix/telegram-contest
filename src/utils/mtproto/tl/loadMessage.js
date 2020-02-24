@@ -62,7 +62,6 @@ import { loadDestroySessionNone } from './destory_session_none';
 import { loadNewSessionCreated } from './new_session_created';
 import { loadHttpWait } from './http_wait';
 import { loadBySchema, isFromSchemaFactory } from './schema';
-import layer from './schema/layer5';
 
 /**
  * Writes warning message into console and returns null
@@ -86,11 +85,13 @@ const parseUnexpectedMessage = R.pipe(
 /**
  * Takes array buffer of encoded message and returns message as parsed object or
  * list of parsed objects
+ * @param {{constructors: *, methods: *}} schema - schema that should be used for dumping objects
  * @param {ArrayBuffer} buffer
  * @param {boolean} [withOffset]
  * @returns {Array<*> | *}
  */
-function parsePlainMessage(buffer, withOffset) {
+export default function loadMessage(schema, buffer, withOffset) {
+  const load = R.partial(loadMessage, [schema]);
   return R.cond([
     [isHttpWait, loadHttpWait],
     [isPong, loadPong],
@@ -115,21 +116,12 @@ function parsePlainMessage(buffer, withOffset) {
     [isGetFutureSalts, loadGetFutureSalts],
     [isFutureSalt, loadFutureSalt],
     [isFutureSalts, loadFutureSalts],
-    [isRpcResult, R.partialRight(loadRpcResult, [parsePlainMessage])],
+    [isRpcResult, R.partialRight(loadRpcResult, [load])],
     [isDestroySession, loadDestroySession],
     [isDestroySessionOk, loadDestroySessionOk],
     [isDestroySessionNone, loadDestroySessionNone],
-    [isMessageContainer, R.partialRight(loadMessageContainer, [parsePlainMessage])],
-    [isFromSchemaFactory(layer), R.partial(loadBySchema, [layer])],
+    [isMessageContainer, R.partialRight(loadMessageContainer, [load])],
+    [isFromSchemaFactory(schema), R.partial(loadBySchema, [schema])],
     [R.T, parseUnexpectedMessage],
   ])(buffer, withOffset);
 }
-
-/**
- * Allow to parse messageContainers
- * @param {ArrayBuffer} buffer
- * @returns {Array<*> | *}
- */
-const loadMessage = parsePlainMessage;
-
-export default loadMessage;

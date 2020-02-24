@@ -21,6 +21,7 @@ import {
 import decryptMessage from 'utils/mtproto/decryptMessage';
 
 import './style.scss';
+import schema from 'utils/mtproto/tl/schema/layer5';
 import App from './components/App';
 import { getNRandomBytes, uint8ArrayToHex } from './utils/mtproto/utils';
 import { AUTH_REQUESTED, PING_REQUESTED, HTTP_WAIT } from './state/todo/constants';
@@ -41,6 +42,8 @@ state$.subscribe(updateView);
 dispatchInit();
 
 createAuthorizationKey().then(({ authKey, authKeyId, serverSalt }) => {
+  const load = R.partial(tlLoads, [schema]);
+
   const sessionId = getNRandomBytes(8);
   const decrypt = R.partial(decryptMessage, [authKey, authKeyId, serverSalt, sessionId]);
   const genSeqNo = seqNoGenerator();
@@ -56,7 +59,7 @@ createAuthorizationKey().then(({ authKey, authKeyId, serverSalt }) => {
       .then((message) => {
         console.log('Message byteLength', message.byteLength);
         console.log(uint8ArrayToHex(new Uint8Array(message)));
-        console.log(tlLoads(message));
+        console.log(load(message));
       });
   });
 
@@ -70,7 +73,7 @@ createAuthorizationKey().then(({ authKey, authKeyId, serverSalt }) => {
       .then(decrypt)
       .then((message) => {
         console.log('Http Wait Result: ', uint8ArrayToHex(new Uint8Array(message)));
-        console.log(tlLoads(message));
+        console.log(load(message));
       });
   });
 
@@ -85,7 +88,7 @@ createAuthorizationKey().then(({ authKey, authKeyId, serverSalt }) => {
       .then(decrypt)
       .then((message) => {
         console.log(uint8ArrayToHex(new Uint8Array(message)));
-        console.log(tlLoads(message));
+        console.log(load(message));
       });
   });
 });
