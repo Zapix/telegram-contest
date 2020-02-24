@@ -7,9 +7,9 @@ import {
   METHOD_KEY,
 } from './constants';
 import { dumps } from './tl';
+import schema from './tl/schema/layer5';
 import encryptMessage from './encryptMessage';
 import sendRequest from './sendRequest';
-import { arrayBufferToHex } from './utils';
 
 /**
  * Builds secnd code message
@@ -24,10 +24,7 @@ export function buildAuthSendCodeMessage(phone) {
     api_hash: API_HASH,
   };
 
-  const buffer = dumps(message);
-  console.log(arrayBufferToHex(buffer));
-
-  return buffer;
+  return dumps(schema, message);
 }
 
 export default function sendAuthCode(authKey, authKeyId, salt, sessionId, seqNo, phone) {

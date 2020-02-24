@@ -5,6 +5,7 @@ import {
   METHOD_KEY,
 } from './constants';
 import { dumps } from './tl';
+import schema from './tl/schema/layer5.json';
 import encryptMessage from './encryptMessage';
 import sendRequest from './sendRequest';
 
@@ -19,7 +20,7 @@ export function buildGetLangPack() {
     lang_code: 'en-en',
   };
 
-  const buffer = dumps(message);
+  const buffer = dumps(schema, message);
   console.log(buffer);
 
   return buffer;

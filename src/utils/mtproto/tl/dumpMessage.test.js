@@ -30,12 +30,15 @@ import {
   TYPE_KEY,
 } from '../constants';
 import dumpMessage from './dumpMessage';
+import schema from './schema/layer5.json';
 import { arrayBufferToHex } from '../utils';
 
 describe('dumpMessage', () => {
+  const dump = R.partial(dumpMessage, [schema]);
+
   function testDump({ type, msg, hexStr }) {
     it(type, () => {
-      const buffer = dumpMessage(msg);
+      const buffer = dump(msg);
       expect(arrayBufferToHex(buffer)).toEqual(hexStr);
     });
   }
@@ -352,6 +355,6 @@ describe('dumpMessage', () => {
 
   it('unexpected message', () => {
     const msg = { [TYPE_KEY]: 'unexpected_message' };
-    expect(dumpMessage(msg)).toEqual(new ArrayBuffer());
+    expect(dump(msg)).toEqual(new ArrayBuffer());
   });
 });

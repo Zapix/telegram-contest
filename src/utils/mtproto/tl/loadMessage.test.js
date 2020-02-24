@@ -1,4 +1,7 @@
+import * as R from 'ramda';
+
 import loadMessage from './loadMessage';
+import schema from './schema/layer5';
 import {
   TYPE_KEY,
   BAD_MSG_NOTIFICATION_TYPE,
@@ -29,12 +32,14 @@ import {
 } from '../constants';
 import { hexToArrayBuffer } from '../utils';
 
-describe('loadMessage', () => {
+describe('load', () => {
+  const load = R.partial(loadMessage, [schema]);
+
   it('pong', () => {
     const hexStr = 'c573773400000000452d075e7e34abe84fe1ef56';
     const buffer = hexToArrayBuffer(hexStr);
 
-    expect(loadMessage(buffer)).toEqual({
+    expect(load(buffer)).toEqual({
       [TYPE_KEY]: PONG_TYPE,
       msgId: BigInt('0x5e072d4500000000'),
       pingId: BigInt('0x56efe14fe8ab347e'),
@@ -45,7 +50,7 @@ describe('loadMessage', () => {
     const hexStr = 'ec77be7a000000000e800b5e';
     const buffer = hexToArrayBuffer(hexStr);
 
-    expect(loadMessage(buffer)).toEqual({
+    expect(load(buffer)).toEqual({
       [TYPE_KEY]: PING_TYPE,
       pingId: BigInt('0x5e0b800e00000000'),
     });
@@ -55,7 +60,7 @@ describe('loadMessage', () => {
     const hexStr = '8c7b42f3000000000e800b5e4b000000';
     const buffer = hexToArrayBuffer(hexStr);
 
-    expect(loadMessage(buffer)).toEqual({
+    expect(load(buffer)).toEqual({
       [TYPE_KEY]: PING_DELAY_DISCONNECT_TYPE,
       pingId: BigInt('0x5e0b800e00000000'),
       disconnectDelay: 75,
@@ -66,7 +71,7 @@ describe('loadMessage', () => {
     const hexStr = '0809c29e00000000452d075e078cde63a724558fb73e6267c6ab026b';
     const buffer = hexToArrayBuffer(hexStr);
 
-    expect(loadMessage(buffer)).toEqual({
+    expect(load(buffer)).toEqual({
       [TYPE_KEY]: NEW_SESSION_CREATED_TYPE,
       firstMsgId: BigInt('0x5e072d4500000000'),
       uniqueId: BigInt('0x8f5524a763de8c07'),
@@ -80,7 +85,7 @@ describe('loadMessage', () => {
     /* eslint-enable */
     const buffer = hexToArrayBuffer(hexStr);
 
-    expect(loadMessage(buffer)).toEqual({
+    expect(load(buffer)).toEqual({
       [TYPE_KEY]: MESSAGE_CONTAINER_TYPE,
       messages: [
         {
@@ -112,7 +117,7 @@ describe('loadMessage', () => {
     const hexStr = '11f8efa70000000079f60a5e0200000023000000';
     const buffer = hexToArrayBuffer(hexStr);
 
-    expect(loadMessage(buffer)).toEqual({
+    expect(load(buffer)).toEqual({
       [TYPE_KEY]: BAD_MSG_NOTIFICATION_TYPE,
       badMsgId: BigInt('0x5e0af67900000000'),
       badSeqNo: 2,
@@ -125,7 +130,7 @@ describe('loadMessage', () => {
     const hexStr = '7b44abed0000000079f60a5e0200000023000000000000000a700b5e';
     const buffer = hexToArrayBuffer(hexStr);
 
-    expect(loadMessage(buffer)).toEqual({
+    expect(load(buffer)).toEqual({
       [TYPE_KEY]: BAD_SERVER_SALT_TYPE,
       badMsgId: BigInt('0x5e0af67900000000'),
       badSeqNo: 2,
@@ -138,7 +143,7 @@ describe('loadMessage', () => {
     const hexStr = '59b4d66215c4b51c02000000000000000a700b5e000000000e800b5e';
     const buffer = hexToArrayBuffer(hexStr);
 
-    expect(loadMessage(buffer)).toEqual({
+    expect(load(buffer)).toEqual({
       [TYPE_KEY]: MSGS_ACK_TYPE,
       msgIds: [
         BigInt('0x5e0b700a00000000'),
@@ -153,7 +158,7 @@ describe('loadMessage', () => {
     /* eslint-enable */
     const buffer = hexToArrayBuffer(hexStr);
 
-    expect(loadMessage(buffer)).toMatchObject({
+    expect(load(buffer)).toMatchObject({
       [TYPE_KEY]: RPC_RESULT_TYPE,
       reqMsgId: BigInt('0x5e0b86bc00000000'),
       result: {
@@ -169,7 +174,7 @@ describe('loadMessage', () => {
     const hex = '19ca4421120000000c48656c6c6f20576f726c6421000000';
     const buffer = hexToArrayBuffer(hex);
 
-    expect(loadMessage(buffer)).toEqual({
+    expect(load(buffer)).toEqual({
       errorCode: 18,
       [TYPE_KEY]: RPC_ERROR_TYPE,
       errorMessage: 'Hello World!',
@@ -180,7 +185,7 @@ describe('loadMessage', () => {
     const hexStr = '40a7e458000000000e800b5e';
     const buffer = hexToArrayBuffer(hexStr);
 
-    expect(loadMessage(buffer)).toEqual({
+    expect(load(buffer)).toEqual({
       [TYPE_KEY]: RPC_DROP_ANSWER_TYPE,
       reqMsgId: BigInt('0x5e0b800e00000000'),
     });
@@ -190,21 +195,21 @@ describe('loadMessage', () => {
     const hexStr = '6ed32a5e';
     const buffer = hexToArrayBuffer(hexStr);
 
-    expect(loadMessage(buffer)).toEqual({ [TYPE_KEY]: RPC_DROP_ANSWER_TYPE });
+    expect(load(buffer)).toEqual({ [TYPE_KEY]: RPC_DROP_ANSWER_TYPE });
   });
 
   it('rpc answer dropped running', () => {
     const hexStr = '86e578cd';
     const buffer = hexToArrayBuffer(hexStr);
 
-    expect(loadMessage(buffer)).toEqual({ [TYPE_KEY]: RPC_ANSWER_DROPPED_RUNNING_TYPE });
+    expect(load(buffer)).toEqual({ [TYPE_KEY]: RPC_ANSWER_DROPPED_RUNNING_TYPE });
   });
 
   it('rpc answer dropped', () => {
     const hexStr = 'b7d83aa4000000000e800b5e1c000000ff000000';
     const buffer = hexToArrayBuffer(hexStr);
 
-    expect(loadMessage(buffer)).toEqual({
+    expect(load(buffer)).toEqual({
       [TYPE_KEY]: RPC_ANSWER_DROPPED_TYPE,
       msgId: BigInt('0x5e0b800e00000000'),
       seqNo: 28,
@@ -216,7 +221,7 @@ describe('loadMessage', () => {
     const hexStr = '52fb69da15c4b51c02000000000000000a700b5e000000000e800b5e';
     const buffer = hexToArrayBuffer(hexStr);
 
-    expect(loadMessage(buffer)).toEqual({
+    expect(load(buffer)).toEqual({
       [TYPE_KEY]: MSGS_STATE_REQ_TYPE,
       msgIds: [
         BigInt('0x5e0b700a00000000'),
@@ -229,7 +234,7 @@ describe('loadMessage', () => {
     const hexStr = '7db5de0400000000452d075e040101040c000000';
     const buffer = hexToArrayBuffer(hexStr);
 
-    expect(loadMessage(buffer)).toEqual({
+    expect(load(buffer)).toEqual({
       [TYPE_KEY]: MSGS_STATE_INFO_TYPE,
       reqMsgId: BigInt('0x5e072d4500000000'),
       info: [1, 1, 4, 12],
@@ -240,7 +245,7 @@ describe('loadMessage', () => {
     const hexStr = '31d1c08c15c4b51c02000000000000000a700b5e000000000e800b5e020c0d00';
     const buffer = hexToArrayBuffer(hexStr);
 
-    expect(loadMessage(buffer)).toEqual({
+    expect(load(buffer)).toEqual({
       [TYPE_KEY]: MSGS_ALL_INFO_TYPE,
       msgIds: [
         BigInt('0x5e0b700a00000000'),
@@ -254,7 +259,7 @@ describe('loadMessage', () => {
     const hexStr = 'c63e6d27000000000a700b5e000000000e800b5e7b00000000000000';
     const buffer = hexToArrayBuffer(hexStr);
 
-    expect(loadMessage(buffer)).toEqual({
+    expect(load(buffer)).toEqual({
       [TYPE_KEY]: MSG_DETAILED_INFO_TYPE,
       msgId: BigInt('0x5e0b700a00000000'),
       answerMsgId: BigInt('0x5e0b800e00000000'),
@@ -267,7 +272,7 @@ describe('loadMessage', () => {
     const hexStr = 'dfb69d80000000000e800b5e0c00000000000000';
     const buffer = hexToArrayBuffer(hexStr);
 
-    expect(loadMessage(buffer)).toEqual({
+    expect(load(buffer)).toEqual({
       [TYPE_KEY]: MSG_NEW_DETAILED_INFO_TYPE,
       answerMsgId: BigInt('0x5e0b800e00000000'),
       bytes: 12,
@@ -279,7 +284,7 @@ describe('loadMessage', () => {
     const hexStr = '081a867d15c4b51c02000000000000000a700b5e000000000e800b5e';
     const buffer = hexToArrayBuffer(hexStr);
 
-    expect(loadMessage(buffer)).toEqual({
+    expect(load(buffer)).toEqual({
       [TYPE_KEY]: MSG_RESEND_REQ_TYPE,
       msgIds: [
         BigInt('0x5e0b700a00000000'),
@@ -292,7 +297,7 @@ describe('loadMessage', () => {
     const hexStr = 'ebba108615c4b51c02000000000000000a700b5e000000000e800b5e';
     const buffer = hexToArrayBuffer(hexStr);
 
-    expect(loadMessage(buffer)).toEqual({
+    expect(load(buffer)).toEqual({
       [TYPE_KEY]: MSG_RESEND_ANS_REQ_TYPE,
       msgIds: [
         BigInt('0x5e0b700a00000000'),
@@ -305,7 +310,7 @@ describe('loadMessage', () => {
     const hexStr = '04bd21b912000000';
     const buffer = hexToArrayBuffer(hexStr);
 
-    expect(loadMessage(buffer)).toEqual({
+    expect(load(buffer)).toEqual({
       [TYPE_KEY]: GET_FUTURE_SALTS,
       num: 18,
     });
@@ -315,7 +320,7 @@ describe('loadMessage', () => {
     const hexStr = 'dcd9490900010000000001000101000000000000';
     const buffer = hexToArrayBuffer(hexStr);
 
-    expect(loadMessage(buffer)).toEqual({
+    expect(load(buffer)).toEqual({
       [TYPE_KEY]: FUTURE_SALT_TYPE,
       validSince: 256,
       validUntil: 65536,
@@ -329,7 +334,7 @@ describe('loadMessage', () => {
     /* eslint-enable */
 
     const buffer = hexToArrayBuffer(hexStr);
-    expect(loadMessage(buffer)).toEqual({
+    expect(load(buffer)).toEqual({
       [TYPE_KEY]: FUTURE_SALTS_TYPE,
       reqMsgId: BigInt('0x5e0b800e00000000'),
       now: 255,
@@ -354,7 +359,7 @@ describe('loadMessage', () => {
     const hexStr = '262151e77e34abe84fe1ef56';
     const buffer = hexToArrayBuffer(hexStr);
 
-    expect(loadMessage(buffer)).toEqual({
+    expect(load(buffer)).toEqual({
       [TYPE_KEY]: DESTROY_SESSION_TYPE,
       sessionId: BigInt('0x56efe14fe8ab347e'),
     });
@@ -365,7 +370,7 @@ describe('loadMessage', () => {
     const hexStr = 'fc4520e27e34abe84fe1ef56';
     const buffer = hexToArrayBuffer(hexStr);
 
-    expect(loadMessage(buffer)).toEqual({
+    expect(load(buffer)).toEqual({
       [TYPE_KEY]: DESTROY_SESSION_OK_TYPE,
       sessionId: BigInt('0x56efe14fe8ab347e'),
     });
@@ -375,7 +380,7 @@ describe('loadMessage', () => {
     const hexStr = 'c950d3627e34abe84fe1ef56';
     const buffer = hexToArrayBuffer(hexStr);
 
-    expect(loadMessage(buffer)).toEqual({
+    expect(load(buffer)).toEqual({
       [TYPE_KEY]: DESTROY_SESSION_NONE_TYPE,
       sessionId: BigInt('0x56efe14fe8ab347e'),
     });
@@ -385,14 +390,14 @@ describe('loadMessage', () => {
     const hexStr = '12110320';
     const buffer = hexToArrayBuffer(hexStr);
 
-    expect(loadMessage(buffer)).toBeNull();
+    expect(load(buffer)).toBeNull();
   });
 
   it('http wait', () => {
     const hexStr = '9f3599920000000000000000a8610000';
     const buffer = hexToArrayBuffer(hexStr);
 
-    expect(loadMessage(buffer)).toEqual({
+    expect(load(buffer)).toEqual({
       [TYPE_KEY]: HTTP_WAIT_TYPE,
       maxDelay: 0,
       waitAfter: 0,
@@ -404,7 +409,7 @@ describe('loadMessage', () => {
     const hexStr = 'bdbc1522b57572991237363064393638363661326264366539343500';
     const buffer = hexToArrayBuffer(hexStr);
 
-    expect(loadMessage(buffer)).toEqual({
+    expect(load(buffer)).toEqual({
       [CONSTRUCTOR_KEY]: 'auth.sentCode',
       [TYPE_KEY]: 'auth.SentCode',
       phone_registered: true,
