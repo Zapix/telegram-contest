@@ -1,8 +1,7 @@
-
 import * as R from 'ramda';
+
 import { getSchemaForConstructor } from './utils';
 import { CONSTRUCTOR_KEY, TYPE_KEY } from '../../constants';
-import { debug } from '../../utils';
 
 
 const buildGetTypePairFunc = R.pipe(
@@ -59,14 +58,13 @@ export default R.unapply(R.pipe(
                     R.prop,
                   ]),
                   R.ap,
-                  (func) => R.pipe(R.of, debug, func),
+                  (func) => R.pipe(R.of, func),
                 )),
               ),
             ]),
             R.flatten,
-            debug,
             R.ap,
-            (func) => R.pipe(R.of, debug, func, R.fromPairs),
+            (func) => R.pipe(R.of, func, R.fromPairs),
           ),
         ],
         [R.T, R.always],

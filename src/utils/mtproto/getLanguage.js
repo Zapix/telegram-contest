@@ -1,10 +1,6 @@
 import * as R from 'ramda';
 
-import {
-  TYPE_KEY,
-  METHOD_KEY,
-} from './constants';
-import { dumps } from './tl';
+import { dumps, methodFromSchema } from './tl';
 import schema from './tl/schema/layer5.json';
 import encryptMessage from './encryptMessage';
 import sendRequest from './sendRequest';
@@ -13,17 +9,16 @@ import sendRequest from './sendRequest';
  * Builds secnd code message
  */
 export function buildGetLangPack() {
-  const message = {
-    [TYPE_KEY]: 'LangPackDifference',
-    [METHOD_KEY]: 'langpack.getLangPack',
-    lang_pack: 'dirtylilbitch',
-    lang_code: 'en-en',
-  };
+  const method = R.partial(methodFromSchema, [schema]);
+  const message = method(
+    'langpack.getLangPack',
+    {
+      lang_pack: 'dirtylilbitch',
+      lang_code: 'en-en',
+    },
+  );
 
-  const buffer = dumps(schema, message);
-  console.log(buffer);
-
-  return buffer;
+  return dumps(schema, message);
 }
 
 export default function getLanguage(authKey, authKeyId, salt, sessionId, seqNo) {
