@@ -24,6 +24,7 @@ const buildGetPredicatePairFunc = R.pipe(
   R.always,
 );
 
+
 /**
  * Builds object that could be dumped as method call
  * @param {{constructors: *, methods: *}} schema

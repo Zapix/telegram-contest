@@ -8,6 +8,7 @@ import { dumps, methodFromSchema } from './tl';
 import schema from './tl/schema/layer5';
 import encryptMessage from './encryptMessage';
 import sendRequest from './sendRequest';
+import { getMessageId } from './utils';
 
 /**
  * Builds secnd code message
@@ -29,7 +30,11 @@ export function buildAuthSendCodeMessage(phone) {
 }
 
 export default function sendAuthCode(authKey, authKeyId, salt, sessionId, seqNo, phone) {
-  const encrypt = R.partial(encryptMessage, [authKey, authKeyId, salt, sessionId, seqNo]);
+  const messageId = getMessageId();
+  const encrypt = R.partial(
+    encryptMessage,
+    [authKey, authKeyId, salt, sessionId, seqNo, messageId],
+  );
   return R.pipe(
     buildAuthSendCodeMessage,
     encrypt,

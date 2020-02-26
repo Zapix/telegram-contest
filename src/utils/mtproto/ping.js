@@ -7,7 +7,11 @@ import { tlDumps } from './index';
 import schema from './tl/schema/layer5';
 
 export default function ping(authKey, authKeyId, salt, sessionId, seqNo) {
-  const encrypt = R.partial(encryptMessage, [authKey, authKeyId, salt, sessionId, seqNo]);
+  const messageId = getMessageId();
+  const encrypt = R.partial(
+    encryptMessage,
+    [authKey, authKeyId, salt, sessionId, seqNo, messageId],
+  );
   const pingId = getMessageId();
   console.log('Ping Id:', pingId);
   return R.pipe(

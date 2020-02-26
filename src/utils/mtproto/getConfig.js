@@ -4,6 +4,7 @@ import encryptMessage from './encryptMessage';
 import sendRequest from './sendRequest';
 import { dumps, methodFromSchema } from './tl';
 import schema from './tl/schema/layer5';
+import { getMessageId } from './utils';
 
 function buildGetConfig() {
   const method = R.partial(methodFromSchema, [schema]);
@@ -15,7 +16,11 @@ function buildGetConfig() {
 }
 
 export default function getConfig(authKey, authKeyId, salt, sessionId, seqNo) {
-  const encrypt = R.partial(encryptMessage, [authKey, authKeyId, salt, sessionId, seqNo]);
+  const messageId = getMessageId();
+  const encrypt = R.partial(
+    encryptMessage,
+    [authKey, authKeyId, salt, sessionId, seqNo, messageId],
+  );
   return R.pipe(
     buildGetConfig,
     encrypt,
