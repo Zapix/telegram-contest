@@ -5,9 +5,17 @@ const defaultRequestOpts = {
   mode: 'cors',
 };
 
-const sendRequest = R.pipe(
-  R.set(R.lensProp('body'), R.__, defaultRequestOpts),
-  R.curryN(2)(fetch)('http://149.154.167.40/apiw'),
-);
+const setBody = R.set(R.lensProp('body'), R.__, defaultRequestOpts);
+
+const sendRequest = R.curry(R.binary(
+  R.unapply(R.pipe(
+    R.of,
+    R.ap([
+      R.nth(0),
+      R.pipe(R.nth(1), setBody),
+    ]),
+    R.apply(fetch),
+  )),
+));
 
 export default sendRequest;

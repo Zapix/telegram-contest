@@ -57,7 +57,7 @@ export default class MTProto extends EventTarget {
    * Inits connection
    */
   init() {
-    createAuthorizationKey()
+    createAuthorizationKey(sendRequest(this.serverUrl))
       .then(({ authKey, authKeyId, serverSalt }) => {
         this.authKey = authKey;
         this.authKeyId = authKeyId;
@@ -134,7 +134,7 @@ export default class MTProto extends EventTarget {
       const sendEncryptedRequest = R.pipe(
         R.partial(dumps, [this.schema]),
         encrypt,
-        sendRequest,
+        sendRequest(this.serverUrl),
       );
 
       const promise = sendEncryptedRequest(message)
@@ -198,7 +198,7 @@ export default class MTProto extends EventTarget {
       const sendEncryptedRequest = R.pipe(
         R.partial(dumps, [this.schema]),
         encrypt,
-        sendRequest,
+        sendRequest(this.serverUrl),
       );
 
       const promise = sendEncryptedRequest(containerMessage)

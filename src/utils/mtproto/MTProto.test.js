@@ -97,7 +97,9 @@ describe('MTProto', () => {
         arrayBuffer: jest.fn(),
       };
       response.arrayBuffer.mockReturnValueOnce(hexToArrayBuffer(hexStr));
-      sendRequest.mockResolvedValue(response);
+      const curried = jest.fn();
+      curried.mockResolvedValue(response);
+      sendRequest.mockReturnValue(curried);
       decryptMessage.mockResolvedValueOnce({
         messageId: BigInt('2342143274123'),
         seqNo: 13,
@@ -131,7 +133,9 @@ describe('MTProto', () => {
         arrayBuffer: jest.fn(),
       };
       response.arrayBuffer.mockReturnValueOnce(hexToArrayBuffer(hexStr));
-      sendRequest.mockResolvedValue(response);
+      const curried = jest.fn();
+      curried.mockResolvedValue(response);
+      sendRequest.mockReturnValue(curried);
 
 
       const connection = new MTProto(url, schema);
@@ -158,8 +162,9 @@ describe('MTProto', () => {
         authKeyId: [206, 49, 208, 130, 207, 59, 41, 19],
         serverSalt: new Uint8Array([199, 141, 234, 177, 54, 191, 107, 190]),
       });
-      sendRequest.mockResolvedValue(new ArrayBuffer());
-
+      const curried = jest.fn();
+      curried.mockResolvedValue(new ArrayBuffer());
+      sendRequest.mockReturnValue(curried);
 
       const connection = new MTProto(url, schema);
       connection.addEventListener(STATUS_CHANGED_EVENT, () => {
@@ -200,7 +205,9 @@ describe('MTProto', () => {
         arrayBuffer: jest.fn(),
       };
       response.arrayBuffer.mockReturnValueOnce(hexToArrayBuffer(hexStr));
-      sendRequest.mockResolvedValue(response);
+      const curried = jest.fn();
+      curried.mockResolvedValue(response);
+      sendRequest.mockReturnValue(curried);
 
       const connection = new MTProto(url, schema);
       connection.acknowledgements = [BigInt(1), BigInt(2)];
