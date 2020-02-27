@@ -1,4 +1,3 @@
-import * as R from 'ramda';
 import { filter } from 'rxjs/operators';
 
 import { mount } from 'utils/vdom';
@@ -11,20 +10,16 @@ import {
 } from 'utils/store';
 import { reducer as todoReducer } from 'state/todo';
 import {
-  createAuthorizationKey,
-  ping,
-  httpWait,
-  sendAuthCode,
-  seqNoGenerator,
-  tlLoads,
+  MTProto,
 } from 'utils/mtproto';
-import decryptMessage from 'utils/mtproto/decryptMessage';
+import schema from 'utils/mtproto/tl/schema/layer5';
 
 import './style.scss';
-import schema from 'utils/mtproto/tl/schema/layer5';
 import App from './components/App';
-import { getNRandomBytes, uint8ArrayToHex } from './utils/mtproto/utils';
+import { getMessageId } from './utils/mtproto/utils';
 import { AUTH_REQUESTED, PING_REQUESTED, HTTP_WAIT } from './state/todo/constants';
+import { AUTH_KEY_CREATED, STATUS_CHANGED_EVENT } from './utils/mtproto/MTProto';
+import { HTTP_WAIT_TYPE, PING_TYPE, TYPE_KEY } from './utils/mtproto/constants';
 
 const div = document.createElement('h1');
 div.setAttribute('id', 'app');
@@ -41,54 +36,41 @@ const action$ = getActionStream();
 state$.subscribe(updateView);
 dispatchInit();
 
-createAuthorizationKey().then(({ authKey, authKeyId, serverSalt }) => {
-  const load = R.partial(tlLoads, [schema]);
+const url = 'http://149.154.167.40/apiw';
+const connection = new MTProto(url, schema);
 
-  const sessionId = getNRandomBytes(8);
-  const decrypt = R.partial(decryptMessage, [authKey, authKeyId, serverSalt, sessionId]);
-  const genSeqNo = seqNoGenerator();
-  const getSeqNo = () => genSeqNo.next().value;
-
-  action$.pipe(
-    filter(isActionOf(PING_REQUESTED)),
-  ).subscribe((item) => {
-    console.log('Send ping request to telegram server ', item);
-    ping(authKey, authKeyId, serverSalt, sessionId, getSeqNo())
-      .then((response) => response.arrayBuffer())
-      .then(decrypt)
-      .then((message) => {
-        console.log('Message byteLength', message.byteLength);
-        console.log(uint8ArrayToHex(new Uint8Array(message)));
-        console.log(load(message));
+connection.addEventListener(STATUS_CHANGED_EVENT, (e) => {
+  console.log(e);
+  if (e.status === AUTH_KEY_CREATED) {
+    action$.pipe(
+      filter(isActionOf(PING_REQUESTED)),
+    ).subscribe((item) => {
+      console.log('Send ping request to telegram server ', item);
+      connection.request({
+        [TYPE_KEY]: PING_TYPE,
+        pingId: getMessageId(),
       });
-  });
+    });
 
-  action$.pipe(
-    filter(isActionOf(HTTP_WAIT)),
-  ).subscribe((item) => {
-    console.log('Send Http Wait request ', item);
-
-    httpWait(authKey, authKeyId, serverSalt, sessionId, getSeqNo())
-      .then((response) => response.arrayBuffer())
-      .then(decrypt)
-      .then((message) => {
-        console.log('Http Wait Result: ', uint8ArrayToHex(new Uint8Array(message)));
-        console.log(load(message));
+    action$.pipe(
+      filter(isActionOf(HTTP_WAIT)),
+    ).subscribe((item) => {
+      console.log('Send Http Wait request ', item);
+      connection.request({
+        [TYPE_KEY]: HTTP_WAIT_TYPE,
+        maxDelay: 0,
+        waitAfter: 0,
+        maxWait: 25000,
       });
-  });
+    });
 
-  action$.pipe(
-    filter(isActionOf(AUTH_REQUESTED)),
-  ).subscribe((item) => {
-    console.log('Auth requested', item);
-    const { payload } = item;
-
-    sendAuthCode(authKey, authKeyId, serverSalt, sessionId, getSeqNo(), payload)
-      .then((response) => response.arrayBuffer())
-      .then(decrypt)
-      .then((message) => {
-        console.log(uint8ArrayToHex(new Uint8Array(message)));
-        console.log(load(message));
-      });
-  });
+    action$.pipe(
+      filter(isActionOf(AUTH_REQUESTED)),
+    ).subscribe((item) => {
+      console.log('Auth requested', item);
+    });
+  } else {
+    console.error('Failed to create auth key');
+  }
 });
+connection.init();

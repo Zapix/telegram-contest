@@ -635,6 +635,7 @@ export default function createAuthorizationKey() {
         const authKeyId = buildAuthKeyId(authKeyHash);
         console.log('Auth key id: ', authKeyId);
         console.log('Auth key id hex: ', uint8ArrayToHex(authKeyId));
+        console.log('Server salt:', serverSalt);
         const authKeyAuxHash = buildAuthKeyAuxHash(authKeyHash);
 
         verifyNewNonce(pqInnerData.new_nonce, authKeyAuxHash, verifyResponse);

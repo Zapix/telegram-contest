@@ -108,8 +108,6 @@ describe('dumpBySchema', () => {
       const buffer = dump(obj);
 
       const hexStr = '83bebede1200000039d3ed3f39d3ed3f';
-
-      console.log(buffer);
       expect(arrayBufferToHex(buffer)).toEqual(hexStr);
     });
   });

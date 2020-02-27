@@ -9,6 +9,7 @@ export { default as seqNoGenerator } from './seqNoGenerator';
 export { default as getNearestDc } from './getNearestDc';
 export { default as getLanguage } from './getLanguage';
 export { default as getConfig } from './getConfig';
+export { default as MTProto } from './MTProto';
 
 export const tl = { dumps, loads };
 export const tlDumps = dumps;
