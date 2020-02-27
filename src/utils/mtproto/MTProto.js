@@ -9,8 +9,15 @@ import { getMessageId, getNRandomBytes } from './utils';
 import sendRequest from './sendRequest';
 import { isMessageOf } from './tl/utils';
 import {
-  HTTP_WAIT_TYPE, MESSAGE_CONTAINER_TYPE, MSGS_ACK_TYPE, TYPE_KEY,
+  HTTP_WAIT_TYPE,
+  MESSAGE_CONTAINER_TYPE,
+  MSGS_ACK_TYPE,
+  NEW_SESSION_CREATED_TYPE,
+  PONG_TYPE, RPC_ERROR_TYPE,
+  RPC_RESULT_TYPE,
+  TYPE_KEY,
 } from './constants';
+import { dumpBigInt } from './tl/bigInt';
 
 export const INIT = 'INIT';
 export const AUTH_KEY_CREATED = 'AUTH_KEY_CREATED';
@@ -75,8 +82,14 @@ export default class MTProto extends EventTarget {
     this.dispatchEvent(event);
   }
 
-  getSeqNo() {
-    return this.genSeqNo.next().value;
+  getSeqNo(isContentRelated) {
+    const { value } = this.genSeqNo.next(isContentRelated);
+
+    if (!isContentRelated && (value % 2 === 0)) {
+      return this.genSeqNo.next(true).value;
+    }
+
+    return value;
   }
 
   /**
@@ -140,30 +153,30 @@ export default class MTProto extends EventTarget {
 
   sendRequestWithAcknowledgements(message) {
     return new Promise((resolve, reject) => {
-      const messageId = getMessageId();
-      const seqNo = this.getSeqNo();
-
       const ackMessage = this.buildAcknowledgementMessage();
       const ackMsgId = getMessageId();
       const ackSeqNo = this.getSeqNo();
+
+      const messageId = getMessageId();
+      const seqNo = this.getSeqNo();
 
       const containerMessage = {
         [TYPE_KEY]: MESSAGE_CONTAINER_TYPE,
         messages: [
           {
-            seqNo,
-            msgId: messageId,
-            body: message,
-          },
-          {
             seqNo: ackSeqNo,
             msgId: ackMsgId,
             body: ackMessage,
           },
+          {
+            seqNo,
+            msgId: messageId,
+            body: message,
+          },
         ],
       };
       const containerMessageId = getMessageId();
-      const containerSeqNo = this.getSeqNo();
+      const containerSeqNo = (seqNo % 2 === 0) ? seqNo : this.getSeqNo(true);
 
       const encrypt = R.partial(
         encryptMessage,
@@ -203,9 +216,55 @@ export default class MTProto extends EventTarget {
   }
 
   handleResponse(message) {
-    console.log(this.serverSalt);
-    console.log(message);
+    if (isMessageOf(MESSAGE_CONTAINER_TYPE, message.body)) {
+      R.pipe(
+        R.path(['body', 'messages']),
+        R.map(this.handleResponse.bind(this)),
+      )(message);
+    } else if (isMessageOf(PONG_TYPE, message.body)) {
+      this.handlePong(message);
+    } else if (isMessageOf(NEW_SESSION_CREATED_TYPE, message.body)) {
+      this.handleNewSessionCreated(message);
+    } else if (isMessageOf(RPC_RESULT_TYPE, message.body)) {
+      this.handleRpcResult(message);
+    } else {
+      console.warn('Unhandled message:');
+      console.warn(message);
+    }
     return message;
+  }
+
+  handlePong(message) {
+    const { msgId } = message.body;
+    const resolve = R.pathOr(() => {}, ['rpcPromises', msgId, 'resolve'], this);
+    resolve(message.body);
+    delete this.rpcPromises[msgId];
+  }
+
+  handleNewSessionCreated(message) {
+    const msgId = R.prop('msgId', message);
+    this.acknowledgements.push(msgId);
+
+    const serverSalt = R.path(['body', 'serverSalt'], message);
+    const buffer = dumpBigInt(serverSalt);
+    this.serverSalt = new Uint8Array(buffer);
+  }
+
+  handleRpcResult(message) {
+    const msgId = R.prop('msgId', message);
+    const reqMsgId = R.path(['body', 'reqMsgId'], message);
+    const result = R.path(['body', 'result'], message);
+    this.acknowledgements.push(msgId);
+
+    if (isMessageOf(RPC_ERROR_TYPE, result)) {
+      const reject = R.pathOr(() => {}, ['rpcPromises', reqMsgId, 'reject'], this);
+      reject(result);
+      delete this.rpcPromises[reqMsgId];
+    } else {
+      const resolve = R.pathOr(() => {}, ['rpcPromises', reqMsgId, 'resolve'], this);
+      resolve(result);
+      delete this.rpcPromises[reqMsgId];
+    }
   }
 
   buildAcknowledgementMessage() {
@@ -226,12 +285,12 @@ export default class MTProto extends EventTarget {
   }
 
   httpWait() {
-    console.log('Send http wait');
     this.request({
       [TYPE_KEY]: HTTP_WAIT_TYPE,
       maxDelay: 0,
       waitAfter: 0,
       maxWait: 25000,
-    }).then(this.httpWait.bind(this));
+    })
+      .then(this.httpWait.bind(this));
   }
 }

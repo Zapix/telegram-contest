@@ -11,7 +11,15 @@ import decryptMessage from './decryptMessage';
 
 import * as R from 'ramda';
 
-import { API_HASH, API_ID, HTTP_WAIT_TYPE, PING_TYPE, TYPE_KEY } from './constants';
+import {
+  API_HASH,
+  API_ID, CONSTRUCTOR_KEY,
+  HTTP_WAIT_TYPE, MESSAGE_CONTAINER_TYPE,
+  NEW_SESSION_CREATED_TYPE,
+  PING_TYPE,
+  PONG_TYPE, RPC_ERROR_TYPE, RPC_RESULT_TYPE,
+  TYPE_KEY
+} from './constants';
 import MTProto, { STATUS_CHANGED_EVENT, AUTH_KEY_CREATED, AUTH_KEY_CREATE_FAILED } from './MTProto';
 import schema from './tl/schema/layer5';
 import { hexToArrayBuffer } from './utils';
@@ -219,6 +227,180 @@ describe('MTProto', () => {
         promisesList[0].resolve('OK');
       });
       connection.init();
+    });
+  });
+
+  describe('handleResponse', () => {
+    it('pong', () => {
+      const connection = new MTProto(url, schema);
+      const resolve = jest.fn();
+      const reject = jest.fn();
+
+      connection.rpcPromises[BigInt(123)] = { resolve, reject };
+      connection.handleResponse({
+        msgId: BigInt(123123),
+        seqNo: 13,
+        body: {
+          [TYPE_KEY]: PONG_TYPE,
+          msgId: BigInt(123),
+          pingId: BigInt(222),
+        },
+      });
+
+      expect(resolve).toHaveBeenCalled();
+    });
+
+    it('new_session_created', () => {
+      const connection = new MTProto(url, schema);
+
+      connection.handleResponse({
+        msgId: BigInt(123123),
+        seqNo: 13,
+        body: {
+          [TYPE_KEY]: NEW_SESSION_CREATED_TYPE,
+          serverSalt: BigInt('14078893447025144951'),
+          uniqueId: BigInt('10125449296245655081'),
+          firstMsgId: BigInt('6798186738482151424'),
+        },
+      });
+
+      const serverSalt = new Uint8Array([119, 52, 130, 52, 255, 70, 98, 195]);
+
+      expect(connection.serverSalt).toEqual(serverSalt);
+      expect(connection.acknowledgements).toHaveLength(1);
+      expect(connection.acknowledgements[0]).toEqual(BigInt(123123));
+    });
+
+    it('rpc_result success', () => {
+      const connection = new MTProto(url, schema);
+
+      const resolve = jest.fn();
+      const reject = jest.fn();
+      connection.rpcPromises[BigInt('6798192296169832448')] = { resolve, reject };
+
+      const message = {
+        seqNo: 3,
+        msgId: BigInt('6798192297014662145'),
+        body: {
+          [TYPE_KEY]: RPC_RESULT_TYPE,
+          reqMsgId: BigInt('6798192296169832448'),
+          result: {
+            [CONSTRUCTOR_KEY]: 'auth.sentCode',
+            [TYPE_KEY]: 'auth.SentCode',
+            phone_registered: true,
+            phone_code_hash: '5da04370ae8bd21278',
+          },
+        },
+      };
+
+      connection.handleResponse(message);
+
+      expect(resolve).toHaveBeenCalledWith({
+        [CONSTRUCTOR_KEY]: 'auth.sentCode',
+        [TYPE_KEY]: 'auth.SentCode',
+        phone_registered: true,
+        phone_code_hash: '5da04370ae8bd21278',
+      });
+      expect(connection.acknowledgements).toHaveLength(1);
+      expect(connection.acknowledgements[0]).toEqual(BigInt('6798192297014662145'));
+    });
+
+    it('rpc_result error', () => {
+      const connection = new MTProto(url, schema);
+
+      const resolve = jest.fn();
+      const reject = jest.fn();
+      connection.rpcPromises[BigInt('6798192296169832448')] = { resolve, reject };
+
+      const message = {
+        seqNo: 3,
+        msgId: BigInt('6798192297014662145'),
+        body: {
+          [TYPE_KEY]: RPC_RESULT_TYPE,
+          reqMsgId: BigInt('6798192296169832448'),
+          result: {
+            errorCode: 400,
+            errorMessage: 'PHONE_NUMBER_INVALID',
+            [TYPE_KEY]: RPC_ERROR_TYPE,
+          },
+        },
+      };
+
+      connection.handleResponse(message);
+
+      expect(reject).toHaveBeenCalledWith({
+        errorCode: 400,
+        errorMessage: 'PHONE_NUMBER_INVALID',
+        [TYPE_KEY]: RPC_ERROR_TYPE,
+      });
+      expect(connection.acknowledgements).toHaveLength(1);
+      expect(connection.acknowledgements[0]).toEqual(BigInt('6798192297014662145'));
+    });
+
+    it('handle message container messages one by one', () => {
+      const connection = new MTProto(url, schema);
+
+      const resolvePing = jest.fn();
+      const rejectPing = jest.fn();
+
+      const resolveAuth = jest.fn();
+      const rejectAuth = jest.fn();
+
+      connection.rpcPromises[BigInt(123)] = {
+        resolve: resolvePing,
+        reject: rejectPing,
+      };
+      connection.rpcPromises[BigInt('6798192296169832448')] = {
+        resolve: resolveAuth,
+        reject: rejectAuth,
+      };
+
+      const message = {
+        seqNo: 4,
+        msgId: BigInt(232),
+        body: {
+          [TYPE_KEY]: MESSAGE_CONTAINER_TYPE,
+          messages: [
+            {
+              msgId: BigInt(123123),
+              seqNo: 13,
+              body: {
+                [TYPE_KEY]: PONG_TYPE,
+                msgId: BigInt(123),
+                pingId: BigInt(222),
+              },
+            },
+            {
+              seqNo: 3,
+              msgId: BigInt('6798192297014662145'),
+              body: {
+                [TYPE_KEY]: RPC_RESULT_TYPE,
+                reqMsgId: BigInt('6798192296169832448'),
+                result: {
+                  errorCode: 400,
+                  errorMessage: 'PHONE_NUMBER_INVALID',
+                  [TYPE_KEY]: RPC_ERROR_TYPE,
+                },
+              },
+            },
+          ],
+        },
+      };
+
+      connection.handleResponse(message);
+
+      expect(resolvePing).toHaveBeenCalledWith({
+        [TYPE_KEY]: PONG_TYPE,
+        msgId: BigInt(123),
+        pingId: BigInt(222),
+      });
+      expect(rejectAuth).toHaveBeenCalledWith({
+        errorCode: 400,
+        errorMessage: 'PHONE_NUMBER_INVALID',
+        [TYPE_KEY]: RPC_ERROR_TYPE,
+      });
+      expect(connection.acknowledgements).toHaveLength(1);
+      expect(connection.acknowledgements[0]).toEqual(BigInt('6798192297014662145'));
     });
   });
 });
