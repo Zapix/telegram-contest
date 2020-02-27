@@ -60,6 +60,7 @@ export default class MTProto extends EventTarget {
 
         this.status = AUTH_KEY_CREATED;
         this.fireStatusChange();
+        this.httpWait();
       })
       .catch((error) => {
         this.status = AUTH_KEY_CREATE_FAILED;
@@ -126,7 +127,7 @@ export default class MTProto extends EventTarget {
       const promise = sendEncryptedRequest(message)
         .then((response) => response.arrayBuffer())
         .then(decrypt)
-        .then(R.partial(loads, [this.schema]))
+        .then(this.loadFromDecrypted.bind(this))
         .then(this.handleResponse.bind(this));
 
       if (isMessageOf(HTTP_WAIT_TYPE, message)) {
@@ -190,7 +191,7 @@ export default class MTProto extends EventTarget {
       const promise = sendEncryptedRequest(containerMessage)
         .then((response) => response.arrayBuffer())
         .then(decrypt)
-        .then(R.partial(loads, [this.schema]))
+        .then(this.loadFromDecrypted.bind(this))
         .then(this.handleResponse.bind(this));
 
       if (isMessageOf(HTTP_WAIT_TYPE, message)) {
@@ -214,5 +215,23 @@ export default class MTProto extends EventTarget {
     };
     this.acknowledgements = [];
     return msg;
+  }
+
+  loadFromDecrypted({ messageId, message, seqNo }) {
+    return {
+      seqNo,
+      msgId: messageId,
+      body: loads(this.schema, message),
+    };
+  }
+
+  httpWait() {
+    console.log('Send http wait');
+    this.request({
+      [TYPE_KEY]: HTTP_WAIT_TYPE,
+      maxDelay: 0,
+      waitAfter: 0,
+      maxWait: 25000,
+    }).then(this.httpWait.bind(this));
   }
 }

@@ -90,7 +90,11 @@ describe('MTProto', () => {
       };
       response.arrayBuffer.mockReturnValueOnce(hexToArrayBuffer(hexStr));
       sendRequest.mockResolvedValue(response);
-      decryptMessage.mockResolvedValueOnce(hexToArrayBuffer(hexStr));
+      decryptMessage.mockResolvedValueOnce({
+        messageId: BigInt('2342143274123'),
+        seqNo: 13,
+        message: hexToArrayBuffer(hexStr),
+      });
 
       const connection = new MTProto(url, schema);
       connection.addEventListener(STATUS_CHANGED_EVENT, () => {
