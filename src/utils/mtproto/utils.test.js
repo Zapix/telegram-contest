@@ -66,12 +66,6 @@ describe('primeGenerator', () => {
 });
 
 describe('findPrimeFactors', () => {
-  test('simple test', () => {
-    const [p, q] = findPrimeFactors(BigInt(85));
-    expect(p === BigInt(5)).toBeTruthy();
-    expect(q === BigInt(17)).toBeTruthy();
-  });
-
   test('from telegram example', () => {
     const [p, q] = findPrimeFactors(BigInt('0x17ED48941A08F981'));
     expect(p === BigInt('0x494C553B')).toBeTruthy();
