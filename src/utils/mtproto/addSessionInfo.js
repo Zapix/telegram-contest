@@ -20,7 +20,6 @@ export default function addSessionInfo(salt, sessionId, messageId, seqNo, messag
   messageIdBytes[0] = messageId;
 
   const seqNoArr = new Uint32Array(buffer, 24, 1);
-  console.log('Current seq no:', seqNo);
   seqNoArr[0] = seqNo;
 
   const messageLength = new Uint32Array(buffer, 28, 1);

@@ -1,6 +1,6 @@
 import * as R from 'ramda';
 
-import { forgeBufferToArrayBuffer, getMessageId, uint8toForgeBuffer } from './utils';
+import { forgeBufferToArrayBuffer, uint8toForgeBuffer } from './utils';
 import addSessionInfo from './addSessionInfo';
 import getMsgKey from './getMsgKey';
 import generateKeyIv from './generateKeyIv';
@@ -14,8 +14,15 @@ const encrypt = R.pipe(
   forgeBufferToArrayBuffer,
 );
 
-export default function encryptMessage(authKey, authKeyId, salt, sessionId, seqNo, messageBuffer) {
-  const messageId = getMessageId();
+export default function encryptMessage(
+  authKey,
+  authKeyId,
+  salt,
+  sessionId,
+  seqNo,
+  messageId,
+  messageBuffer,
+) {
   const messageWithHeaders = addSessionInfo(salt, sessionId, messageId, seqNo, messageBuffer);
 
   const paddedBuffer = padBytes(messageWithHeaders.buffer);

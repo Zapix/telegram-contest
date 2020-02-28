@@ -29,7 +29,6 @@ import {
 import { fromTlString, getStringFromArrayBuffer, toTlString } from './tl/tlSerialization';
 import { getPublicKey } from './pems';
 import { decryptIge as decryptAesIge, encryptIge as encryptAesIge } from './aes';
-import sendRequest from './sendRequest';
 import { sha1 } from './sha';
 
 /**
@@ -580,7 +579,7 @@ function buildSalt({ server_nonce: serverNonce, new_nonce: newNonce }) {
   return salt;
 }
 
-export default function createAuthorizationKey() {
+export default function createAuthorizationKey(sendRequest) {
   const initDHMessage = getInitialDHExchangeMessage();
 
   return Promise.race([
@@ -635,6 +634,7 @@ export default function createAuthorizationKey() {
         const authKeyId = buildAuthKeyId(authKeyHash);
         console.log('Auth key id: ', authKeyId);
         console.log('Auth key id hex: ', uint8ArrayToHex(authKeyId));
+        console.log('Server salt:', serverSalt);
         const authKeyAuxHash = buildAuthKeyAuxHash(authKeyHash);
 
         verifyNewNonce(pqInnerData.new_nonce, authKeyAuxHash, verifyResponse);

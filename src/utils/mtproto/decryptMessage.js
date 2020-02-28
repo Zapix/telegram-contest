@@ -38,7 +38,9 @@ export default function decryptMessage(authKey, authKeyId, salt, sessionId, serv
   const { key, iv } = generateKeyIv(authKey, serverMessageKey, true);
   const messageWithHeaders = decrypt(encryptedMessage, key, iv);
   const {
+    seqNo,
+    messageId,
     message,
   } = parseSessionInfo(messageWithHeaders);
-  return message;
+  return { seqNo, messageId, message };
 }

@@ -28,8 +28,8 @@ import {
   RPC_ANSWER_DROPPED_TYPE,
   RPC_ANSWER_UNKNOWN_TYPE,
   RPC_DROP_ANSWER_TYPE,
-  RPC_ERROR_TYPE, RPC_RESULT_TYPE,
-  TYPE_KEY,
+  RPC_ERROR_TYPE,
+  RPC_RESULT_TYPE,
 } from '../constants';
 import { dumpBadServerSalt } from './bad_server_salt';
 import { dumpDestroySession } from './destory_session';
@@ -59,9 +59,8 @@ import { dumpRpcDropAnswer } from './rpc_drop_answer';
 import { dumpRpcError } from './rpc_error';
 import { dumpRpcResult } from './rpc_result';
 import { dumpBySchema, isMsgCouldBeDump } from './schema';
+import { isMessageOf } from './utils';
 
-
-const isMessageOf = R.propEq(TYPE_KEY);
 
 /**
  * Dumps unexpected message as empty array. print error to console

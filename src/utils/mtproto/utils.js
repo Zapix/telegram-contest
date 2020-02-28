@@ -422,7 +422,12 @@ export function getUnixTimestamp() {
  * @returns {bigint}
  */
 export function getMessageId() {
-  return BigInt(getUnixTimestamp() * 2 ** 32);
+  if (!getMessageId.inc) {
+    getMessageId.inc = 1;
+  } else {
+    getMessageId.inc += 1;
+  }
+  return BigInt(getUnixTimestamp() * 2 ** 32) + BigInt(getMessageId.inc * 4);
 }
 
 /**
