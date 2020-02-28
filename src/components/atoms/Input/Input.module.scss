@@ -14,3 +14,7 @@
   margin: 0;
   border: 2px solid $focusBorderColor;
 }
+
+.error {
+  border: 2px solid $errorColor !important;
+}

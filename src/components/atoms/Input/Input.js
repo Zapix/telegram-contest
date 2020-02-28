@@ -8,7 +8,7 @@ export default function Input(type, attrs, error) {
     'input',
     Object.assign(
       attrs,
-      { class: mergeClasses(styles.input, attrs, error ? 'error' : null) },
+      { class: mergeClasses(styles.input, attrs, error ? styles.error : null) },
     ),
     null,
   );

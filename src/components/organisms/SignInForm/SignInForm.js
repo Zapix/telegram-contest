@@ -1,3 +1,5 @@
+import * as R from 'ramda';
+
 import { requestPing, httpWait } from 'state/todo/actions';
 import { sendAuthCode } from 'state/auth';
 import { createElement } from 'utils/vdom';
@@ -33,7 +35,20 @@ function handleHttpWait(e) {
   httpWait();
 }
 
-export default function SignInForm() {
+const getError = R.cond([
+  [R.equals('PHONE_NUMBER_INVALID'), R.always('Invalid phone number')],
+  [R.T, R.identity],
+]);
+
+const hasSendAuthError = R.hasPath(['auth', 'sendAuthCodeError']);
+
+const getSendAuthError = R.cond([
+  [hasSendAuthError, R.pipe(R.path(['auth', 'sendAuthCodeError']), getError)],
+  [R.T, R.always('')],
+]);
+
+export default function SignInForm(state) {
+  console.log(hasSendAuthError(state));
   return createElement(
     'form',
     {
@@ -42,6 +57,11 @@ export default function SignInForm() {
       onsubmit: handleSubmit,
     },
     [
+      createElement(
+        'div',
+        { class: 'commonError' },
+        [getSendAuthError(state)],
+      ),
       createElement(
         'div',
         { class: styles.inputGroup },
@@ -65,6 +85,7 @@ export default function SignInForm() {
             class: styles.input,
             oninput: handleChange,
           },
+          hasSendAuthError(state),
         ),
       ),
       createElement(

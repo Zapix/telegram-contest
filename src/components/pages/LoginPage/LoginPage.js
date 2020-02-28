@@ -6,7 +6,7 @@ import { SignInForm } from 'components/organisms';
 
 import styles from './LoginPage.module.scss';
 
-export default function LoginPage() {
+export default function LoginPage(state) {
   return CenterLayout(createElement(
     'div',
     {
@@ -20,7 +20,7 @@ export default function LoginPage() {
         null,
         HelpText('Please confirm your country and enter your phone number'),
       ),
-      SignInForm(),
+      SignInForm(state),
     ],
   ));
 }
