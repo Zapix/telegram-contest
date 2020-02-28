@@ -8,10 +8,10 @@ import schema from 'utils/mtproto/tl/schema/layer5';
 
 import { isActionOf } from 'utils/store';
 import { API_HASH, API_ID, RPC_ERROR_TYPE } from 'utils/mtproto/constants';
-import { debug } from 'utils/mtproto/utils';
 import { AUTH_SEND_CODE } from '../constants';
 import { sendAuthCodeError, sendAuthCodeSuccess } from '../actions';
 import { isMessageOf } from '../../../utils/mtproto/tl/utils';
+import { setPage } from '../../pages';
 
 const sendAuthMethod = R.partial(methodFromSchema, [schema, 'auth.sendCode']);
 
@@ -27,9 +27,11 @@ const sendAuthCode = R.pipe(
   sendAuthMethod,
 );
 
-const handleSuccess = sendAuthCodeSuccess;
+const handleSuccess = R.pipe(
+  R.of,
+  R.ap([sendAuthCodeSuccess, R.partial(setPage, ['verify'])]),
+);
 const handleError = R.pipe(
-  debug,
   R.prop('errorMessage'),
   sendAuthCodeError,
 );

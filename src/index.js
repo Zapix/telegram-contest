@@ -10,6 +10,7 @@ import {
 } from 'utils/store';
 import { reducer as todoReducer } from 'state/todo';
 import { reducer as authReducer, applyMiddleware as authApplyMiddleware } from 'state/auth';
+import { reducer as pageReducer } from 'state/pages';
 import {
   MTProto,
 } from 'utils/mtproto';
@@ -31,6 +32,7 @@ document.body.append(div);
 const updateView = mount(div, App, null);
 
 const state$ = buildStateStream(combineReducers({
+  page: pageReducer,
   auth: authReducer,
   todo: todoReducer,
 }));
