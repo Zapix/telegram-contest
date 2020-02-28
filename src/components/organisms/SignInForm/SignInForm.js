@@ -1,4 +1,5 @@
-import { requestAuth, requestPing, httpWait } from 'state/todo/actions';
+import { requestPing, httpWait } from 'state/todo/actions';
+import { sendAuthCode } from 'state/auth';
 import { createElement } from 'utils/vdom';
 import mergeClasses from 'utils/mergeClasses';
 import { Input, Button } from 'components/atoms';
@@ -19,7 +20,7 @@ function handleChange(e) {
 function handleSubmit(e) {
   e.preventDefault();
   const phoneNumber = document.getElementById('phoneNumber').value;
-  requestAuth(phoneNumber);
+  sendAuthCode(phoneNumber);
 }
 
 function handleClick(e) {
