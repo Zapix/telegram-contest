@@ -48,7 +48,6 @@ const getSendAuthError = R.cond([
 ]);
 
 export default function SignInForm(state) {
-  console.log(hasSendAuthError(state));
   return createElement(
     'form',
     {
@@ -126,7 +125,7 @@ export default function SignInForm(state) {
       ),
       createElement(
         'div',
-        { class: mergeClasses(styles.inputGroup) },
+        { class: mergeClasses(styles.inputGroup, styles.submitGroup) },
         [
           Button(
             'Sign In',
