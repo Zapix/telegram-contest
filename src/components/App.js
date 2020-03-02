@@ -1,13 +1,13 @@
 import * as R from 'ramda';
 import { createElement } from 'utils/vdom';
-import { LoginPage } from 'components/pages';
-import NotFoundPage from './pages/NotFoundPage/NotFoundPage';
+import { LoginPage, VerifyPage, NotFoundPage } from './pages';
 
 
 const getPageComponent = R.pipe(
   R.prop('page'),
   R.cond([
     [R.equals('login'), R.always(LoginPage)],
+    [R.equals('verify'), R.always(VerifyPage)],
     [R.T, R.always(NotFoundPage)],
   ]),
 );

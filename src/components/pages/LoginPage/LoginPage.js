@@ -10,6 +10,7 @@ export default function LoginPage(state) {
   return CenterLayout(createElement(
     'div',
     {
+      id: 'login',
       class: styles.loginPage,
     },
     [
