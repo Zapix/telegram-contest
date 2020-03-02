@@ -1,13 +1,14 @@
 import { createElement } from 'utils/vdom';
+import mergeClasses from 'utils/mergeClasses';
 import { Button, Input } from 'components/atoms';
+import { sendVerifyCode } from 'state/auth';
 
 import styles from './VerifyForm.module.scss';
-import mergeClasses from '../../../utils/mergeClasses';
 
 function handleSubmit(e) {
   e.preventDefault();
   const verifyCode = document.getElementById('verifyCode').value;
-  console.log(verifyCode);
+  sendVerifyCode(verifyCode);
 }
 
 export default function VerifyForm() {
