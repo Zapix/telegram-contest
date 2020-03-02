@@ -1,5 +1,11 @@
 import * as R from 'ramda';
-import { catchError, filter, mergeMap } from 'rxjs/operators';
+import {
+  catchError,
+  filter,
+  mergeMap,
+  map,
+  withLatestFrom,
+} from 'rxjs/operators';
 import { fromPromise } from 'rxjs/internal-compatibility';
 
 import { methodFromSchema } from 'utils/mtproto';
@@ -27,18 +33,30 @@ const sendAuthCode = R.pipe(
   sendAuthMethod,
 );
 
+const mergeResponseWithPhone = R.pipe(
+  R.reverse,
+  R.apply(R.set(R.lensProp('phone'))),
+);
+
 const handleSuccess = R.pipe(
+  mergeResponseWithPhone,
   R.of,
   R.ap([sendAuthCodeSuccess, R.partial(setPage, ['verify'])]),
 );
 const handleError = R.pipe(
+  R.nth(0),
   R.prop('errorMessage'),
   sendAuthCodeError,
 );
-const handleResponse = R.cond([
-  [isMessageOf(RPC_ERROR_TYPE), handleError],
-  [R.T, handleSuccess],
-]);
+
+const handleResponseWithPhone = R.pipe(
+  R.cond([
+    [R.pipe(R.nth(0), isMessageOf(RPC_ERROR_TYPE)), handleError],
+    [R.T, handleSuccess],
+  ]),
+);
+
+const getPhone = R.prop('payload');
 
 /**
  * @param action$ - stream of actions
@@ -49,16 +67,21 @@ export default function sendAuthMiddleware(action$, state$, connection) {
   connection.addEventListener(STATUS_CHANGED_EVENT, (e) => {
     if (e.status === AUTH_KEY_CREATED) {
       const sendAuthRequestStream = R.pipe(
-        R.prop('payload'),
+        getPhone,
         sendAuthCode,
         (x) => connection.request(x),
         fromPromise,
       );
 
-      action$
-        .pipe(filter(isActionOf(AUTH_SEND_CODE)))
-        .pipe(mergeMap((x) => sendAuthRequestStream(x).pipe(catchError(R.of))))
-        .subscribe(handleResponse);
+      const sendAuth$ = action$.pipe(filter(isActionOf(AUTH_SEND_CODE)));
+      const authPhone$ = sendAuth$.pipe(map(getPhone));
+      const sendAuthResponse$ = sendAuth$.pipe(
+        mergeMap((x) => sendAuthRequestStream(x).pipe(catchError(R.of))),
+      );
+
+      sendAuthResponse$
+        .pipe(withLatestFrom(authPhone$))
+        .subscribe(handleResponseWithPhone);
     }
   });
 }

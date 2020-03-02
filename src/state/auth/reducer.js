@@ -5,7 +5,17 @@ import { AUTH_SEND_CODE, AUTH_SEND_CODE_ERROR, AUTH_SEND_CODE_SUCCESS } from './
 
 const getCurrentPhonePair = R.pipe(
   R.of,
-  R.ap([R.always('currentPhone'), R.prop('payload')]),
+  R.ap([R.always('currentPhone'), R.path(['payload', 'phone'])]),
+);
+const getPhoneCodeHashPair = R.pipe(
+  R.of,
+  R.ap([R.always('phoneCodeHash'), R.path(['payload', 'phone_code_hash'])]),
+);
+
+const getPhoneRegisteredPair = R.pipe(
+  R.of,
+  R.ap([R.always('phoneRegistered'), R.path(['payload', 'phone_registered'])]),
+
 );
 
 const handleAuthSendCode = R.always({ sendingAuthCode: true });
@@ -19,7 +29,7 @@ const handleAuthSendCodeError = R.pipe(
 const handleAuthSendCodeSuccess = R.pipe(
   R.nth(1),
   R.of,
-  R.ap([getCurrentPhonePair]),
+  R.ap([getCurrentPhonePair, getPhoneCodeHashPair, getPhoneRegisteredPair]),
   R.fromPairs,
 );
 
