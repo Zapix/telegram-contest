@@ -1,5 +1,10 @@
 import reducer from './reducer';
-import { AUTH_SEND_CODE, AUTH_SEND_CODE_ERROR, AUTH_SEND_CODE_SUCCESS } from './constants';
+import {
+  AUTH_SEND_CODE,
+  AUTH_SEND_CODE_ERROR,
+  AUTH_SEND_CODE_SUCCESS,
+  VERIFY_CODE, VERIFY_CODE_ERROR
+} from './constants';
 
 describe('auth', () => {
   describe('AUTH_SEND_CODE', () => {
@@ -51,6 +56,69 @@ describe('auth', () => {
         currentPhone: '+9996621212',
         phoneRegistered: true,
         phoneCodeHash: 'e6476b05a321aa7001',
+      });
+    });
+  });
+
+  describe('VERIFY_CODE', () => {
+    const action = {
+      type: VERIFY_CODE,
+      payload: '12312',
+    };
+
+    it('without error', () => {
+      const state = {
+        currentPhone: '+9996621212',
+        phoneRegistered: true,
+        phoneCodeHash: 'e6476b05a321aa7001',
+      };
+
+      expect(reducer(state, action)).toEqual({
+        currentPhone: '+9996621212',
+        phoneRegistered: true,
+        phoneCodeHash: 'e6476b05a321aa7001',
+        verifyCode: '12312',
+      });
+    });
+
+    it('with error', () => {
+      const state = {
+        currentPhone: '+9996621212',
+        phoneRegistered: true,
+        phoneCodeHash: 'e6476b05a321aa7001',
+        verifyCode: '232',
+        verifyError: 'INVALID_ERROR',
+      };
+
+      expect(reducer(state, action)).toEqual({
+        currentPhone: '+9996621212',
+        phoneRegistered: true,
+        phoneCodeHash: 'e6476b05a321aa7001',
+        verifyCode: '12312',
+      });
+    });
+  });
+
+  describe('VERIFY_CODE_ERROR', () => {
+    const action = {
+      type: VERIFY_CODE_ERROR,
+      payload: 'INVALID_CODE',
+    };
+
+    it('set error', () => {
+      const state = {
+        currentPhone: '+9996621212',
+        phoneRegistered: true,
+        phoneCodeHash: 'e6476b05a321aa7001',
+        verifyCode: '232',
+      };
+
+      expect(reducer(state, action)).toEqual({
+        currentPhone: '+9996621212',
+        phoneRegistered: true,
+        phoneCodeHash: 'e6476b05a321aa7001',
+        verifyCode: '232',
+        verifyError: 'INVALID_CODE',
       });
     });
   });

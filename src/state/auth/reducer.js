@@ -1,7 +1,13 @@
 import * as R from 'ramda';
 import { isActionOf, buildReducer } from 'utils/store';
 
-import { AUTH_SEND_CODE, AUTH_SEND_CODE_ERROR, AUTH_SEND_CODE_SUCCESS } from './constants';
+import {
+  AUTH_SEND_CODE,
+  AUTH_SEND_CODE_ERROR,
+  AUTH_SEND_CODE_SUCCESS,
+  VERIFY_CODE,
+  VERIFY_CODE_ERROR,
+} from './constants';
 
 const getCurrentPhonePair = R.pipe(
   R.of,
@@ -33,8 +39,29 @@ const handleAuthSendCodeSuccess = R.pipe(
   R.fromPairs,
 );
 
+const handleVerifyCode  = R.pipe(
+  R.of,
+  R.ap([
+    R.nth(0),
+    R.pipe(R.nth(1), R.prop('payload'), R.set(R.lensProp('verifyCode'), R.__, {})),
+  ]),
+  R.mergeAll,
+  R.omit(['verifyError']),
+);
+
+const handleVerifyError = R.pipe(
+  R.of,
+  R.ap([
+    R.nth(0),
+    R.pipe(R.nth(1), R.prop('payload'), R.set(R.lensProp('verifyError'), R.__, {})),
+  ]),
+  R.mergeAll,
+);
+
 export default buildReducer({}, [
   [isActionOf(AUTH_SEND_CODE), handleAuthSendCode],
   [isActionOf(AUTH_SEND_CODE_ERROR), handleAuthSendCodeError],
   [isActionOf(AUTH_SEND_CODE_SUCCESS), handleAuthSendCodeSuccess],
+  [isActionOf(VERIFY_CODE), handleVerifyCode],
+  [isActionOf(VERIFY_CODE_ERROR), handleVerifyError],
 ]);
