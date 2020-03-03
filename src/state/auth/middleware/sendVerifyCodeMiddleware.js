@@ -14,6 +14,11 @@ import schema from 'utils/mtproto/tl/schema/layer5';
 
 import { isActionOf } from 'utils/store';
 import { VERIFY_CODE } from '../constants';
+import { RPC_ERROR_TYPE } from '../../../utils/mtproto/constants';
+import { sendVerifyCodeError, setAuthorizationData } from '../actions';
+import { isMessageOf } from '../../../utils/mtproto/tl/utils';
+import { debug } from '../../../utils/mtproto/utils';
+import { setPage } from '../../pages';
 
 const sendSignIn = R.partial(methodFromSchema, [schema, 'auth.signIn']);
 
@@ -53,6 +58,18 @@ const getPhoneCode = R.pipe(
   R.set(R.lensProp('phone_code'), R.__, {}),
 );
 
+
+const isPhoneUnoccupied = R.allPass([
+  isMessageOf(RPC_ERROR_TYPE),
+  R.propEq('errorMessage', 'PHONE_NUMBER_UNOCCUPIED'),
+]);
+
+const handleVerifyResponse = R.cond([
+  [isPhoneUnoccupied, R.partial(setPage, ['sign-up'])],
+  [isMessageOf(RPC_ERROR_TYPE), R.pipe(R.prop('errorMessage'), sendVerifyCodeError)],
+  [R.T, R.pipe(R.of, R.ap([setAuthorizationData, R.partial(setPage, ['chat'])]))],
+]);
+
 /**
  * @param action$ - stream of actions
  * @param state$ - stream of application state
@@ -66,16 +83,15 @@ export default function sendVerifyCodeMiddleware(action$, state$, connection) {
         .pipe(filter(isActionOf(VERIFY_CODE)))
         .pipe(map(getPhoneCode));
 
-      const sendSignIn$ = phoneData$
-        .pipe(withLatestFrom(verifyCode$))
+      const sendSignIn$ = verifyCode$
+        .pipe(withLatestFrom(phoneData$))
+        .pipe(map(debug))
         .pipe(map(R.mergeAll))
         .pipe(map(sendSignIn));
 
       sendSignIn$
         .pipe(mergeMap((x) => fromPromise(connection.request(x)).pipe(catchError(R.of))))
-        .subscribe(
-          (x) => console.log(x),
-        );
+        .subscribe(handleVerifyResponse);
     }
   });
 }
