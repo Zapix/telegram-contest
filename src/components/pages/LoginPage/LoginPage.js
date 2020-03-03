@@ -15,7 +15,13 @@ export default function LoginPage(state) {
     },
     [
       Logo(),
-      Header('Sign in to Telegram'),
+      createElement(
+        'div',
+        { class: styles.headerGroup },
+        [
+          Header('Sign in to Telegram'),
+        ],
+      ),
       createElement(
         'p',
         null,
