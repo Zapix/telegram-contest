@@ -3,7 +3,9 @@ import {
   AUTH_SEND_CODE,
   AUTH_SEND_CODE_ERROR,
   AUTH_SEND_CODE_SUCCESS,
-  VERIFY_CODE, VERIFY_CODE_ERROR
+  CLEAR_AUTH_STATE,
+  VERIFY_CODE,
+  VERIFY_CODE_ERROR,
 } from './constants';
 
 describe('auth', () => {
@@ -120,6 +122,25 @@ describe('auth', () => {
         verifyCode: '232',
         verifyError: 'INVALID_CODE',
       });
+    });
+  });
+
+  describe('CLEAR_AUTH_STATE', () => {
+    it('test', () => {
+      const action = {
+        type: CLEAR_AUTH_STATE,
+        payload: null,
+      };
+
+      const state = {
+        currentPhone: '+9996621212',
+        phoneRegistered: true,
+        phoneCodeHash: 'e6476b05a321aa7001',
+        verifyCode: '232',
+        verifyError: 'INVALID_CODE',
+      };
+
+      expect(reducer(state, action)).toEqual({});
     });
   });
 });
