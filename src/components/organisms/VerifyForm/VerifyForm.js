@@ -1,3 +1,4 @@
+import * as R from 'ramda';
 import { createElement } from 'utils/vdom';
 import mergeClasses from 'utils/mergeClasses';
 import { Button, Input } from 'components/atoms';
@@ -11,7 +12,9 @@ function handleSubmit(e) {
   sendVerifyCode(verifyCode);
 }
 
-export default function VerifyForm() {
+const hasVerifyError = R.hasPath(['auth', 'verifyError']);
+
+export default function VerifyForm(state) {
   return createElement(
     'form',
     {
@@ -31,6 +34,7 @@ export default function VerifyForm() {
               name: 'verifyCode',
               class: styles.input,
             },
+            hasVerifyError(state),
           ),
         ],
       ),
