@@ -1,7 +1,6 @@
 import * as R from 'ramda';
 
 import { createElement } from 'utils/vdom';
-
 import { CenterLayout } from 'components/layout';
 import {
   Logo,
@@ -32,9 +31,7 @@ export default function VerifyPage(state) {
       Logo(),
       createElement(
         'div',
-        {
-          class: styles.headerGroup
-        },
+        { class: styles.headerGroup },
         [
           Header(getCurrentPhone(state)),
           createElement(

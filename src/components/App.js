@@ -1,6 +1,11 @@
 import * as R from 'ramda';
 import { createElement } from 'utils/vdom';
-import { LoginPage, VerifyPage, NotFoundPage } from './pages';
+import {
+  LoginPage,
+  VerifyPage,
+  NotFoundPage,
+  SignUpPage,
+} from './pages';
 
 
 const getPageComponent = R.pipe(
@@ -8,6 +13,7 @@ const getPageComponent = R.pipe(
   R.cond([
     [R.equals('login'), R.always(LoginPage)],
     [R.equals('verify'), R.always(VerifyPage)],
+    [R.equals('sign-up'), R.always(SignUpPage)],
     [R.T, R.always(NotFoundPage)],
   ]),
 );
