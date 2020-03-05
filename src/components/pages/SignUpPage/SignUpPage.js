@@ -5,6 +5,7 @@ import {
   Header,
   HelpText,
 } from 'components/atoms';
+import { SignUpForm } from 'components/organisms';
 
 import styles from './SignUpPage.module.scss';
 
@@ -19,10 +20,11 @@ export default function SignUpPage() {
           'div',
           { class: styles.headerGroup },
           [
-            Header('You Name'),
+            Header('Your Name'),
           ],
         ),
         HelpText('Enter your name and add a profile picture'),
+        SignUpForm(),
       ],
     ),
   );
