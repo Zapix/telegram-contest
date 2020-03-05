@@ -5,3 +5,5 @@ export const VERIFY_CODE = 'VERIFY_CODE';
 export const VERIFY_CODE_ERROR = 'VERIFY_CODE_ERROR';
 export const SET_AUTHORIZATION_DATA = 'SET_AUTHORIZATION_DATA';
 export const CLEAR_AUTH_STATE = 'CLEAR_AUTH_STATE';
+export const SIGN_UP = 'SIGN_UP';
+export const SIGN_UP_ERROR = 'SIGN_UP_ERROR';

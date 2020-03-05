@@ -3,7 +3,7 @@ import {
   AUTH_SEND_CODE,
   AUTH_SEND_CODE_ERROR,
   AUTH_SEND_CODE_SUCCESS,
-  CLEAR_AUTH_STATE,
+  CLEAR_AUTH_STATE, SIGN_UP, SIGN_UP_ERROR,
   VERIFY_CODE,
   VERIFY_CODE_ERROR,
 } from './constants';
@@ -142,5 +142,73 @@ describe('auth', () => {
 
       expect(reducer(state, action)).toEqual({});
     });
+  });
+
+  describe('SIGN_UP', () => {
+    const action = {
+      type: SIGN_UP,
+      payload: {
+        firstName: 'John',
+        lastName: 'Doe',
+      },
+    };
+
+    it('without error', () => {
+      const state = {
+        currentPhone: '+9996621212',
+        phoneRegistered: true,
+        phoneCodeHash: 'e6476b05a321aa7001',
+        verifyCode: '232',
+      };
+
+      expect(reducer(state, action)).toEqual({
+        ...state,
+        firstName: 'John',
+        lastName: 'Doe',
+      });
+    });
+
+    it('with error', () => {
+      const state = {
+        currentPhone: '+9996621212',
+        phoneRegistered: true,
+        phoneCodeHash: 'e6476b05a321aa7001',
+        verifyCode: '232',
+        signUpError: 'ERROR',
+      };
+
+      expect(reducer(state, action)).toEqual({
+        currentPhone: '+9996621212',
+        phoneRegistered: true,
+        phoneCodeHash: 'e6476b05a321aa7001',
+        verifyCode: '232',
+        firstName: 'John',
+        lastName: 'Doe',
+      });
+    });
+  });
+
+  describe('SIGN_UP_ERROR', () => {
+    it('error', () => {
+      const state = {
+        currentPhone: '+9996621212',
+        phoneRegistered: true,
+        phoneCodeHash: 'e6476b05a321aa7001',
+        verifyCode: '232',
+        firstName: 'John',
+        lastName: 'Doe',
+      };
+
+      const action = {
+        type: SIGN_UP_ERROR,
+        payload: 'ERROR',
+      };
+
+      expect(reducer(state, action)).toEqual({
+        ...state,
+        signUpError: 'ERROR',
+      });
+    });
+
   });
 });

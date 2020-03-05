@@ -5,7 +5,7 @@ import {
   AUTH_SEND_CODE,
   AUTH_SEND_CODE_ERROR,
   AUTH_SEND_CODE_SUCCESS,
-  CLEAR_AUTH_STATE,
+  CLEAR_AUTH_STATE, SIGN_UP, SIGN_UP_ERROR,
   VERIFY_CODE,
   VERIFY_CODE_ERROR,
 } from './constants';
@@ -61,6 +61,24 @@ const handleVerifyError = R.pipe(
 
 const handleClearAuthState = R.always({});
 
+const handleSignUp = R.pipe(
+  R.of,
+  R.ap([
+    R.pipe(R.nth(0), R.omit(['signUpError'])),
+    R.pipe(R.nth(1), R.prop('payload'), R.pickAll(['firstName', 'lastName'])),
+  ]),
+  R.mergeAll,
+);
+
+const handleSignUpError = R.pipe(
+  R.of,
+  R.ap([
+    R.nth(0),
+    R.pipe(R.nth(1), R.prop('payload'), R.set(R.lensProp('signUpError'), R.__, {})),
+  ]),
+  R.mergeAll,
+);
+
 export default buildReducer({}, [
   [isActionOf(AUTH_SEND_CODE), handleAuthSendCode],
   [isActionOf(AUTH_SEND_CODE_ERROR), handleAuthSendCodeError],
@@ -68,4 +86,6 @@ export default buildReducer({}, [
   [isActionOf(VERIFY_CODE), handleVerifyCode],
   [isActionOf(VERIFY_CODE_ERROR), handleVerifyError],
   [isActionOf(CLEAR_AUTH_STATE), handleClearAuthState],
+  [isActionOf(SIGN_UP), handleSignUp],
+  [isActionOf(SIGN_UP_ERROR), handleSignUpError],
 ]);
