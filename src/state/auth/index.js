@@ -1,3 +1,8 @@
-export { sendAuthCode, sendAuthCodeError, sendVerifyCode } from './actions';
+export {
+  sendAuthCode,
+  sendAuthCodeError,
+  sendVerifyCode,
+  clearAuthState,
+} from './actions';
 export { default as reducer } from './reducer';
 export { default as applyMiddleware } from './middleware';

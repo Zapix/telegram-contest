@@ -12,12 +12,14 @@ import { VerifyFrom } from 'components/organisms';
 import { setPage } from 'state/pages';
 
 import styles from './VerifyPage.module.scss';
+import { clearAuthState } from '../../../state/auth';
 
 const getCurrentPhone = R.pathOr('', ['auth', 'currentPhone']);
 
 function handleEditPhone(e) {
   e.preventDefault();
   setPage('login');
+  clearAuthState();
 }
 
 export default function VerifyPage(state) {
