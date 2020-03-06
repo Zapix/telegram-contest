@@ -9,7 +9,7 @@ import { SignUpForm } from 'components/organisms';
 
 import styles from './SignUpPage.module.scss';
 
-export default function SignUpPage() {
+export default function SignUpPage(state) {
   return CenterLayout(
     createElement(
       'div',
@@ -24,7 +24,7 @@ export default function SignUpPage() {
           ],
         ),
         HelpText('Enter your name and add a profile picture'),
-        SignUpForm(),
+        SignUpForm(state),
       ],
     ),
   );
