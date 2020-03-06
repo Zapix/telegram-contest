@@ -6,21 +6,28 @@ import { SignInForm } from 'components/organisms';
 
 import styles from './LoginPage.module.scss';
 
-export default function LoginPage() {
+export default function LoginPage(state) {
   return CenterLayout(createElement(
     'div',
     {
+      id: 'login',
       class: styles.loginPage,
     },
     [
       Logo(),
-      Header('Sign in to Telegram'),
+      createElement(
+        'div',
+        { class: styles.headerGroup },
+        [
+          Header('Sign in to Telegram'),
+        ],
+      ),
       createElement(
         'p',
         null,
         HelpText('Please confirm your country and enter your phone number'),
       ),
-      SignInForm(),
+      SignInForm(state),
     ],
   ));
 }

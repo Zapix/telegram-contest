@@ -1,9 +1,13 @@
-/* eslint-disable */
 import * as R from 'ramda';
 
 import { dispatch } from 'utils/store';
 
-import { SET_UPDATED, AUTH_REQUESTED, PING_REQUESTED, HTTP_WAIT } from './constants';
+import {
+  SET_UPDATED,
+  AUTH_REQUESTED,
+  PING_REQUESTED,
+  HTTP_WAIT,
+} from './constants';
 
 export const setUpdated = R.partial(dispatch, [SET_UPDATED, true]);
 

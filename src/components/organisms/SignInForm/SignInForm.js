@@ -1,4 +1,7 @@
-import { requestAuth, requestPing, httpWait } from 'state/todo/actions';
+import * as R from 'ramda';
+
+import { requestPing, httpWait } from 'state/todo/actions';
+import { sendAuthCode } from 'state/auth';
 import { createElement } from 'utils/vdom';
 import mergeClasses from 'utils/mergeClasses';
 import { Input, Button } from 'components/atoms';
@@ -19,7 +22,7 @@ function handleChange(e) {
 function handleSubmit(e) {
   e.preventDefault();
   const phoneNumber = document.getElementById('phoneNumber').value;
-  requestAuth(phoneNumber);
+  sendAuthCode(phoneNumber);
 }
 
 function handleClick(e) {
@@ -32,7 +35,19 @@ function handleHttpWait(e) {
   httpWait();
 }
 
-export default function SignInForm() {
+const getError = R.cond([
+  [R.equals('PHONE_NUMBER_INVALID'), R.always('Invalid phone number')],
+  [R.T, R.identity],
+]);
+
+const hasSendAuthError = R.hasPath(['auth', 'sendAuthCodeError']);
+
+const getSendAuthError = R.cond([
+  [hasSendAuthError, R.pipe(R.path(['auth', 'sendAuthCodeError']), getError)],
+  [R.T, R.always('')],
+]);
+
+export default function SignInForm(state) {
   return createElement(
     'form',
     {
@@ -41,6 +56,11 @@ export default function SignInForm() {
       onsubmit: handleSubmit,
     },
     [
+      createElement(
+        'div',
+        { class: 'commonError' },
+        [getSendAuthError(state)],
+      ),
       createElement(
         'div',
         { class: styles.inputGroup },
@@ -64,6 +84,7 @@ export default function SignInForm() {
             class: styles.input,
             oninput: handleChange,
           },
+          hasSendAuthError(state),
         ),
       ),
       createElement(
@@ -104,7 +125,7 @@ export default function SignInForm() {
       ),
       createElement(
         'div',
-        { class: mergeClasses(styles.inputGroup) },
+        { class: mergeClasses(styles.inputGroup, styles.submitGroup) },
         [
           Button(
             'Sign In',
