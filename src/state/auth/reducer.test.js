@@ -209,6 +209,5 @@ describe('auth', () => {
         signUpError: 'ERROR',
       });
     });
-
   });
 });

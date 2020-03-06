@@ -8,17 +8,17 @@ import {
 } from 'rxjs/operators';
 import { fromPromise } from 'rxjs/internal-compatibility';
 
+import { isActionOf } from 'utils/store';
 import { methodFromSchema } from 'utils/mtproto';
 import { AUTH_KEY_CREATED, STATUS_CHANGED_EVENT } from 'utils/mtproto/MTProto';
 import schema from 'utils/mtproto/tl/schema/layer5';
+import { isMessageOf } from 'utils/mtproto/tl/utils';
+import { RPC_ERROR_TYPE } from 'utils/mtproto/constants';
 
-import { isActionOf } from 'utils/store';
-import { VERIFY_CODE } from '../constants';
-import { RPC_ERROR_TYPE } from '../../../utils/mtproto/constants';
-import { sendVerifyCodeError, setAuthorizationData } from '../actions';
-import { isMessageOf } from '../../../utils/mtproto/tl/utils';
-import { debug } from '../../../utils/mtproto/utils';
 import { setPage } from '../../pages';
+import { VERIFY_CODE } from '../constants';
+import { sendVerifyCodeError, setAuthorizationData } from '../actions';
+import { debug } from '../../../utils/mtproto/utils';
 
 const sendSignIn = R.partial(methodFromSchema, [schema, 'auth.signIn']);
 
@@ -85,13 +85,12 @@ export default function sendVerifyCodeMiddleware(action$, state$, connection) {
 
       const sendSignIn$ = verifyCode$
         .pipe(withLatestFrom(phoneData$))
-        .pipe(map(debug))
         .pipe(map(R.mergeAll))
         .pipe(map(sendSignIn));
 
       sendSignIn$
         .pipe(mergeMap((x) => fromPromise(connection.request(x)).pipe(catchError(R.of))))
-        .subscribe(handleVerifyResponse);
+        .subscribe(R.pipe(debug, handleVerifyResponse));
     }
   });
 }
