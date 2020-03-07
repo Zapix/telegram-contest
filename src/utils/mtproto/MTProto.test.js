@@ -13,8 +13,8 @@ import * as R from 'ramda';
 
 import {
   API_HASH,
-  API_ID, CONSTRUCTOR_KEY,
-  HTTP_WAIT_TYPE, MESSAGE_CONTAINER_TYPE,
+  API_ID, BAD_SERVER_SALT_TYPE, CONSTRUCTOR_KEY,
+  HTTP_WAIT_TYPE, MESSAGE_CONTAINER_TYPE, MSGS_ACK_TYPE,
   NEW_SESSION_CREATED_TYPE,
   PING_TYPE,
   PONG_TYPE, RPC_ERROR_TYPE, RPC_RESULT_TYPE,
@@ -408,6 +408,39 @@ describe('MTProto', () => {
       });
       expect(connection.acknowledgements).toHaveLength(1);
       expect(connection.acknowledgements[0]).toEqual(BigInt('6798192297014662145'));
+    });
+
+    it('handle bad_server_salt', () => {
+      const connection = new MTProto(url, schema);
+      const resolve = jest.fn();
+      const reject = jest.fn();
+
+      connection.rpcPromises[BigInt('6798186738482151424')] = { resolve, reject };
+      connection.handleResponse({
+        msgId: BigInt(123123),
+        seqNo: 13,
+        body: {
+          [TYPE_KEY]: BAD_SERVER_SALT_TYPE,
+          badMsgId: BigInt('6798186738482151424'),
+          badMsgSeqNo: 13,
+          errorCode: 20,
+          newServerSalt: BigInt('14078893447025144951'),
+        },
+      });
+
+      const serverSalt = new Uint8Array([119, 52, 130, 52, 255, 70, 98, 195]);
+
+      expect(connection.serverSalt).toEqual(serverSalt);
+      expect(reject).toHaveBeenCalled();
+    });
+
+    it('handle msgs_ack', () => {
+      const connection = new MTProto(url, schema);
+      connection.handleResponse({
+        msgId: BigInt(123123),
+        seqNo: 13,
+        body: { [TYPE_KEY]: MSGS_ACK_TYPE, msg_ids: [] },
+      });
     });
   });
 });
