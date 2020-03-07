@@ -9,6 +9,7 @@ import { getMessageId, getNRandomBytes } from './utils';
 import sendRequest from './sendRequest';
 import { isMessageOf } from './tl/utils';
 import {
+  BAD_SERVER_SALT_TYPE,
   HTTP_WAIT_TYPE,
   MESSAGE_CONTAINER_TYPE,
   MSGS_ACK_TYPE,
@@ -221,18 +222,31 @@ export default class MTProto extends EventTarget {
         R.path(['body', 'messages']),
         R.map(this.handleResponse.bind(this)),
       )(message);
+    } else if (isMessageOf(MSGS_ACK_TYPE, message.body)) {
+      this.handleMsgsAck(message);
     } else if (isMessageOf(PONG_TYPE, message.body)) {
       this.handlePong(message);
     } else if (isMessageOf(NEW_SESSION_CREATED_TYPE, message.body)) {
       this.handleNewSessionCreated(message);
+    } else if (isMessageOf(BAD_SERVER_SALT_TYPE, message.body)) {
+      this.handleBadServerSalt(message);
     } else if (isMessageOf(RPC_RESULT_TYPE, message.body)) {
       this.handleRpcResult(message);
     } else {
-      console.warn('Unhandled message:');
-      console.warn(message);
+      this.handleUnExpected(message);
     }
     return message;
   }
+
+  /* eslint-disable */
+  handleUnExpected(message) {
+    console.warn('Unhandled message:');
+    console.warn(message);
+  }
+
+  handleMsgsAck() {
+  }
+  /* eslint-enable */
 
   handlePong(message) {
     const { msgId } = message.body;
@@ -248,6 +262,19 @@ export default class MTProto extends EventTarget {
     const serverSalt = R.path(['body', 'serverSalt'], message);
     const buffer = dumpBigInt(serverSalt);
     this.serverSalt = new Uint8Array(buffer);
+  }
+
+  handleBadServerSalt(message) {
+    const serverSalt = R.path(['body', 'newServerSalt'], message);
+    console.log('Switch to new server salt:', serverSalt);
+    const buffer = dumpBigInt(serverSalt);
+    this.serverSalt = new Uint8Array(buffer);
+
+    const badMsgId = R.path(['body', 'badMsgId'], message);
+
+    if (R.has(badMsgId, this.rpcPromises)) {
+      this.rpcPromises[badMsgId].reject(message);
+    }
   }
 
   handleRpcResult(message) {
