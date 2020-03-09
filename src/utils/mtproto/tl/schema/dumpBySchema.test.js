@@ -110,5 +110,21 @@ describe('dumpBySchema', () => {
       const hexStr = '83bebede1200000039d3ed3f39d3ed3f';
       expect(arrayBufferToHex(buffer)).toEqual(hexStr);
     });
+
+    it('dump by schema', () => {
+      const obj = {
+        [METHOD_KEY]: 'invokeWithLayer',
+        [TYPE_KEY]: 'X',
+        layer: 105,
+        query: {
+          [METHOD_KEY]: 'help.getConfig',
+          [TYPE_KEY]: 'Config',
+        },
+      };
+
+      const buffer = dump(obj);
+      const hexStr = '0d0d9bda690000006b18f9c4';
+      expect(arrayBufferToHex(buffer)).toEqual(hexStr);
+    });
   });
 });

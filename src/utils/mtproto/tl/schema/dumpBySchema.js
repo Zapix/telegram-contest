@@ -9,7 +9,9 @@ import {
   getVectorType,
   isDumpingTypeFactory,
   hasConditionalField,
-  isFlagOption, flagOptionMatch, dumpFlag,
+  isFlagOption,
+  flagOptionMatch,
+  dumpFlag,
 } from './utils';
 import { getEmptyArrayBuffer, buildDumpFunc, mergeAllArrayBuffers } from '../../utils';
 import { CONSTRUCTOR_KEY, METHOD_KEY } from '../../constants';
@@ -36,6 +38,7 @@ export default function dumpBySchema(schema, message) {
       [R.equals('int'), R.always(dumpInt)],
       [R.equals('long'), R.always(dumpBigInt)],
       [R.equals('string'), R.always(dumpString)],
+      [R.equals('!X'), R.always(R.partial(dumpBySchema, [schema]))],
       [
         isVector,
         R.pipe(

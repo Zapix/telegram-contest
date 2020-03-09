@@ -5,7 +5,7 @@ import layer5 from './layer5.json';
 import layer108 from './layer108.json';
 
 import loadBySchema from './loadBySchema';
-import { CONSTRUCTOR_KEY, TYPE_KEY } from '../../constants';
+import { CONSTRUCTOR_KEY, METHOD_KEY, TYPE_KEY } from '../../constants';
 
 describe('loadBySchema', () => {
   describe('user api layer 5', () => {
@@ -155,6 +155,37 @@ describe('loadBySchema', () => {
             },
             offset: 16,
           });
+        });
+      });
+    });
+
+    describe('invoke with layer 108 get config', () => {
+      const hexStr = '0d0d9bda690000006b18f9c4';
+      const buffer = hexToArrayBuffer(hexStr);
+      it('without offset', () => {
+        expect(load(buffer)).toEqual({
+          [METHOD_KEY]: 'invokeWithLayer',
+          [TYPE_KEY]: 'X',
+          layer: 105,
+          query: {
+            [METHOD_KEY]: 'help.getConfig',
+            [TYPE_KEY]: 'Config',
+          },
+        });
+      });
+
+      it('with offset', () => {
+        expect(load(buffer, true)).toEqual({
+          offset: 12,
+          value: {
+            [METHOD_KEY]: 'invokeWithLayer',
+            [TYPE_KEY]: 'X',
+            layer: 105,
+            query: {
+              [METHOD_KEY]: 'help.getConfig',
+              [TYPE_KEY]: 'Config',
+            },
+          },
         });
       });
     });
