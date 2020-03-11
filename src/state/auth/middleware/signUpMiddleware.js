@@ -12,11 +12,11 @@ import { AUTH_KEY_CREATED, STATUS_CHANGED_EVENT } from 'utils/mtproto/MTProto';
 import { isActionOf } from 'utils/store';
 import { methodFromSchema } from 'utils/mtproto';
 import layer5 from 'utils/mtproto/tl/schema/layer5';
+import { isMessageOf } from 'utils/mtproto/tl/utils';
+import { RPC_ERROR_TYPE } from 'utils/mtproto/constants';
 import { SIGN_UP } from 'state/auth/constants';
 import { setAuthorizationData, signUpError } from '../actions';
 import { setPage } from '../../pages';
-import { isMessageOf } from '../../../utils/mtproto/tl/utils';
-import { RPC_ERROR_TYPE } from '../../../utils/mtproto/constants';
 
 const method = R.partial(methodFromSchema, [layer5]);
 const methodSignUp = R.partial(method, ['auth.signUp']);
@@ -27,7 +27,7 @@ const getFirstNameFromAction = R.pipe(
 );
 
 const getLastNameFromAction = R.pipe(
-  R.path(['payload', 'firstName']),
+  R.path(['payload', 'lastName']),
   R.set(R.lensProp('last_name'), R.__, {}),
 );
 
@@ -36,7 +36,6 @@ const getSignUpNames = R.pipe(
   R.ap([getFirstNameFromAction, getLastNameFromAction]),
   R.mergeAll,
 );
-
 
 const getPhoneNumberFromState = R.pipe(
   R.path(['auth', 'currentPhone']),
@@ -48,14 +47,9 @@ const getPhoneCodeHashFromState = R.pipe(
   R.set(R.lensProp('phone_code_hash'), R.__, {}),
 );
 
-const getPhoneCodeFromState = R.pipe(
-  R.path(['auth', 'verifyCode']),
-  R.set(R.lensProp('phone_code'), R.__, {}),
-);
-
 const getAuthDataFromState = R.pipe(
   R.of,
-  R.ap([getPhoneCodeFromState, getPhoneNumberFromState, getPhoneCodeHashFromState]),
+  R.ap([getPhoneNumberFromState, getPhoneCodeHashFromState]),
   R.mergeAll,
 );
 

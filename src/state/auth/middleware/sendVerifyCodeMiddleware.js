@@ -11,9 +11,9 @@ import { fromPromise } from 'rxjs/internal-compatibility';
 import { isActionOf } from 'utils/store';
 import { methodFromSchema } from 'utils/mtproto';
 import { AUTH_KEY_CREATED, STATUS_CHANGED_EVENT } from 'utils/mtproto/MTProto';
-import schema from 'utils/mtproto/tl/schema/layer5';
+import schema from 'utils/mtproto/tl/schema/layer108';
 import { isMessageOf } from 'utils/mtproto/tl/utils';
-import { RPC_ERROR_TYPE } from 'utils/mtproto/constants';
+import { CONSTRUCTOR_KEY, RPC_ERROR_TYPE } from 'utils/mtproto/constants';
 
 import { setPage } from '../../pages';
 import { VERIFY_CODE } from '../constants';
@@ -59,10 +59,7 @@ const getPhoneCode = R.pipe(
 );
 
 
-const isPhoneUnoccupied = R.allPass([
-  isMessageOf(RPC_ERROR_TYPE),
-  R.propEq('errorMessage', 'PHONE_NUMBER_UNOCCUPIED'),
-]);
+const isPhoneUnoccupied = R.propEq(CONSTRUCTOR_KEY, 'auth.authorizationSignUpRequired');
 
 const handleVerifyResponse = R.cond([
   [isPhoneUnoccupied, R.partial(setPage, ['sign-up'])],

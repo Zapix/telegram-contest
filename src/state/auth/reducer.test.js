@@ -3,7 +3,7 @@ import {
   AUTH_SEND_CODE,
   AUTH_SEND_CODE_ERROR,
   AUTH_SEND_CODE_SUCCESS,
-  CLEAR_AUTH_STATE, SIGN_UP, SIGN_UP_ERROR,
+  CLEAR_AUTH_STATE, SET_AUTHORIZATION_DATA, SIGN_UP, SIGN_UP_ERROR,
   VERIFY_CODE,
   VERIFY_CODE_ERROR,
 } from './constants';
@@ -207,6 +207,35 @@ describe('auth', () => {
       expect(reducer(state, action)).toEqual({
         ...state,
         signUpError: 'ERROR',
+      });
+    });
+  });
+
+  describe('SET_AUTHORIZATION_DATA', () => {
+    it('set user', () => {
+      const action = {
+        payload: {
+          user: {
+            self: true,
+            first_name: 'John',
+            last_name: 'Doe',
+          },
+        },
+        type: SET_AUTHORIZATION_DATA,
+      };
+
+      const state = {
+        currentPhone: '+9996621212',
+        phoneRegistered: true,
+        phoneCodeHash: 'e6476b05a321aa7001',
+        verifyCode: '232',
+        firstName: 'John',
+        lastName: 'Doe',
+      };
+
+      expect(reducer(state, action)).toEqual({
+        ...state,
+        user: action.payload.user,
       });
     });
   });
