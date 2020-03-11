@@ -11,7 +11,7 @@ import { fromPromise } from 'rxjs/internal-compatibility';
 import { isActionOf } from 'utils/store';
 import { methodFromSchema } from 'utils/mtproto';
 import { AUTH_KEY_CREATED, STATUS_CHANGED_EVENT } from 'utils/mtproto/MTProto';
-import schema from 'utils/mtproto/tl/schema/layer5';
+import schema from 'utils/mtproto/tl/schema/layer108';
 import { isMessageOf } from 'utils/mtproto/tl/utils';
 import { RPC_ERROR_TYPE } from 'utils/mtproto/constants';
 

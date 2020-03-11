@@ -5,7 +5,7 @@ import seqNoGenerator from './seqNoGenerator';
 import { dumps, loads } from './tl';
 import encryptMessage from './encryptMessage';
 import decryptMessage from './decryptMessage';
-import { getMessageId, getNRandomBytes } from './utils';
+import { arrayBufferToHex, getMessageId, getNRandomBytes } from './utils';
 import sendRequest from './sendRequest';
 import { isMessageOf } from './tl/utils';
 import {
@@ -138,6 +138,7 @@ export default class MTProto extends EventTarget {
         sendRequest(this.serverUrl),
       );
 
+      console.log(message);
       const promise = sendEncryptedRequest(message)
         .then((response) => response.arrayBuffer())
         .then(decrypt)
@@ -304,10 +305,13 @@ export default class MTProto extends EventTarget {
   }
 
   loadFromDecrypted({ messageId, message, seqNo }) {
+    console.log(arrayBufferToHex(message));
+    const body = loads(this.schema, message);
+    console.log(body);
     return {
       seqNo,
+      body,
       msgId: messageId,
-      body: loads(this.schema, message),
     };
   }
 

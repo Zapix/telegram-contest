@@ -8,9 +8,9 @@ import {
 } from 'rxjs/operators';
 import { fromPromise } from 'rxjs/internal-compatibility';
 
-import { methodFromSchema } from 'utils/mtproto';
+import { methodFromSchema, constructorFromSchema } from 'utils/mtproto';
 import { AUTH_KEY_CREATED, STATUS_CHANGED_EVENT } from 'utils/mtproto/MTProto';
-import schema from 'utils/mtproto/tl/schema/layer5';
+import schema from 'utils/mtproto/tl/schema/layer108';
 
 import { isActionOf } from 'utils/store';
 import { API_HASH, API_ID, RPC_ERROR_TYPE } from 'utils/mtproto/constants';
@@ -20,12 +20,12 @@ import { isMessageOf } from '../../../utils/mtproto/tl/utils';
 import { setPage } from '../../pages';
 
 const sendAuthMethod = R.partial(methodFromSchema, [schema, 'auth.sendCode']);
+const constructor = R.partial(constructorFromSchema, [schema]);
 
 const baseAuthData = {
   api_id: API_ID,
-  sms_type: 0,
-  lang_code: 'ru',
   api_hash: API_HASH,
+  settings: constructor('codeSettings', {}),
 };
 
 const sendAuthCode = R.pipe(

@@ -120,3 +120,5 @@ export const DESTROY_SESSION_OK_TYPE = 'destroy_session_ok';
 
 export const DESTROY_SESSION_NONE = 0x62d350c9;
 export const DESTROY_SESSION_NONE_TYPE = 'destroy_session_none';
+
+export const GZIP_PACKED = 0x3072cfa1;
