@@ -121,21 +121,16 @@ describe('loadBySchema', () => {
     const load = R.partial(loadBySchema, [layer108]);
     describe('codeSettings', () => {
       describe('2 flags on', () => {
-        const hexStr = '83bebede1200000039d3ed3f39d3ed3f';
+        const hexStr = '83bebede12000000';
         const buffer = hexToArrayBuffer(hexStr);
 
         it('without offset', () => {
           expect(load(buffer)).toEqual({
             [CONSTRUCTOR_KEY]: 'codeSettings',
             [TYPE_KEY]: 'CodeSettings',
-            current_number: {
-              [CONSTRUCTOR_KEY]: 'true',
-              [TYPE_KEY]: 'True',
-            },
-            allow_app_hash: {
-              [CONSTRUCTOR_KEY]: 'true',
-              [TYPE_KEY]: 'True',
-            },
+            current_number: true,
+            allow_flashcall: false,
+            allow_app_hash: true,
           });
         });
 
@@ -144,16 +139,11 @@ describe('loadBySchema', () => {
             value: {
               [CONSTRUCTOR_KEY]: 'codeSettings',
               [TYPE_KEY]: 'CodeSettings',
-              current_number: {
-                [CONSTRUCTOR_KEY]: 'true',
-                [TYPE_KEY]: 'True',
-              },
-              allow_app_hash: {
-                [CONSTRUCTOR_KEY]: 'true',
-                [TYPE_KEY]: 'True',
-              },
+              current_number: true,
+              allow_flashcall: false,
+              allow_app_hash: true,
             },
-            offset: 16,
+            offset: 8,
           });
         });
       });

@@ -5,6 +5,7 @@ import { loadInt } from '../int';
 import { loadBigInt } from '../bigInt';
 import { loadBool } from '../bool';
 import { loadVector } from '../vector';
+import { loadBytes } from '../bytes';
 
 import {
   flagOptionMatch,
@@ -29,6 +30,7 @@ const bareTypeLoaders = {
   Bool: loadBool,
   int: loadInt,
   long: loadBigInt,
+  bytes: loadBytes,
   string: loadString,
 };
 
@@ -161,8 +163,11 @@ function loadBySchema(schema, buffer, withOffset) {
       } else if (isFlagOption(type)) {
         const data = flagOptionMatch(type);
         const flagId = parseInt(data[1], 10);
-        if (flags[flagId]) {
-          const currentType = data[2];
+        const currentType = data[2];
+
+        if (currentType === 'true') {
+          value = { ...value, [name]: flags[flagId] };
+        } else if (flags[flagId]) {
           const loader = getLoaderForType(currentType);
           const { value: param, offset: currentOffset } = loader(currentBuffer, true);
           value = { ...value, [name]: param };

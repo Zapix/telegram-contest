@@ -20,6 +20,7 @@ import { dumpBool } from '../bool';
 import { dumpBigInt } from '../bigInt';
 import { dumpString } from '../string';
 import { dumpVector } from '../vector';
+import { dumpBytes } from '../bytes';
 
 /**
  * Dumps message object into array buffer
@@ -38,6 +39,7 @@ export default function dumpBySchema(schema, message) {
       [R.equals('int'), R.always(dumpInt)],
       [R.equals('long'), R.always(dumpBigInt)],
       [R.equals('string'), R.always(dumpString)],
+      [R.equals('bytes'), R.always(dumpBytes)],
       [R.equals('!X'), R.always(R.partial(dumpBySchema, [schema]))],
       [
         isVector,
@@ -89,6 +91,7 @@ export default function dumpBySchema(schema, message) {
     );
 
     function dumpWithFlag(obj) {
+      console.log('Dump with flag', obj);
       const buffers = [dumpId(objSchema)(obj)];
       let flagId = 0;
       const flags = (new Array(32)).fill(false);
@@ -101,7 +104,7 @@ export default function dumpBySchema(schema, message) {
           buffers.push(new ArrayBuffer());
           flagId = i;
         } else if (isFlagOption(type)) {
-          if (R.has(name, obj)) {
+          if (R.has(name, obj) && R.prop(name, obj) !== undefined) {
             const match = flagOptionMatch(type);
             flags[parseInt(match[1], 10)] = true;
 

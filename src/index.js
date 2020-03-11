@@ -90,7 +90,7 @@ connection.addEventListener(STATUS_CHANGED_EVENT, (e) => {
         ),
       },
     );
-    connection.request(obj);
+    connection.request(obj).then(console.log);
   }
 });
 connection.init();
