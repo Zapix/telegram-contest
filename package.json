@@ -46,7 +46,7 @@
     "jest": "^24.9.0",
     "jest-environment-jsdom": "^24.9.0",
     "jest-environment-jsdom-fifteen": "^1.0.2",
-    "jsdom": "^15.2.1",
+    "jsdom": "^16.5.0",
     "mini-css-extract-plugin": "^0.8.0",
     "node-sass": "^4.13.1",
     "sass-loader": "^8.0.0",
